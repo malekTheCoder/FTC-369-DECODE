@@ -42,8 +42,11 @@ public class IntakeWheel extends OpMode{
         if(gamepad1.left_bumper){
             intake.setPower(1);
         }
-        else{
+        else if (gamepad1.right_bumper){
             intake.setPower(-1);
+        }
+        else{
+            intake.setPower(0);
         }
         outtake.setPower(gamepad1.left_stick_y);
 
