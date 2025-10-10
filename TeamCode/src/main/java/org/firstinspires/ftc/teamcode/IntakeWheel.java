@@ -48,7 +48,7 @@ public class IntakeWheel extends OpMode{
         else{
             intake.setPower(0);
         }
-        outtake.setPower(gamepad1.left_stick_y);
+        outtake.setPower(gamepad1.left_trigger);
 
     }
 }
