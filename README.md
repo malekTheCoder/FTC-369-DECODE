@@ -8,7 +8,7 @@ This GitHub repository contains the source code that is used to build an Android
 ## Requirements
 To use this Android Studio project, you will need Android Studio Ladybug (2024.2) or later.
 
-To program your robot in Blocks or OnBot Java, you do not need Android Studio.
+To program your robot in Blocks or OnBot Java, you do not need   Studio.
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html) to get familiar with how to use the control system:
