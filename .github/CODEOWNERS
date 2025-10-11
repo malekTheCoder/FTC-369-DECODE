@@ -1,9 +1,0 @@
-
-
-# CODEOWNERS file
-# This file defines who is responsible for reviewing changes to the repository.
-# Patterns on the left match files/folders; owners on the right are GitHub usernames or teams.
-# Because of branch protection rules, any matching owner must approve a Pull Request before it can be merged.
-
-# Default owner for all files in the repo (everything matched by '*')
-* @malekTheCoder

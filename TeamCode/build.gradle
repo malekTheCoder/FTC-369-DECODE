@@ -25,25 +25,15 @@ android {
 
 repositories {
     maven {
-        url = 'https://maven.brott.dev/' // for roadrunner
+        url = 'https://maven.brott.dev/'
     }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
-    //roadrunner ones below
-    implementation "com.acmerobotics.roadrunner:ftc:0.1.23"
+
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.25"
     implementation "com.acmerobotics.roadrunner:core:1.0.1"
     implementation "com.acmerobotics.roadrunner:actions:1.0.1"
-    implementation "com.acmerobotics.dashboard:dashboard:0.4.17"
-
-    //next ftc
-    implementation 'dev.nextftc:ftc:1.0.0'
-    implementation 'dev.nextftc:hardware:1.0.0' // If you would like to use the hardware module
-
-    //ctrl alt ftc
-    implementation 'com.github.Thermal-Equilibrium:homeostasis-FTC:1.0.8'
-
-
+    implementation "com.acmerobotics.dashboard:dashboard:0.5.0"
 }
