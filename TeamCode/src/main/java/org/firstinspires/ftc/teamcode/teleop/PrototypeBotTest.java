@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -21,6 +22,10 @@ public class PrototypeBotTest extends OpMode{
     private DcMotor backRight;
     private DcMotor backLeft;
 
+    private DcMotor intake;
+
+    private CRServo feeder;
+
     private IMU imu;
 
     private double power;
@@ -33,6 +38,10 @@ public class PrototypeBotTest extends OpMode{
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
+        feeder = hardwareMap.get(CRServo.class, "feeder");
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -59,18 +68,36 @@ public class PrototypeBotTest extends OpMode{
         handleDrivetrain();
         handleOuttake();
         handleIntake();
+        handleFeeder();
+
+        if (gamepad1.x){
+            imu.resetYaw();
+        }
 
         telemetry.update();
     }
 
+    private void handleFeeder() {
+        if (Math.abs(gamepad2.left_stick_y) > 0.1) {
+            feeder.setPower(gamepad2.left_stick_y);
+        } else {
+            feeder.setPower(0);
+        }
+    }
+
     private void handleIntake() {
+        if (gamepad2.left_trigger > 0.1){
+            intake.setPower(gamepad2.left_trigger);
+        } else {
+            intake.setPower(0);
+        }
     }
 
     private void handleDrivetrain() {
         
         // Get drive inputs (negated Y because joystick Y is reversed)
         double x = -gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;  // Negated to match standard coordinate system
+        double y = -gamepad1.left_stick_y;  // Negated to match standard coordinate system
         double rx = (gamepad1.right_trigger - gamepad1.left_trigger);
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -91,26 +118,25 @@ public class PrototypeBotTest extends OpMode{
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
 
-        telemetry.addData("imu reading", botHeading);
+        telemetry.addData("imu reading", Math.toDegrees(botHeading));
     }
 
     
 
     private void handleOuttake() {
-        if (gamepad1.dpadUpWasPressed()){
-            power = -1;
-        }
+
 
         if(gamepad2.a){
-            outtake.setPower(1 * power);
+            power = 1;
         } else if (gamepad2.b) {
-            outtake.setPower(0.9 * power);
+            power = 0.95;
         } else if (gamepad2.y) {
-            outtake.setPower(0.8 * power);
-        } else if (gamepad2.x) {
-            outtake.setPower(0.7 * power);
+            power = 0.8;
         } else {
-            outtake.setPower(0);
+            power = 0;
         }
+
+
+        outtake.setPower(power);
     }
 }
