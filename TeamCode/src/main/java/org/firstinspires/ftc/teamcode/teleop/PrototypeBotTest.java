@@ -1,25 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-
-import java.util.Locale;
 
 // saved copy
 
@@ -68,23 +56,18 @@ public class PrototypeBotTest extends OpMode{
 
     @Override
     public void loop() {
+        handleDrivetrain();
+        handleOuttake();
+        handleIntake();
 
-        if (gamepad1.dpadUpWasPressed()){
-            power = -1;
-        }
+        telemetry.update();
+    }
 
-        if(gamepad2.a){
-            outtake.setPower(1 * power);
-        } else if (gamepad2.b) {
-            outtake.setPower(0.9 * power);
-        } else if (gamepad2.y) {
-            outtake.setPower(0.8 * power);
-        } else if (gamepad2.x) {
-            outtake.setPower(0.7 * power);
-        } else {
-            outtake.setPower(0);
-        }
+    private void handleIntake() {
+    }
 
+    private void handleDrivetrain() {
+        
         // Get drive inputs (negated Y because joystick Y is reversed)
         double x = -gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;  // Negated to match standard coordinate system
@@ -109,7 +92,25 @@ public class PrototypeBotTest extends OpMode{
         backRight.setPower(backRightPower);
 
         telemetry.addData("imu reading", botHeading);
+    }
 
+    
 
+    private void handleOuttake() {
+        if (gamepad1.dpadUpWasPressed()){
+            power = -1;
+        }
+
+        if(gamepad2.a){
+            outtake.setPower(1 * power);
+        } else if (gamepad2.b) {
+            outtake.setPower(0.9 * power);
+        } else if (gamepad2.y) {
+            outtake.setPower(0.8 * power);
+        } else if (gamepad2.x) {
+            outtake.setPower(0.7 * power);
+        } else {
+            outtake.setPower(0);
+        }
     }
 }
