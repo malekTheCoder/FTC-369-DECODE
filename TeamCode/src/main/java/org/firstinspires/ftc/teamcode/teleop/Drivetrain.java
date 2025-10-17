@@ -1,12 +1,15 @@
+// current working drivetrain
+
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+@TeleOp(name = "new drivetrain code")
 public class Drivetrain extends OpMode {
 
     private DcMotor frontRight;
@@ -25,13 +28,13 @@ public class Drivetrain extends OpMode {
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
@@ -51,9 +54,11 @@ public class Drivetrain extends OpMode {
 
         // drivetrain code to get inputs from controller and call the drive method w/ parameters
         double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y; //negate it bc its reversed
+        double y = gamepad1.left_stick_y; //negate it bc its reversed
         double rx = (gamepad1.right_trigger - gamepad1.left_trigger); // rotation w/ triggers
         drive(y, x, rx);
+
+
     }
 
     public void drive(double forward, double strafe, double rotate){
@@ -61,7 +66,7 @@ public class Drivetrain extends OpMode {
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
 
-        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double rotatedTheta = AngleUnit.normalizeRadians(theta - heading);
 
         double f = r * Math.sin(rotatedTheta);
@@ -83,5 +88,8 @@ public class Drivetrain extends OpMode {
         backLeft.setPower(backLeftPower / max);
         frontRight.setPower(frontRightPower / max);
         backRight.setPower(backRightPower / max);
+
+        telemetry.addData("heading", Math.toDegrees(heading));
+        telemetry.update();
     }
 }
