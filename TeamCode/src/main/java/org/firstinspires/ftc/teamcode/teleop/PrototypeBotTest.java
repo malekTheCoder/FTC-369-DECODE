@@ -31,12 +31,22 @@ public class PrototypeBotTest extends OpMode{
     private IMU imu;
 
 
+
+
     @Override
     public void init() {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         outtake = hardwareMap.get(DcMotor.class,"fly");
@@ -78,6 +88,8 @@ public class PrototypeBotTest extends OpMode{
             imu.resetYaw();
         }
 
+        String precentPower = " " + (power*100) + "%";
+        telemetry.addData("Precent Power -> ", precentPower);
         telemetry.update();
     }
 
@@ -134,7 +146,7 @@ public class PrototypeBotTest extends OpMode{
 
 
         if(gamepad2.a){
-            power = 1;
+            power = 0.97;
         } else if (gamepad2.b) {
             power = 0.95;
         } else if (gamepad2.y) {
@@ -145,5 +157,7 @@ public class PrototypeBotTest extends OpMode{
 
 
         outtake.setPower(power);
+
+        telemetry.update();
     }
 }
