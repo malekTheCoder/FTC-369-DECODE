@@ -26,21 +26,20 @@ public class PrototypeBotTest extends OpMode{
 
     private CRServo feeder;
 
+    private double power;
+
     private IMU imu;
 
-    private double power;
 
     @Override
     public void init() {
-        outtake = hardwareMap.get(DcMotor.class,"fly");
-
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         intake = hardwareMap.get(DcMotor.class, "intake");
-
+        outtake = hardwareMap.get(DcMotor.class,"fly");
         feeder = hardwareMap.get(CRServo.class, "feeder");
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -54,18 +53,23 @@ public class PrototypeBotTest extends OpMode{
 
         power = 1;
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
-
         telemetry.addLine("Hardware Initialized");
         telemetry.update();
     }
 
     @Override
     public void loop() {
-        handleDrivetrain();
+        if (gamepad1.x) {
+            imu.resetYaw();
+        }
+
+        // drivetrain code to get inputs from controller and call the drive method w/ parameters
+        double x = gamepad1.left_stick_x;
+        double y = gamepad1.left_stick_y; //negate it bc its reversed
+        double rx = (gamepad1.right_trigger - gamepad1.left_trigger); // rotation w/ triggers
+        drive(y, x, rx);
+
+
         handleOuttake();
         handleIntake();
         handleFeeder();
@@ -74,6 +78,38 @@ public class PrototypeBotTest extends OpMode{
             imu.resetYaw();
         }
 
+        telemetry.update();
+    }
+
+    public void drive(double forward, double strafe, double rotate){
+        // Always field-centric: rotate the joystick vector by -heading
+        double theta = Math.atan2(forward, strafe);
+        double r = Math.hypot(strafe, forward);
+
+        double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double rotatedTheta = AngleUnit.normalizeRadians(theta - heading);
+
+        double f = r * Math.sin(rotatedTheta);
+        double s = r * Math.cos(rotatedTheta);
+
+        // Mecanum kinematics
+        double frontLeftPower = f + s + rotate;
+        double backLeftPower = f - s + rotate;
+        double frontRightPower = f - s - rotate;
+        double backRightPower = f + s - rotate;
+
+        // Normalize so no value exceeds 1.0
+        double max = Math.max(1.0, Math.max(Math.abs(frontLeftPower),
+                Math.max(Math.abs(backLeftPower),
+                        Math.max(Math.abs(frontRightPower),
+                                Math.abs(backRightPower)))));
+
+        frontLeft.setPower(frontLeftPower / max);
+        backLeft.setPower(backLeftPower / max);
+        frontRight.setPower(frontRightPower / max);
+        backRight.setPower(backRightPower / max);
+
+        telemetry.addData("heading", Math.toDegrees(heading));
         telemetry.update();
     }
 
@@ -93,35 +129,6 @@ public class PrototypeBotTest extends OpMode{
         }
     }
 
-    private void handleDrivetrain() {
-        
-        // Get drive inputs (negated Y because joystick Y is reversed)
-        double x = -gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;  // Negated to match standard coordinate system
-        double rx = (gamepad1.right_trigger - gamepad1.left_trigger);
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-        // Apply field centric transformation
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-        // Calculate motor powers using transformed inputs
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backLeftPower = (rotY - rotX + rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
-
-        // Set motor powers
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-
-        telemetry.addData("imu reading", Math.toDegrees(botHeading));
-    }
-
-    
 
     private void handleOuttake() {
 
