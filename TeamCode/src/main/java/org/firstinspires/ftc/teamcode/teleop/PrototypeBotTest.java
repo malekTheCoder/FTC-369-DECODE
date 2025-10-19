@@ -30,6 +30,8 @@ public class PrototypeBotTest extends OpMode{
 
     private IMU imu;
 
+    private double percentPower;
+
 
 
 
@@ -62,6 +64,7 @@ public class PrototypeBotTest extends OpMode{
         imu.resetYaw();
 
         power = 1;
+        percentPower = (power * 100);
 
         telemetry.addLine("Hardware Initialized");
         telemetry.update();
@@ -88,8 +91,8 @@ public class PrototypeBotTest extends OpMode{
             imu.resetYaw();
         }
 
-        String precentPower = " " + (power*100) + "%";
-        telemetry.addData("Precent Power -> ", precentPower);
+
+        telemetry.addData("Percent Power -> ", percentPower);
         telemetry.update();
     }
 
@@ -126,7 +129,7 @@ public class PrototypeBotTest extends OpMode{
     }
 
     private void handleFeeder() {
-        if (Math.abs(gamepad2.left_stick_y) > 0.1) {
+        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             feeder.setPower(gamepad2.left_stick_y);
         } else {
             feeder.setPower(0);
@@ -134,7 +137,7 @@ public class PrototypeBotTest extends OpMode{
     }
 
     private void handleIntake() {
-        if (gamepad2.left_trigger > 0.1){
+        if (gamepad2.left_trigger > 0.05){
             intake.setPower(gamepad2.left_trigger);
         } else {
             intake.setPower(0);
@@ -157,7 +160,7 @@ public class PrototypeBotTest extends OpMode{
 
 
         outtake.setPower(power);
-
+        telemetry.addData("Percent Power -> ", percentPower);
         telemetry.update();
     }
 }
