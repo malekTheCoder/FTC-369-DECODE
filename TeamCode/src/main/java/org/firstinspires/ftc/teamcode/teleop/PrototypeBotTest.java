@@ -16,22 +16,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class PrototypeBotTest extends OpMode{
 
     private DcMotor outtake;
-
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backRight;
     private DcMotor backLeft;
 
+
     private DcMotor intake;
-
     private CRServo feeder;
-
-    private double power;
-
     private IMU imu;
 
-    private double percentPower;
 
+    private double power;
+    private double percentPower;
+    private double slowRotationScale;
 
 
 
@@ -65,6 +63,7 @@ public class PrototypeBotTest extends OpMode{
 
         power = 1;
         percentPower = (power * 100);
+        slowRotationScale = 0.5;
 
         telemetry.addLine("Hardware Initialized");
         telemetry.update();
@@ -77,9 +76,13 @@ public class PrototypeBotTest extends OpMode{
         }
 
         // drivetrain code to get inputs from controller and call the drive method w/ parameters
+        double leftStickX = gamepad1.left_stick_x;
+        if (Math.abs(leftStickX) < 0.05){
+            leftStickX = 0;
+        }
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y; //negate it bc its reversed
-        double rx = (gamepad1.right_trigger - gamepad1.left_trigger); // rotation w/ triggers
+        double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (leftStickX*slowRotationScale)); // rotation w/ triggers
         drive(y, x, rx);
 
 
