@@ -78,7 +78,7 @@ public class AimBot extends OpMode {
                 .setDrawCubeProjection(true)
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
-                //.setLensIntrinsics()
+                //.setLensIntrinsics() // need to input the values here after getting the intrinsics from the camera calibration
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .build();
