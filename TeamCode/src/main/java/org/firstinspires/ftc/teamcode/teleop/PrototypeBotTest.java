@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -76,13 +75,14 @@ public class PrototypeBotTest extends OpMode{
         }
 
         // drivetrain code to get inputs from controller and call the drive method w/ parameters
-        double leftStickX = gamepad1.left_stick_x;
-        if (Math.abs(leftStickX) < 0.05){
-            leftStickX = 0;
+        // right stick x used for rotating while aiming, scaled down rotation
+        double rightStickX = gamepad1.right_stick_x;
+        if (Math.abs(rightStickX) < 0.05){
+            rightStickX = 0;
         }
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y; //negate it bc its reversed
-        double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (leftStickX*slowRotationScale)); // rotation w/ triggers
+        double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (rightStickX *slowRotationScale)); // rotation w/ triggers
         drive(y, x, rx);
 
 
@@ -141,7 +141,7 @@ public class PrototypeBotTest extends OpMode{
 
     private void handleIntake() {
         if (gamepad2.left_trigger > 0.05){
-            intake.setPower(gamepad2.left_trigger);
+            intake.setPower( 0.5 * gamepad2.left_trigger);
         } else {
             intake.setPower(0);
         }
