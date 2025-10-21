@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import android.util.Size;
-
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,18 +10,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.List;
 
 @Config
-@TeleOp(name = "turn bot test")
-public class AimBot extends OpMode {
+@TeleOp(name = "tune turning")
+public class TuneTurn extends OpMode {
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
     private DcMotorEx backRight;
@@ -31,24 +23,29 @@ public class AimBot extends OpMode {
 
     private IMU imu;
 
-    AprilTagProcessor tagProcessor;
-    VisionPortal visionPortal;
-
     private PIDEx turnPID;
     private PIDCoefficientsEx turnPIDCoeffs;
 
+    public static double Kp = 0.5; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    public static double Ki = 0.0; // keep 0 for aiming
+    public static double Kd = 0.10; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
+    public static double integralSumMax = 0.5;
+    public static double stabilityThreshold = 0.5;
+    public static double lowPassGain = 0.9;
 
-    private double Kp = 0.5; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
-    private double Ki = 0.0; // keep 0 for aiming
-    private double Kd = 0.10; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
-    private double integralSumMax = 0.5;
-    private double stabilityThreshold = 0.5;
-    private double lowPassGain = 0.9;
-
+    //
+    private double previousKp = Kp;
+    private double previousKi = Ki;
+    private double previousKd = Kd;
+    private double previousIntegralSumMax = integralSumMax;
+    private double previousStabilityThreshold = stabilityThreshold;
+    private double previousLowPassGain = lowPassGain;
 
     private double targetBearing = 0.0;
 
     private double slowRotationScale = 0.5;
+
+
     @Override
     public void init() {
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
@@ -73,72 +70,64 @@ public class AimBot extends OpMode {
 
         imu.resetYaw();
 
-        tagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                //.setLensIntrinsics()
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
-                .build();
-
-        visionPortal = new VisionPortal.Builder()
-                .addProcessor(tagProcessor)
-                .setCamera(hardwareMap.get(WebcamName.class, "webcam"))
-                .setCameraResolution(new Size(640,480))
-                .build();
-
-
-
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
+
+        // so error=0 on init
+        targetBearing = 0.0; // radians, relative to resetYaw()
+
     }
 
     @Override
     public void loop() {
-
-
         if (gamepad1.a){
-            handleAimBot();
+            aim();
         } else {
             handleDrivetrain();
         }
 
-
-
     }
 
-    private void handleAimBot() {
-        double bearing = 0;
-        double turnCommand = 0;
-
-        if (gamepad1.a){
-            List<AprilTagDetection> detectionsList = tagProcessor.getFreshDetections();
-            if (detectionsList != null && !detectionsList.isEmpty()){
-                AprilTagDetection tag = detectionsList.get(0);
-
-                bearing = tag.ftcPose.bearing;
-                turnCommand = turnPID.calculate(targetBearing, bearing);
-
-                if (turnCommand > 1) turnCommand = 1;
-                if (turnCommand < -1) turnCommand = -1;
-
-                drive(0,0, turnCommand);
-
-                telemetry.addData("AIM: id", tag.id);
-                telemetry.addData("AIM: bearing (deg)", "%.1f", Math.toDegrees(bearing));
-                telemetry.addData("AIM: turnCmd", "%.3f", turnCommand);
-                telemetry.update();
-            } else {
-                telemetry.addLine("AIM: no tag");
-                telemetry.update();
-            }
+    private void aim() {
+        if (gamepad1.dpadLeftWasPressed()) targetBearing -= Math.toRadians(45);
+        if (gamepad1.dpadRightWasPressed()) targetBearing += Math.toRadians(45);
+        if (gamepad1.y){
+            imu.resetYaw();
+            targetBearing = 0;
         }
+
+        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double error = AngleUnit.normalizeRadians(targetBearing - currentHeading);
+
+        // Rebuild the PID controller only when any tuning value has changed (for live Dashboard edits)
+        boolean pidValuesChanged = (Kp != previousKp) || (Ki != previousKi) || (Kd != previousKd) || (integralSumMax != previousIntegralSumMax) || (stabilityThreshold != previousStabilityThreshold) || (lowPassGain != previousLowPassGain);
+
+        if (pidValuesChanged) {
+            previousKp = Kp;
+            previousKi = Ki;
+            previousKd = Kd;
+            previousIntegralSumMax = integralSumMax;
+            previousStabilityThreshold = stabilityThreshold;
+            previousLowPassGain = lowPassGain;
+
+            turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
+            turnPID = new PIDEx(turnPIDCoeffs);
+        }
+
+        double turn = turnPID.calculate(0, error);
+        if (turn > 1) turn = 1;
+        if (turn <-1) turn = -1;
+
+        drive(0,0,turn);
+
+        telemetry.addData("target (deg)", Math.toDegrees(targetBearing));
+        telemetry.addData("heading (deg)", Math.toDegrees(currentHeading));
+        telemetry.addData("error (deg)",   Math.toDegrees(error));
+        telemetry.addData("turn", turn);
+        telemetry.update();
     }
 
     private void handleDrivetrain() {
-
         if (gamepad1.x){
             imu.resetYaw();
         }
