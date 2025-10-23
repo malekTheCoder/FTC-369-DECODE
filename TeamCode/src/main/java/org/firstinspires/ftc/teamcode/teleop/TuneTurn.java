@@ -133,13 +133,13 @@ public class TuneTurn extends OpMode {
         }
 
         // drivetrain code to get inputs from controller and call the drive method w/ parameters
-        double leftStickX = gamepad1.left_stick_x;
-        if (Math.abs(leftStickX) < 0.05){
-            leftStickX = 0;
+        double rightStickX = gamepad1.right_stick_x;
+        if (Math.abs(rightStickX) < 0.05){
+            rightStickX = 0;
         }
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
-        double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (leftStickX* slowRotationScale)); // rotation w/ triggers
+        double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (rightStickX* slowRotationScale)); // rotation w/ triggers
         drive(y, x, rx);
     }
 
