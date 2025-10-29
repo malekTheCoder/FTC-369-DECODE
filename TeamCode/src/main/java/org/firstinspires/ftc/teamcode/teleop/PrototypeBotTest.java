@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 // saved copy
 
-@TeleOp(name = "prototype bot")
+@TeleOp(name = "prototype bot code")
 public class PrototypeBotTest extends OpMode{
 
     private DcMotor outtake;
@@ -81,7 +81,7 @@ public class PrototypeBotTest extends OpMode{
             rightStickX = 0;
         }
         double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y; //negate it bc its reversed
+        double y = -gamepad1.left_stick_y; //negate it bc its reversed
         double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (rightStickX *slowRotationScale)); // rotation w/ triggers
         drive(y, x, rx);
 
@@ -104,7 +104,7 @@ public class PrototypeBotTest extends OpMode{
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
 
-        double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double rotatedTheta = AngleUnit.normalizeRadians(theta - heading);
 
         double f = r * Math.sin(rotatedTheta);
@@ -141,7 +141,7 @@ public class PrototypeBotTest extends OpMode{
 
     private void handleIntake() {
         if (gamepad2.left_trigger > 0.05){
-            intake.setPower( 0.5 * gamepad2.left_trigger);
+            intake.setPower( gamepad2.left_trigger);
         } else {
             intake.setPower(0);
         }
@@ -152,12 +152,15 @@ public class PrototypeBotTest extends OpMode{
 
 
         if(gamepad2.a){
-            power = 0.97;
+            power = 0.98;
         } else if (gamepad2.b) {
-            power = 0.95;
+            power = 0.90;
         } else if (gamepad2.y) {
             power = 0.8;
-        } else {
+        } else if(gamepad2.x){
+            power = 0.85;
+
+        }else{
             power = 0;
         }
 

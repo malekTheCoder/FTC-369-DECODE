@@ -65,7 +65,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Optimize AprilTag Exposure", group = "Concept")
-@Disabled
 public class ConceptAprilTagOptimizeExposure extends LinearOpMode
 {
     private VisionPortal visionPortal = null;        // Used to manage the video source.
@@ -86,6 +85,12 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
     boolean lastExpDn = false;
     boolean lastGainUp = false;
     boolean lastGainDn = false;
+
+    private double GBfx = 481.985;
+    private double GBfy = 481.985;
+    private double GBcx = 334.203;
+    private double GBcy = 241.948;
+
     @Override public void runOpMode()
     {
         // Initialize the Apriltag Detection process
@@ -129,10 +134,10 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
 
             // look for clicks to change exposure
             if (thisExpUp && !lastExpUp) {
-                myExposure = Range.clip(myExposure + 1, minExposure, maxExposure);
+                myExposure = Range.clip(myExposure + 10, minExposure, maxExposure);
                 setManualExposure(myExposure, myGain);
             } else if (thisExpDn && !lastExpDn) {
-                myExposure = Range.clip(myExposure - 1, minExposure, maxExposure);
+                myExposure = Range.clip(myExposure - 10, minExposure, maxExposure);
                 setManualExposure(myExposure, myGain);
             }
 
@@ -159,7 +164,9 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
      */
     private void initAprilTag() {
         // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag = new AprilTagProcessor.Builder()
+                .setLensIntrinsics(GBfx, GBfy, GBcx, GBcy) // need to input the values here after getting the intrinsics from the camera calibration
+                .build();
 
         // Create the WEBCAM vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()

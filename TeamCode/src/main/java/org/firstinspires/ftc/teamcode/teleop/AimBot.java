@@ -22,7 +22,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @Config
-@TeleOp(name = "turn bot test")
+@TeleOp(name = "turn bot ")
 public class AimBot extends OpMode {
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
@@ -85,8 +85,9 @@ public class AimBot extends OpMode {
 
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(tagProcessor)
-                .setCamera(hardwareMap.get(WebcamName.class, "webcam"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setCameraResolution(new Size(640,480))
+                .enableLiveView(true)
                 .build();
 
 
@@ -104,6 +105,8 @@ public class AimBot extends OpMode {
         } else {
             handleDrivetrain();
         }
+
+
 
 
 
