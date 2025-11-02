@@ -48,7 +48,7 @@ public class BasicApril extends OpMode {
     private double GBcx = 334.203;
     private double GBcy = 241.948;
 
-    public int exposure = 6;
+    public int exposure = 10;
 
 
     @Override
@@ -87,7 +87,12 @@ public class BasicApril extends OpMode {
 
 
         handleAimBot();
-
+        if(gamepad1.left_bumper){
+            exposure+=1;
+        }
+        if(gamepad1.right_bumper){
+            exposure-=1;
+        }
     }
 
     private void handleAimBot() {

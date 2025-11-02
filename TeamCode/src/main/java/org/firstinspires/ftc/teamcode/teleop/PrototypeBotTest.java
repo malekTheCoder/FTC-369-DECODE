@@ -62,7 +62,7 @@ public class PrototypeBotTest extends OpMode{
 
         power = 1;
         percentPower = (power * 100);
-        slowRotationScale = 0.5;
+        slowRotationScale = 0.25;
 
         telemetry.addLine("Hardware Initialized");
         telemetry.update();
