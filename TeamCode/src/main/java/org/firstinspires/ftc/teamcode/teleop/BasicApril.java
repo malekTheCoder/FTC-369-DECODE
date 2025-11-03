@@ -87,12 +87,7 @@ public class BasicApril extends OpMode {
 
 
         handleAimBot();
-        if(gamepad1.left_bumper){
-            exposure+=1;
-        }
-        if(gamepad1.right_bumper){
-            exposure-=1;
-        }
+
     }
 
     private void handleAimBot() {
@@ -103,17 +98,21 @@ public class BasicApril extends OpMode {
             if (detectionsList != null && !detectionsList.isEmpty()) {
                 AprilTagDetection tag = detectionsList.get(0);
 
+                if (tag.ftcPose != null){
+                    bearing = AngleUnit.normalizeRadians(tag.ftcPose.bearing);
 
-                bearing = AngleUnit.normalizeRadians(tag.ftcPose.bearing);
+                    telemetry.addData("exposure", exposure);
 
-                telemetry.addData("exposure", exposure);
+                    telemetry.addData("Tag Info", String.format("ID: %d | Bearing: %.1f° | Dist: %.1f in", tag.id, Math.toDegrees(bearing), tag.ftcPose.range));
+                    // Offsets: X = left/right (positive right), Y = up/down (positive up), Z = forward/back (positive forward)
+                    // Range is straight-line distance from camera to tag in inches.
+                    telemetry.addData("Offsets (in)", String.format("X: %.1f  Y: %.1f  Z: %.1f", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
+                    telemetry.addData("tag solve time ms:", tagProcessor.getPerTagAvgPoseSolveTime());
+                    telemetry.update();
+                }
 
-                telemetry.addData("Tag Info", String.format("ID: %d | Bearing: %.1f° | Dist: %.1f in", tag.id, Math.toDegrees(bearing), tag.ftcPose.range));
-                // Offsets: X = left/right (positive right), Y = up/down (positive up), Z = forward/back (positive forward)
-                // Range is straight-line distance from camera to tag in inches.
-                telemetry.addData("Offsets (in)", String.format("X: %.1f  Y: %.1f  Z: %.1f", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
-                telemetry.addData("tag solve time ms:", tagProcessor.getPerTagAvgPoseSolveTime());
-                telemetry.update();
+
+
             } else {
                 telemetry.addLine("AIM: no tag");
                 telemetry.update();
