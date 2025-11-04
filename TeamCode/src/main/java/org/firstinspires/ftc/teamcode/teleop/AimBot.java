@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -34,7 +35,11 @@ public class AimBot extends OpMode {
     private DcMotorEx backRight;
     private DcMotorEx backLeft;
 
+    private DcMotor intake;
+    private DcMotor outtake;
+    private CRServo feeder;
     private IMU imu;
+
 
     AprilTagProcessor tagProcessor;
     VisionPortal visionPortal;
@@ -48,18 +53,17 @@ public class AimBot extends OpMode {
     private double GBcy = 241.948;
 
 
-    private double Kp = 1.65; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    private double Kp = 1; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
     private double Ki = 0.000; // keep 0 for aiming
     private double Kd = 0.0; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
     private double integralSumMax = 0.5;
     private double stabilityThreshold = 0.5;
     private double lowPassGain = 0.9;
 
-    private double targetBearing = 0.0;
     private double slowRotationScale = 0.35;
 
 
-    private double exposure = 20;
+    private double exposure = 10;
 
 
     double cameraBearing = 0;
@@ -76,14 +80,20 @@ public class AimBot extends OpMode {
 
     private AprilTagDetection tag;
 
+    private double power;
 
     @Override
     public void init() {
         initDriveAndIMU();
         initCameraStuff();
 
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        outtake = hardwareMap.get(DcMotor.class,"fly");
+        feeder = hardwareMap.get(CRServo.class, "feeder");
+
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
+        power = 0;
 
         telemetry.addLine("Hardware Initialized!");
     }
@@ -93,6 +103,13 @@ public class AimBot extends OpMode {
 
     @Override
     public void loop() {
+
+        handleOuttake();
+        handleIntake();
+        handleFeeder();
+
+
+
         botHeadingIMU = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
 
@@ -105,15 +122,7 @@ public class AimBot extends OpMode {
 
             if (tag.ftcPose != null){
                 cameraBearing = AngleUnit.normalizeRadians(tag.ftcPose.bearing);
-
-
-                telemetry.addData("exposure", exposure);
-                telemetry.addData("AIM: turnCmd", "%.3f", turnCommand);
-                telemetry.addData("Tag Info", String.format("ID: %d | Bearing: %.1f° | Dist: %.1f in", tag.id, Math.toDegrees(cameraBearing), tag.ftcPose.range));
-                // Offsets: X = left/right (positive right), Y = up/down (positive up), Z = forward/back (positive forward)
-                // Range is straight-line distance from camera to tag in inches.
-                telemetry.addData("Offsets (in)", String.format("X: %.1f  Y: %.1f  Z: %.1f", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
-                telemetry.addData("tag solve time ms:", tagProcessor.getPerTagAvgPoseSolveTime());
+                addTagTelemetry();
 
             }else {
                 telemetry.addLine("no pose");
@@ -154,6 +163,8 @@ public class AimBot extends OpMode {
 
         telemetry.update();
     }
+
+
 
     private void aim() {
         if(!aiming) return;
@@ -248,9 +259,9 @@ public class AimBot extends OpMode {
             }
             telemetry.addData("Camera", "Ready");
             telemetry.update();
-//            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-//            exposureControl.setMode(ExposureControl.Mode.Manual);
-//            exposureControl.setExposure((long)exposure, TimeUnit.MILLISECONDS);
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+           exposureControl.setMode(ExposureControl.Mode.Manual);
+            exposureControl.setExposure((long)exposure, TimeUnit.MILLISECONDS);
             telemetry.addData("Camera", "Ready & exposure set");
         }
 
@@ -280,4 +291,55 @@ public class AimBot extends OpMode {
         imu.resetYaw();
         botHeadingIMU = imu.getRobotYawPitchRollAngles().getYaw();
     }
+
+    private void addTagTelemetry() {
+        telemetry.addData("exposure", exposure);
+        telemetry.addData("AIM: turnCmd", "%.3f", turnCommand);
+        telemetry.addData("Tag Info", String.format("ID: %d | Bearing: %.1f° | Dist: %.1f in", tag.id, Math.toDegrees(cameraBearing), tag.ftcPose.range));
+        // Offsets: X = left/right (positive right), Y = up/down (positive up), Z = forward/back (positive forward)
+        // Range is straight-line distance from camera to tag in inches.
+        telemetry.addData("Offsets (in)", String.format("X: %.1f  Y: %.1f  Z: %.1f", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
+        telemetry.addData("tag solve time ms:", tagProcessor.getPerTagAvgPoseSolveTime());
+        telemetry.addData("decisionMargin:", "%.1f", tag.decisionMargin);
+
+    }
+
+    private void handleFeeder() {
+        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
+            feeder.setPower(gamepad2.left_stick_y);
+        } else {
+            feeder.setPower(0);
+        }
+    }
+
+    private void handleIntake() {
+        if (gamepad2.left_trigger > 0.05){
+            intake.setPower( gamepad2.left_trigger);
+        } else {
+            intake.setPower(0);
+        }
+    }
+
+
+    private void handleOuttake() {
+
+
+        if(gamepad2.a){
+            power = 0.98;
+        } else if (gamepad2.b) {
+            power = 0.90;
+        } else if (gamepad2.y) {
+            power = 0.8;
+        } else if(gamepad2.x){
+            power = 0.85;
+
+        }else{
+            power = 0;
+        }
+
+
+        outtake.setPower(power);
+    }
+
 }
+
