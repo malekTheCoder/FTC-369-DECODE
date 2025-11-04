@@ -152,7 +152,7 @@ public class FlywheelPID extends OpMode {
         if (gamepad1.dpadDownWasPressed()) targetVel -= 50;   // -500 tps (reverse if negative)
         if (gamepad1.b)         targetVel = 0;
 
-        targetVel = -gamepad1.left_stick_y*2750;
+        targetVel = -gamepad2.right_stick_y*2750;
         fly.setVelocity(targetVel); // ticks per second (negative allowed)
 
         telemetry.addData("Target (tps)", targetVel);
