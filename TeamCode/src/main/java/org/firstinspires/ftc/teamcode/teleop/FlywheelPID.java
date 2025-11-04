@@ -171,7 +171,7 @@ public class FlywheelPID extends OpMode {
             intake.setPower(0);
         }
 
-//OUTTAKE
+        //OUTTAKE
         if(gamepad2.a){
             power = 0.98;
         } else if (gamepad2.b) {
@@ -214,6 +214,8 @@ public class FlywheelPID extends OpMode {
         } else {
             telemetry.addLine("AIM: no tag");
         }
+
+
         if (gamepad1.aWasPressed()){
             if (detectionsList != null && !detectionsList.isEmpty()){
                 AprilTagDetection t = detectionsList.get(0);
