@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -23,23 +25,17 @@ public class TuneTurn extends OpMode {
 
     private IMU imu;
 
-    private PIDEx turnPID;
-    private PIDCoefficientsEx turnPIDCoeffs;
+    private BasicPID turnPID;
+    private PIDCoefficients turnPIDCoeffs;
 
     public static double Kp = 0.5; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
     public static double Ki = 0.0; // keep 0 for aiming
     public static double Kd = 0.10; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
-    public static double integralSumMax = 0.5;
-    public static double stabilityThreshold = 0.5;
-    public static double lowPassGain = 0.9;
 
     //
     private double previousKp = Kp;
     private double previousKi = Ki;
     private double previousKd = Kd;
-    private double previousIntegralSumMax = integralSumMax;
-    private double previousStabilityThreshold = stabilityThreshold;
-    private double previousLowPassGain = lowPassGain;
 
     private double targetBearing = 0.0;
 
@@ -70,8 +66,8 @@ public class TuneTurn extends OpMode {
 
         imu.resetYaw();
 
-        turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
-        turnPID = new PIDEx(turnPIDCoeffs);
+        turnPIDCoeffs = new PIDCoefficients(Kp, Ki, Kd);
+        turnPID = new BasicPID(turnPIDCoeffs);
 
         // so error=0 on init
         targetBearing = 0.0; // radians, relative to resetYaw()
@@ -101,18 +97,15 @@ public class TuneTurn extends OpMode {
         double error = AngleUnit.normalizeRadians(targetBearing - currentHeading);
 
         // Rebuild the PID controller only when any tuning value has changed (for live Dashboard edits)
-        boolean pidValuesChanged = (Kp != previousKp) || (Ki != previousKi) || (Kd != previousKd) || (integralSumMax != previousIntegralSumMax) || (stabilityThreshold != previousStabilityThreshold) || (lowPassGain != previousLowPassGain);
+        boolean pidValuesChanged = (Kp != previousKp) || (Ki != previousKi) || (Kd != previousKd);
 
         if (pidValuesChanged) {
             previousKp = Kp;
             previousKi = Ki;
             previousKd = Kd;
-            previousIntegralSumMax = integralSumMax;
-            previousStabilityThreshold = stabilityThreshold;
-            previousLowPassGain = lowPassGain;
 
-            turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
-            turnPID = new PIDEx(turnPIDCoeffs);
+            turnPIDCoeffs = new PIDCoefficients(Kp, Ki, Kd);
+            turnPID = new BasicPID(turnPIDCoeffs);
         }
 
         double turn = turnPID.calculate(0, error);
