@@ -4,11 +4,13 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+@TeleOp(name = "limelight data")
 public class limelight extends OpMode {
     private Limelight3A limelight;
     private IMU imu;
@@ -37,7 +39,7 @@ public class limelight extends OpMode {
         double targetOffsetAngle_Vertical = ty;
 
         // how many degrees back is your limelight rotated from perfectly vertical?
-        double limelightMountAngleDegrees = 0;
+        double limelightMountAngleDegrees = 15;
 
         // distance from the center of the Limelight lens to the floor
         double limelightLensHeightInches = 14.5;

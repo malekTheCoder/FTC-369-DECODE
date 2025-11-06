@@ -5,6 +5,8 @@ import android.util.Size;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,6 +19,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -27,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "flywheel test velocity")
 public class FlywheelPID extends OpMode {
+
+    private Limelight3A limelight;
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
     private DcMotorEx backRight;
@@ -40,31 +46,14 @@ public class FlywheelPID extends OpMode {
     private DcMotorEx fly;
     private double targetVel;
 
-    AprilTagProcessor tagProcessor;
-    VisionPortal visionPortal;
-
     double bearing = 0;
-
-     /*
-        intrinsics found online for the gobuilda usb camera with 640x480
-        fx = 481.985
-		fy = 481.985
-		cx = 334.203
-		cy = 241.948
-
-         */
 
     private PIDEx turnPID;
     private PIDCoefficientsEx turnPIDCoeffs;
-    private double GBfx = 481.985;
-    private double GBfy = 481.985;
-    private double GBcx = 334.203;
-    private double GBcy = 241.948;
-    public int exposure = 10;
 
-    private double Kp = 1; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
-    private double Ki = 0.000; // keep 0 for aiming
-    private double Kd = 0.0; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
+    private double Kp = 1.25; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    private double Ki = 0.0001; // keep 0 for aiming
+    private double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
     private double integralSumMax = 0.5;
     private double stabilityThreshold = 0.5;
     private double lowPassGain = 0.9;
@@ -84,13 +73,17 @@ public class FlywheelPID extends OpMode {
     double turnError;
     double turnCommand = 0;
 
-    private AprilTagDetection tag;
-
     private double power;
+
+    private double ty;
+    private double tx;
 
 
     @Override
     public void init() {
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
 
         initDriveAndIMU();
 
@@ -102,43 +95,13 @@ public class FlywheelPID extends OpMode {
         turnPID = new PIDEx(turnPIDCoeffs);
         power = 0;
 
-
         fly = hardwareMap.get(DcMotorEx.class, "fly");
         fly.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fly.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fly.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        tagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .setLensIntrinsics(GBfx, GBfy, GBcx, GBcy) // need to input the values here after getting the intrinsics from the camera calibration
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS)
-                .build();
+        limelight.start();
 
-        visionPortal = new VisionPortal.Builder()
-                .addProcessor(tagProcessor)
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setCameraResolution(new Size(640, 480))
-                .enableLiveView(true)
-                .build();
-
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while ((visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                telemetry.addData("Camera", "Waiting");
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-            exposureControl.setMode(ExposureControl.Mode.Manual);
-            exposureControl.setExposure((long)exposure, TimeUnit.MILLISECONDS);
-            telemetry.addData("Camera", "Ready & exposure set");
-        }
 
         telemetry.addLine("Hardware Initialized!");
 
@@ -147,16 +110,36 @@ public class FlywheelPID extends OpMode {
     @Override
     public void loop() {
 
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        limelight.updateRobotOrientation(orientation.getYaw());
+        LLResult llResult = limelight.getLatestResult();
+        ty = llResult.getTy();
+        tx = llResult.getTx();
+        double targetOffsetAngle_Vertical = ty;
+
+        // how many degrees back is your limelight rotated from perfectly vertical?
+        double limelightMountAngleDegrees = 15;
+
+        // distance from the center of the Limelight lens to the floor
+        double limelightLensHeightInches = 14.5;
+
+        // distance from the target to the floor
+        double goalHeightInches = 29.5;
+
+        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+        //calculate distance
+        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+
+
+
             // D-pad up/down to raise or lower target velocity
-        if (gamepad1.dpadUpWasPressed())   targetVel += 50;   // +500 tps
-        if (gamepad1.dpadDownWasPressed()) targetVel -= 50;   // -500 tps (reverse if negative)
+        if (gamepad1.dpadUpWasPressed())   targetVel += 25;   // +500 tps
+        if (gamepad1.dpadDownWasPressed()) targetVel -= 25;   // -500 tps (reverse if negative)
         if (gamepad1.b)         targetVel = 0;
 
-        targetVel = -gamepad2.right_stick_y*2750;
         fly.setVelocity(targetVel); // ticks per second (negative allowed)
-
-        telemetry.addData("Target (tps)", targetVel);
-        telemetry.addData("Actual (tps)", fly.getVelocity());
 
         //FEEDER
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
@@ -164,12 +147,16 @@ public class FlywheelPID extends OpMode {
         } else {
             feeder.setPower(0);
         }
+
+
         //Intake
         if (gamepad2.left_trigger > 0.05){
             intake.setPower( gamepad2.left_trigger);
         } else {
             intake.setPower(0);
         }
+
+
 
         //OUTTAKE
         if(gamepad2.a){
@@ -180,50 +167,21 @@ public class FlywheelPID extends OpMode {
             power = 0.8;
         } else if(gamepad2.x){
             power = 0.85;
-
         }else{
             power = 0;
         }
 
-        outtake.setPower(power);
+        //outtake.setPower(power);
 
         botHeadingIMU = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        List<AprilTagDetection> detectionsList = tagProcessor.getDetections();
-
-        if (detectionsList != null && !detectionsList.isEmpty()) {
-            tag = detectionsList.get(0);
-
-            if (tag.ftcPose != null) {
-                bearing = AngleUnit.normalizeRadians(tag.ftcPose.bearing);
-
-                telemetry.addData("exposure", exposure);
-                telemetry.addData("AIM: turnCmd", "%.3f", turnCommand);
-                telemetry.addData("Tag Info", String.format("ID: %d | Bearing: %.1f° | Dist: %.1f in", tag.id, Math.toDegrees(bearing), tag.ftcPose.range));
-                // Offsets: X = left/right (positive right), Y = up/down (positive up), Z = forward/back (positive forward)
-                // Range is straight-line distance from camera to tag in inches.
-                telemetry.addData("Offsets (in)", String.format("X: %.1f  Y: %.1f  Z: %.1f", tag.ftcPose.x, tag.ftcPose.y, tag.ftcPose.z));
-                telemetry.addData("tag solve time ms:", tagProcessor.getPerTagAvgPoseSolveTime());
-                telemetry.addData("decisionMargin:", "%.1f", tag.decisionMargin);
-                cameraBearing = AngleUnit.normalizeRadians(tag.ftcPose.bearing);
-                telemetry.update();
-
-            } else {
-                telemetry.addLine("no pose");
-            }
-        } else {
-            telemetry.addLine("AIM: no tag");
-        }
-
 
         if (gamepad1.aWasPressed()){
-            if (detectionsList != null && !detectionsList.isEmpty()){
-                AprilTagDetection t = detectionsList.get(0);
-                if (t.ftcPose != null){
+            // if valid detection
+            if (llResult != null && llResult.isValid()){
                     aiming = true;
                     botHeadingAtCapture = botHeadingIMU;
-                    desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture + AngleUnit.normalizeRadians(t.ftcPose.bearing));
-                }
+                    desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx)));
             }
 
 
@@ -239,6 +197,18 @@ public class FlywheelPID extends OpMode {
             handleDrivetrain();
         }
         telemetry.update();
+
+        telemetry.addData("Target (tps)", targetVel);
+        telemetry.addData("Actual (tps)", fly.getVelocity());
+        if (llResult != null && llResult.isValid()){
+            Pose3D botPose = llResult.getBotpose_MT2();
+            telemetry.addData("Tx", llResult.getTx());
+            telemetry.addData("Ty", llResult.getTy());
+            telemetry.addData("Ta", llResult.getTa());
+            telemetry.addData("Bot pose", botPose.toString());
+            telemetry.addData("Yaw", botPose.getOrientation().getYaw());
+            telemetry.addData("Distance", distanceFromLimelightToGoalInches);
+        }
 
     }
     private void handleDrivetrain() {
