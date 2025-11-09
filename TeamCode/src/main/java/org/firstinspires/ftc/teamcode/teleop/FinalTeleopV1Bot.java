@@ -52,12 +52,15 @@ public class FinalTeleopV1Bot extends OpMode {
     private double targetVel;
 
 
-    private BasicPID turnPID;
-    private PIDCoefficients turnPIDCoeffs;
+    private PIDEx turnPID;
+    private PIDCoefficientsEx turnPIDCoeffs;
 
-    private double Kp = 1.25; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    private double Kp = 1.45; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
     private double Ki = 0.0001; // keep 0 for aiming
     private double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
+    private double integralSumMax = 0.5;
+    private double stabilityThreshold = Math.toRadians(1);
+    private double lowPassGain = 0.9;
 
     private double slowRotationScale = 0.35;
 
@@ -86,11 +89,13 @@ public class FinalTeleopV1Bot extends OpMode {
     private double tx;
 
     private double flyMultiplier;
+    private double intakeMultiplier;
+
+    private double verticalTranslation;
 
 
     @Override
     public void init() {
-
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         initDriveAndIMU();
         initFlyWheel();
@@ -98,12 +103,14 @@ public class FinalTeleopV1Bot extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         feeder = hardwareMap.get(CRServo.class, "feeder");
 
-        turnPIDCoeffs = new PIDCoefficients(Kp, Ki, Kd);
-        turnPID = new BasicPID(turnPIDCoeffs);
+        turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
+        turnPID = new PIDEx(turnPIDCoeffs);
+
+        intakeMultiplier = 0;
+        verticalTranslation = 50;
 
         limelight.start();
         telemetry.addLine("Hardware Initialized!");
-
     }
 
 
@@ -116,7 +123,7 @@ public class FinalTeleopV1Bot extends OpMode {
         handleIntake();
 
 
-        botHeadingIMU = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
 
         if (gamepad1.aWasPressed()){
@@ -124,7 +131,8 @@ public class FinalTeleopV1Bot extends OpMode {
             if (llResult != null && llResult.isValid()){
                 aiming = true;
                 botHeadingAtCapture = botHeadingIMU;
-                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx)));
+                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx - 3)));
+                // minus 4 from the tx becasue the camera is to the left of the bot, centering the bot gets aroudn 4 tx
             }
         } else if (gamepad1.aWasReleased()){
             aiming = false;
@@ -158,7 +166,7 @@ public class FinalTeleopV1Bot extends OpMode {
     private void handleFlywheel() {
         targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
-        if (gamepad1.yWasPressed()){
+        if (gamepad2.aWasPressed()){
             if (flyMultiplier == 1){
                 flyMultiplier = 0;
             }
@@ -166,19 +174,25 @@ public class FinalTeleopV1Bot extends OpMode {
                 flyMultiplier = 1;
             }
         }
-        fly.setVelocity(targetVel); // ticks per second (negative allowed)
+        fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
     }
 
     private double shooterModel (double distanceInches){
-        return 0.0; // add regression here to return the velocity needed given the distance
+        return 7.41521*distanceInches + (1854.98152 - verticalTranslation); // add regression here to return the velocity needed given the distance
     }
 
     private void updateLimelightInfo() {
         orientation = imu.getRobotYawPitchRollAngles();
         limelight.updateRobotOrientation(orientation.getYaw());
         llResult = limelight.getLatestResult();
-        ty = llResult.getTy();
-        tx = llResult.getTx();
+        if (llResult != null && llResult.isValid()) {
+            ty = llResult.getTy();
+            tx = llResult.getTx();
+        }else {
+            ty = 0;
+            tx = 0;
+        }
+
         targetOffsetAngle_Vertical = ty;
         angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
         angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
@@ -187,20 +201,11 @@ public class FinalTeleopV1Bot extends OpMode {
 
 
     private void handleFeeder() {
-        if (gamepad1.right_stick_y > 0.05) {
-            feeder.setPower(gamepad2.left_stick_y);
-        } else {
-            feeder.setPower(0);
-        }
-
+        feeder.setPower(gamepad2.left_stick_y);
     }
 
     private void handleIntake(){
-        if (gamepad1.right_stick_y < - 0.05){
-            intake.setPower(gamepad1.right_stick_y);
-        } else {
-            intake.setPower(0);
-        }
+        intake.setPower(gamepad2.left_trigger);
     }
     private void handleDrivetrain() {
 
@@ -221,15 +226,16 @@ public class FinalTeleopV1Bot extends OpMode {
     }
 
     private void aim() {
-        if(!aiming) return;
-        currentHeading = botHeadingIMU;
-        turnError = AngleUnit.normalizeRadians(desiredHeading - currentHeading);
-        turnCommand = turnPID.calculate(0.0, turnError);
+        if(aiming) {
+            currentHeading = botHeadingIMU;
+            turnError = AngleUnit.normalizeRadians(desiredHeading - currentHeading);
+            turnCommand = turnPID.calculate(0.0, turnError);
 
-        if (turnCommand > 1) turnCommand = 1;
-        if (turnCommand < -1) turnCommand = -1;
+            if (turnCommand > 1) turnCommand = 1;
+            if (turnCommand < -1) turnCommand = -1;
 
-        drive(0,0, turnCommand);
+            drive(0, 0, turnCommand);
+        }
     }
 
     public void drive(double forward, double strafe, double rotate){
@@ -293,7 +299,7 @@ public class FinalTeleopV1Bot extends OpMode {
         fly = hardwareMap.get(DcMotorEx.class, "fly");
         fly.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fly.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        fly.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        fly.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 }
