@@ -57,7 +57,7 @@ public class TeleopV2Bot extends OpMode {
     private PIDEx turnPID;
     private PIDCoefficientsEx turnPIDCoeffs;
 
-    public static double Kp = 1.45; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    public static double Kp = 1.55; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
     public static double Ki = 0.0001; // keep 0 for aiming
     public static double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
     public static double integralSumMax = 0.5;
@@ -202,7 +202,7 @@ public class TeleopV2Bot extends OpMode {
                 flyMultiplier = 1;
             }
         }
-        fly.setVelocity(targetVel); // ticks per second (negative allowed)
+        fly.setVelocity(targetVel* flyMultiplier); // ticks per second (negative allowed)
     }
 
     private double shooterModel (double distanceInches){
