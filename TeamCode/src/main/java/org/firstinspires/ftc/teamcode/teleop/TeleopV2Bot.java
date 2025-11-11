@@ -32,6 +32,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Config
 @TeleOp(name = " V2 Bot Teleop")
 public class TeleopV2Bot extends OpMode {
 
@@ -57,12 +58,12 @@ public class TeleopV2Bot extends OpMode {
     private PIDEx turnPID;
     private PIDCoefficientsEx turnPIDCoeffs;
 
-    private double Kp = 1.45; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
-    private double Ki = 0.0001; // keep 0 for aiming
-    private double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
-    private double integralSumMax = 0.5;
-    private double stabilityThreshold = Math.toRadians(1);
-    private double lowPassGain = 0.9;
+    public static double Kp = 1.45; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    public static double Ki = 0.0001; // keep 0 for aiming
+    public static double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
+    public static double integralSumMax = 0.5;
+    public static double stabilityThreshold = Math.toRadians(1);
+    public static double  lowPassGain = 0.9;
 
     private double slowRotationScale = 0.35;
 
@@ -80,7 +81,7 @@ public class TeleopV2Bot extends OpMode {
 
     double targetOffsetAngle_Vertical;
     double limelightMountAngleDegrees = 15;
-    double limelightLensHeightInches = 14.5;
+    double limelightLensHeightInches = 10.5;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;
 

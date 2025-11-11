@@ -39,6 +39,13 @@ public class TuneTurn extends OpMode {
 
     private double targetBearing = 0.0;
 
+    double currentHeading;
+    double error;
+    double turn = 0;
+
+
+
+
     private double slowRotationScale = 0.5;
 
 
@@ -71,6 +78,8 @@ public class TuneTurn extends OpMode {
 
         // so error=0 on init
         targetBearing = 0.0; // radians, relative to resetYaw()
+        currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        error = AngleUnit.normalizeRadians(targetBearing - currentHeading);
 
     }
 
@@ -83,6 +92,12 @@ public class TuneTurn extends OpMode {
         }
 
 
+
+        telemetry.addData("target (deg)", Math.toDegrees(targetBearing));
+        telemetry.addData("heading (deg)", Math.toDegrees(currentHeading));
+        telemetry.addData("error (deg)",   Math.toDegrees(error));
+        telemetry.addData("turn", turn);
+        telemetry.update();
     }
 
     private void aim() {
@@ -93,8 +108,8 @@ public class TuneTurn extends OpMode {
             targetBearing = 0;
         }
 
-        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double error = AngleUnit.normalizeRadians(targetBearing - currentHeading);
+         currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+         error = AngleUnit.normalizeRadians(targetBearing - currentHeading);
 
         // Rebuild the PID controller only when any tuning value has changed (for live Dashboard edits)
         boolean pidValuesChanged = (Kp != previousKp) || (Ki != previousKi) || (Kd != previousKd);
@@ -108,17 +123,13 @@ public class TuneTurn extends OpMode {
             turnPID = new BasicPID(turnPIDCoeffs);
         }
 
-        double turn = turnPID.calculate(error, 0);
+         turn = turnPID.calculate(error, 0);
         if (turn > 1) turn = 1;
         if (turn <-1) turn = -1;
 
         drive(0,0,turn);
 
-        telemetry.addData("target (deg)", Math.toDegrees(targetBearing));
-        telemetry.addData("heading (deg)", Math.toDegrees(currentHeading));
-        telemetry.addData("error (deg)",   Math.toDegrees(error));
-        telemetry.addData("turn", turn);
-        telemetry.update();
+
     }
 
     private void handleDrivetrain() {
