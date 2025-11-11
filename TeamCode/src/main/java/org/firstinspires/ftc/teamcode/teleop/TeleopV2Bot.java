@@ -160,6 +160,7 @@ public class TeleopV2Bot extends OpMode {
 
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
+        telemetry.addData("Limelight Servo Pos", llServo.getPosition());
 
         if (llResult != null && llResult.isValid()){
             Pose3D botPose = llResult.getBotpose_MT2();
@@ -169,7 +170,6 @@ public class TeleopV2Bot extends OpMode {
             telemetry.addData("Bot pose", botPose.toString());
             telemetry.addData("Yaw", botPose.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
-            telemetry.addData("Limelight Servo Pos", llServo.getPosition());
         }
 
 
@@ -194,11 +194,14 @@ public class TeleopV2Bot extends OpMode {
         }
     }
     private void handleLLServo(){
-        if(gamepad1.dpad_left && llServo.getPosition() > .2){
-            llServo.setPosition(llServo.getPosition()-0.05);
+        if(gamepad1.dpad_left){
+            llServo.setPosition(.2);
         }
-        else if(gamepad1.dpad_right && llServo.getPosition() < .8){
-            llServo.setPosition(llServo.getPosition()+0.05);
+        else if(gamepad1.dpad_right){
+            llServo.setPosition(.8);
+        }
+        else if(gamepad1.dpad_down){
+            llServo.setPosition(.47);
         }
     }
     private void handleFlywheel() {
