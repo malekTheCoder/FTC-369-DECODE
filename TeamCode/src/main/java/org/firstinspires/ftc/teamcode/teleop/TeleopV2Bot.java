@@ -32,7 +32,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Final V1 Bot Teleop")
+@TeleOp(name = " V2 Bot Teleop")
 public class TeleopV2Bot extends OpMode {
 
     private Limelight3A limelight;
@@ -270,7 +270,7 @@ public class TeleopV2Bot extends OpMode {
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
 
-        double heading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         double rotatedTheta = AngleUnit.normalizeRadians(theta - heading);
 
         double f = r * Math.sin(rotatedTheta);
