@@ -192,7 +192,7 @@ public class TeleopV2Bot extends OpMode {
     }
 
     private void handleFlywheel() {
-        targetVel = shooterModel(distanceFromLimelightToGoalInches);
+        /*targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
         if (gamepad2.aWasPressed()){
             if (flyMultiplier == 1){
@@ -201,8 +201,14 @@ public class TeleopV2Bot extends OpMode {
             else{
                 flyMultiplier = 1;
             }
+        }*/
+        if(gamepad1.dpad_up){
+            targetVel+=25;
         }
-        fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
+        if(gamepad1.dpad_down){
+            targetVel-=25;
+        }
+        fly.setVelocity(targetVel); // ticks per second (negative allowed)
     }
 
     private double shooterModel (double distanceInches){
