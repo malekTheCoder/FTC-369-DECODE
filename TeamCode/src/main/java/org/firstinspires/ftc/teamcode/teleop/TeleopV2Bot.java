@@ -167,6 +167,7 @@ public class TeleopV2Bot extends OpMode {
             telemetry.addData("Bot pose", botPose.toString());
             telemetry.addData("Yaw", botPose.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
+            telemetry.addData("NewDistance", Math.sqrt((distanceFromLimelightToGoalInches*distanceFromLimelightToGoalInches)+(29.5*29.5)));
         }
 
 
