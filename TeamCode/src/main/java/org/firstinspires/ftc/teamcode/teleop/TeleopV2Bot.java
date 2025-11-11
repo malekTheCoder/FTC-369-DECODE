@@ -45,6 +45,7 @@ public class TeleopV2Bot extends OpMode {
     private DcMotorEx fly;
     private DcMotor belt;
     private Servo kicker;
+    private Servo llServo;
     private IMU imu;
 
     YawPitchRollAngles orientation;
@@ -110,6 +111,7 @@ public class TeleopV2Bot extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         kicker = hardwareMap.get(Servo.class, "kicker");
         belt = hardwareMap.get(DcMotor.class, "belt");
+        llServo = hardwareMap.get(Servo.class,"llServo");
 
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
@@ -130,6 +132,7 @@ public class TeleopV2Bot extends OpMode {
         handleIntake();
         handleBelt();
         handleKicker();
+        handleLLServo();
 
 
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
@@ -166,6 +169,7 @@ public class TeleopV2Bot extends OpMode {
             telemetry.addData("Bot pose", botPose.toString());
             telemetry.addData("Yaw", botPose.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
+            telemetry.addData("Limelight Servo Pos", llServo.getPosition());
         }
 
 
@@ -189,7 +193,14 @@ public class TeleopV2Bot extends OpMode {
 
         }
     }
-
+    private void handleLLServo(){
+        if(gamepad1.dpad_left && llServo.getPosition() > .2){
+            llServo.setPosition(llServo.getPosition()-0.05);
+        }
+        else if(gamepad1.dpad_right && llServo.getPosition() < .8){
+            llServo.setPosition(llServo.getPosition()+0.05);
+        }
+    }
     private void handleFlywheel() {
         targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
