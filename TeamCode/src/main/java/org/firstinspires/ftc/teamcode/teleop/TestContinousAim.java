@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Config
-@TeleOp(name = " V2 Bot Teleop")
-public class TeleopV2Bot extends OpMode {
+@TeleOp(name = " test continous aim - V2 tele")
+public class TestContinousAim extends OpMode {
     private Limelight3A limelight;
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
@@ -58,7 +58,7 @@ public class TeleopV2Bot extends OpMode {
     private PIDCoefficientsEx turnPIDCoeffs;
 
     public static double Kp = 1.55; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
-    public static double Ki = 0.0001; // keep 0 for aiming
+    public static double Ki = 0.000; // keep 0 for aiming
     public static double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
     public static double integralSumMax = 0.5;
     public static double stabilityThreshold = Math.toRadians(1);
@@ -115,7 +115,7 @@ public class TeleopV2Bot extends OpMode {
         turnPID = new PIDEx(turnPIDCoeffs);
 
         intakeMultiplier = 0;
-        verticalTranslation = 0;
+        verticalTranslation = 50;
 
         limelight.start();
         telemetry.addLine("Hardware Initialized!");
