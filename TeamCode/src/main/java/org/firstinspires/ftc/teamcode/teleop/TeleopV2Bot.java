@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 @Config
 @TeleOp(name = " V2 Bot Teleop")
 public class TeleopV2Bot extends OpMode {
-
     private Limelight3A limelight;
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
@@ -52,13 +51,13 @@ public class TeleopV2Bot extends OpMode {
     LLResult llResult;
 
 
-    private double targetVel;
-
+    public static double targetVel = 0;
+    public static double actualVel;
 
     private PIDEx turnPID;
     private PIDCoefficientsEx turnPIDCoeffs;
 
-    public static double Kp = 1.45; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
+    public static double Kp = 1.55; // one of the main values, increase if it goes slowly or stops early and reduce slightly if it overshoots and oscillates
     public static double Ki = 0.0001; // keep 0 for aiming
     public static double Kd = 0.1; // start with 0.1, if its overshooting increase a little bit (by 0.02-0.05), if it feels twitchy reduce it a little bit
     public static double integralSumMax = 0.5;
@@ -80,7 +79,7 @@ public class TeleopV2Bot extends OpMode {
 
 
     double targetOffsetAngle_Vertical;
-    double limelightMountAngleDegrees = 15;
+    double limelightMountAngleDegrees = 14;
     double limelightLensHeightInches = 10.5;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;
@@ -192,6 +191,7 @@ public class TeleopV2Bot extends OpMode {
     }
 
     private void handleFlywheel() {
+        actualVel = fly.getVelocity();
         targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
         if (gamepad2.aWasPressed()){
@@ -202,11 +202,11 @@ public class TeleopV2Bot extends OpMode {
                 flyMultiplier = 1;
             }
         }
-        fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
+        fly.setVelocity(targetVel* flyMultiplier); // ticks per second (negative allowed)
     }
 
     private double shooterModel (double distanceInches){
-        return 7.41521*distanceInches + (1854.98152 - verticalTranslation); // add regression here to return the velocity needed given the distance
+        return 10.80327*distanceInches+(1574.00755-verticalTranslation); // add regression here to return the velocity needed given the distance
     }
 
     private void updateLimelightInfo() {
