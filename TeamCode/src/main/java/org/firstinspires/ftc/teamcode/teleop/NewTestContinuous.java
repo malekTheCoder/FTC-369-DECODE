@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 @TeleOp(name = " test continous aim - V2 tele")
-public class TestContinousAim extends OpMode {
+public class NewTestContinuous extends OpMode {
     private Limelight3A limelight;
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
@@ -135,15 +135,6 @@ public class TestContinousAim extends OpMode {
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
 
-        if (gamepad1.a){
-            // if valid detection
-            if (llResult != null && llResult.isValid()){
-                botHeadingAtCapture = botHeadingIMU;
-                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx)));
-                // minus 4 from the tx becasue the camera is to the left of the bot, centering the bot gets aroudn 4 tx
-            }
-        }
-
 
         handleAim();
         if (gamepad1.a){
@@ -171,9 +162,7 @@ public class TestContinousAim extends OpMode {
     }
 
     private void handleAim() {
-        currentHeading = botHeadingIMU;
-        turnError = AngleUnit.normalizeRadians(desiredHeading - currentHeading);
-        turnCommand = turnPID.calculate(0.0, turnError);
+        turnCommand = turnPID.calculate(0.0, -tx);
 
         if (turnCommand > 1) turnCommand = 1;
         if (turnCommand < -1) turnCommand = -1;

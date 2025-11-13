@@ -79,7 +79,7 @@ public class TeleopV2Bot extends OpMode {
 
 
     double targetOffsetAngle_Vertical;
-    double limelightMountAngleDegrees = 14;
+    double limelightMountAngleDegrees = 17;
     double limelightLensHeightInches = 10.5;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;
@@ -115,7 +115,7 @@ public class TeleopV2Bot extends OpMode {
         turnPID = new PIDEx(turnPIDCoeffs);
 
         intakeMultiplier = 0;
-        verticalTranslation = 0;
+        verticalTranslation = 30;
 
         limelight.start();
         telemetry.addLine("Hardware Initialized!");
