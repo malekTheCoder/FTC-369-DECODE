@@ -47,6 +47,8 @@ public class TeleopV2Bot extends OpMode {
     private Servo kicker;
     private IMU imu;
 
+    private double distanceFromLLTOFly = 4.25;
+
     YawPitchRollAngles orientation;
     LLResult llResult;
 
@@ -79,8 +81,8 @@ public class TeleopV2Bot extends OpMode {
 
 
     double targetOffsetAngle_Vertical;
-    double limelightMountAngleDegrees = 17;
-    double limelightLensHeightInches = 10.5;
+    double limelightMountAngleDegrees = 15;
+    double limelightLensHeightInches = 13;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;
 
@@ -114,8 +116,8 @@ public class TeleopV2Bot extends OpMode {
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
 
-        intakeMultiplier = 0;
-        verticalTranslation = 30;
+        intakeMultiplier = 0.6;
+        verticalTranslation = 75;
 
         limelight.start();
         telemetry.addLine("Hardware Initialized!");
@@ -140,7 +142,7 @@ public class TeleopV2Bot extends OpMode {
             if (llResult != null && llResult.isValid()){
                 aiming = true;
                 botHeadingAtCapture = botHeadingIMU;
-                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx)));
+                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx - 3.5 )));
                 // minus 4 from the tx becasue the camera is to the left of the bot, centering the bot gets aroudn 4 tx
             }
         } else if (gamepad1.aWasReleased()){
@@ -192,7 +194,7 @@ public class TeleopV2Bot extends OpMode {
 
     private void handleFlywheel() {
         actualVel = fly.getVelocity();
-        targetVel = shooterModel(distanceFromLimelightToGoalInches);
+        targetVel = shooterModelV1(distanceFromLimelightToGoalInches);
 
         if (gamepad2.aWasPressed()){
             if (flyMultiplier == 1){
@@ -205,8 +207,17 @@ public class TeleopV2Bot extends OpMode {
         fly.setVelocity(targetVel* flyMultiplier); // ticks per second (negative allowed)
     }
 
-    private double shooterModel (double distanceInches){
-        return 10.80327*distanceInches+(1574.00755-verticalTranslation); // add regression here to return the velocity needed given the distance
+//    private double shooterModel (double distanceInches){
+//        return 10.80327*distanceInches+(1574.00755-verticalTranslation); // add regression here to return the velocity needed given the distance
+//    }
+
+    private double shooterModelV1 (double distanceInches){
+        if (distanceInches < 125){
+            return 7.41521*distanceInches + (1854.98152 - verticalTranslation); // add regression here to return the velocity needed given the distance
+
+        } else {
+            return 7.41521*distanceInches + (1854.98152 - verticalTranslation + 50);
+        }
     }
 
     private void updateLimelightInfo() {
@@ -233,7 +244,7 @@ public class TeleopV2Bot extends OpMode {
     }
 
     private void handleIntake(){
-        intake.setPower(gamepad2.left_trigger);
+        intake.setPower(gamepad2.left_trigger * intakeMultiplier);
     }
     private void handleDrivetrain() {
 
