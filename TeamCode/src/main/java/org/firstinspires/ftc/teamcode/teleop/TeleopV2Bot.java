@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -35,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 @Config
 @TeleOp(name = " V2 Bot Teleop")
 public class TeleopV2Bot extends OpMode {
+    private FtcDashboard dashboard;
+
     private Limelight3A limelight;
     private DcMotorEx frontRight;
     private DcMotorEx frontLeft;
@@ -119,7 +123,9 @@ public class TeleopV2Bot extends OpMode {
         intakeMultiplier = 0.6;
         verticalTranslation = 75;
 
+        dashboard = FtcDashboard.getInstance();
         limelight.start();
+
         telemetry.addLine("Hardware Initialized!");
     }
 
@@ -170,6 +176,11 @@ public class TeleopV2Bot extends OpMode {
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
         }
 
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("targetVel", targetVel);
+        packet.put("actualVel", actualVel);  // or fly.getVelocity() if you prefer
+        dashboard.sendTelemetryPacket(packet);
 
         telemetry.update();
     }
