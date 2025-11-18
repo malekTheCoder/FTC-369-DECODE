@@ -1,21 +1,92 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Blue Far Side Auto")
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+
+@Autonomous(name = "Blue Far Side Auto..")
 public class BlueFarSideAuto extends LinearOpMode {
-    public class Shooter{
+    public class Kicker {
+        double KICKER_DOWN_POSITION = 0;
+        double KICKER_UP_POSITION = 1;
+        double INTAKE_POWER = 0.6;
         private DcMotorEx flywheel;
-        private Servo servoLift;
+        private Servo kicker;
+        private ElapsedTime timer = new ElapsedTime();
 
-        public Shooter(HardwareMap hardwareMap){
+
+        public Kicker(HardwareMap hardwareMap){
+            flywheel = hardwareMap.get(DcMotorEx.class, "fly");
+            kicker = hardwareMap.get(Servo.class, "kicker");
+            flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            kicker.setPosition(KICKER_DOWN_POSITION);
+
 
         } // constructor
+
+        public class KickerUp implements Action{
+            public boolean isReset = false;
+
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if(!isReset){
+                    isReset = true;
+                    timer.reset();
+                }
+
+                kicker.setPosition(KICKER_UP_POSITION);
+                if (timer.seconds() > 0.4){
+                    return false;
+                }
+
+                return true;
+            }
+        }
+        public Action kickerUp(){
+            return new KickerUp();
+        }
+
+
+        public class KickerDown implements Action{
+            public boolean isReset = false;
+
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if(!isReset){
+                    isReset = true;
+                    timer.reset();
+                }
+
+                kicker.setPosition(KICKER_DOWN_POSITION);
+                if (timer.seconds() > 0.4){
+                    return false;
+                }
+
+                return true;
+            }
+        }
+        public Action kickerDown(){
+            return new KickerDown();
+        }
+
 
     }
 
@@ -23,23 +94,181 @@ public class BlueFarSideAuto extends LinearOpMode {
         private DcMotor intakeMotor;
 
         public Intake (HardwareMap hardwareMap){
+            intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         }// constructor
 
+        public class HoldIntakePower implements Action {
+            private final double power;
 
+            public HoldIntakePower(double power) {
+                this.power = power;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                intakeMotor.setPower(power);
+                packet.put("intakePower", power);
+                // will return false so it keeps running
+                return false;
+            }
+        }
+
+        public Action holdIntakePower(double power) {
+            return new HoldIntakePower(power);
+        }
+
+        // stop the intake
+        public class StopIntake implements Action {
+            private boolean done = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!done) {
+                    intakeMotor.setPower(0);
+                    done = true;
+                }
+                return true; // done after one call
+            }
+        }
+
+        public Action stopIntake() {
+            return new StopIntake();
+        }
     }
 
     public class Belt{
         private DcMotor beltMotor;
 
         public Belt(HardwareMap hardwareMap){
+            beltMotor = hardwareMap.get(DcMotor.class, "intake");
+            beltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            beltMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         }// constructor
+
+        public class HoldBeltPower implements Action {
+            private final double power;
+
+            public HoldBeltPower(double power) {
+                this.power = power;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                beltMotor.setPower(power);
+                packet.put("belt power ", power);
+                // will return false so it keeps running
+                return false;
+            }
+        }
+
+        public Action holdBeltPower(double power) {
+            return new HoldBeltPower(power);
+        }
+
+        // stop the intake
+        public class StopBelt implements Action {
+            private boolean done = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!done) {
+                    beltMotor.setPower(0);
+                    done = true;
+                }
+                return true; // done after one call
+            }
+        }
+
+        public Action stopBelt() {
+            return new StopBelt();
+        }
+
+    }
+
+    public class Flywheel{
+        private DcMotorEx flywheel;
+
+        public Flywheel(HardwareMap hardwareMap){
+            flywheel = hardwareMap.get(DcMotorEx.class, "fly");
+            flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+
+        public class HoldFlywheelVelocity implements Action {
+            private final double velocity;
+
+            public HoldFlywheelVelocity(double velocity) {
+                this.velocity = velocity;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                flywheel.setVelocity(velocity);
+                packet.put("fly velocity ", velocity);
+
+                return false;
+            }
+        }
+
+        public Action holdFlywheelVelocity(double vel) {
+            return new HoldFlywheelVelocity(vel);
+        }
+
+
+        public class StopFlywheel implements Action {
+            private final double velocity;
+
+            public StopFlywheel(double velocity) {
+                this.velocity = velocity;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                flywheel.setVelocity(velocity);
+                packet.put("fly velocity ", velocity);
+
+                return false;
+            }
+        }
+
+        public Action stopFlywheel(double vel) {
+            return new StopFlywheel(vel);
+        }
+
+
 
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        Pose2d initialPose = new Pose2d(61, -10, Math.PI);
+
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        Flywheel flywheel = new Flywheel(hardwareMap);
+        Kicker kicker = new Kicker(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+
+        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195));  // position to shoot zero batch
+
+
+        ParallelAction prepareToShootPreload = new ParallelAction(
+                goToShootPreload.build(),
+                flywheel.holdFlywheelVelocity(2750)
+        );
+
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        prepareToShootPreload
+                        //kicker.kickerUp()
+
+                )
+        );
 
     }
 }
