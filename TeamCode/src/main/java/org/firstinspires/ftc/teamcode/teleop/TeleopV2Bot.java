@@ -142,6 +142,7 @@ public class TeleopV2Bot extends OpMode {
         handleIntake();
         handleBelt();
         handleKicker();
+        handleRGB();
 
 
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
@@ -228,6 +229,15 @@ public class TeleopV2Bot extends OpMode {
 
     private double shooterModel (double distanceInches){
             return 8.78571+distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
+    }
+
+    private void handleRGB(){
+        if(Math.abs(targetVel-actualVel)<40 && turnError<.5) {
+            rgbLight.setPosition(0.8);
+        }
+        else{
+            rgbLight.setPosition(.5);
+        }
     }
 
     private void updateLimelightInfo() {
