@@ -273,8 +273,6 @@ public class BlueFarSideAuto extends LinearOpMode {
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(205))
                 .waitSeconds(4);  // position to shoot zero batch
-
-
         ParallelAction prepareToShootPreload = new ParallelAction(
                 goToShootPreload.build(),
                 flywheel.holdFlywheelVelocity(2750)
