@@ -26,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.internal.hardware.android.DragonboardIndicatorLED;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -50,6 +51,8 @@ public class TeleopV2Bot extends OpMode {
     private DcMotor belt;
     private Servo kicker;
     private IMU imu;
+
+    private Servo rgbLight;
 
     private double distanceFromLLTOFly = 4.25;
 
@@ -116,6 +119,7 @@ public class TeleopV2Bot extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         kicker = hardwareMap.get(Servo.class, "kicker");
         belt = hardwareMap.get(DcMotor.class, "belt");
+        rgbLight = hardwareMap.get(Servo.class, "rgb");
 
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
