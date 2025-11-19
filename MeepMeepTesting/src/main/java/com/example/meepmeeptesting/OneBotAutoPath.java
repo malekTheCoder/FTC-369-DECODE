@@ -19,7 +19,7 @@ public class OneBotAutoPath {
                 .build();
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(61, -10, Math.PI))
-                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195)) // position to shoot zero batch
+                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(205)) // position to shoot zero batch
 
                 .strafeToLinearHeading(new Vector2d(35,-30), Math.toRadians(270)) // go to first set of artifacts
                 .strafeToLinearHeading(new Vector2d(35,-50), Math.toRadians(270)) // drive into first set of artifacts

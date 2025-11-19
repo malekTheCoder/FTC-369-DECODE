@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous(name = "Blue Far Side Auto..")
@@ -143,7 +144,7 @@ public class BlueFarSideAuto extends LinearOpMode {
         private DcMotor beltMotor;
 
         public Belt(HardwareMap hardwareMap){
-            beltMotor = hardwareMap.get(DcMotor.class, "intake");
+            beltMotor = hardwareMap.get(DcMotor.class, "belt");
             beltMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             beltMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -191,14 +192,23 @@ public class BlueFarSideAuto extends LinearOpMode {
 
     public class Flywheel{
         private DcMotorEx flywheel;
+        private Telemetry telemetry;
 
-        public Flywheel(HardwareMap hardwareMap){
+
+        public Flywheel(HardwareMap hardwareMap, Telemetry telemetry){
             flywheel = hardwareMap.get(DcMotorEx.class, "fly");
+            flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            this.telemetry = telemetry;
+        }
+
+        public double getVelocity(){
+            return flywheel.getVelocity();
         }
 
         public class HoldFlywheelVelocity implements Action {
-            private final double velocity;
+            private double velocity;
 
             public HoldFlywheelVelocity(double velocity) {
                 this.velocity = velocity;
@@ -208,6 +218,11 @@ public class BlueFarSideAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 flywheel.setVelocity(velocity);
                 packet.put("fly velocity ", velocity);
+                // Driver Hub telemetry
+                double actual = flywheel.getVelocity();
+                telemetry.addData("Flywheel target", velocity);
+                telemetry.addData("Flywheel actual", actual);
+                telemetry.update();
 
                 return false;
             }
@@ -245,15 +260,19 @@ public class BlueFarSideAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+
+
         Pose2d initialPose = new Pose2d(61, -10, Math.PI);
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-        Flywheel flywheel = new Flywheel(hardwareMap);
+        Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
         Kicker kicker = new Kicker(hardwareMap);
         Intake intake = new Intake(hardwareMap);
+        Belt belt = new Belt(hardwareMap);
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195));  // position to shoot zero batch
+                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(205))
+                .waitSeconds(4);  // position to shoot zero batch
 
 
         ParallelAction prepareToShootPreload = new ParallelAction(
@@ -261,12 +280,52 @@ public class BlueFarSideAuto extends LinearOpMode {
                 flywheel.holdFlywheelVelocity(2750)
         );
 
+        ParallelAction shootFirst = new ParallelAction(
+                kicker.kickerUp()
+        );
+
+        ParallelAction GoAndShootPreLoad = new ParallelAction(
+                new SequentialAction(
+                        goToShootPreload.build(),
+                        shootFirst,
+                        kicker.kickerDown(),
+                        kicker.kickerDown(),
+                        kicker.kickerDown(),
+                        kicker.kickerUp(), // shoot
+                        kicker.kickerDown(),
+                        kicker.kickerDown(),
+                        kicker.kickerDown(),
+                        kicker.kickerUp() // shoot
+                ),
+                belt.holdBeltPower(0.8),
+                flywheel.holdFlywheelVelocity(2900)
+        );
+
+
+
+
+        while (!opModeIsActive()){
+            telemetry.addData("Position during Init", initialPose);
+            telemetry.update();
+        }
+
 
         Actions.runBlocking(
                 new SequentialAction(
-                        prepareToShootPreload
-                        //kicker.kickerUp()
-
+                        prepareToShootPreload,
+                        shootFirst,
+                        new ParallelAction(
+                                new SequentialAction(kicker.kickerDown(),
+                                        kicker.kickerDown(),
+                                        kicker.kickerDown(),
+                                        kicker.kickerUp(), // shoot
+                                        kicker.kickerDown(),
+                                        kicker.kickerDown(),
+                                        kicker.kickerDown(),
+                                        kicker.kickerUp()
+                                ),
+                                belt.holdBeltPower(0.8)
+                        )
                 )
         );
 
