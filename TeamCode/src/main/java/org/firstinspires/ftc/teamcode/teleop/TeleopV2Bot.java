@@ -209,7 +209,7 @@ public class TeleopV2Bot extends OpMode {
 
     private void handleFlywheel() {
         actualVel = fly.getVelocity();
-        targetVel = shooterModelV1(distanceFromLimelightToGoalInches);
+        targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
         if (gamepad2.aWasPressed()){
             if (flyMultiplier == 1){
@@ -226,13 +226,8 @@ public class TeleopV2Bot extends OpMode {
 //        return 10.80327*distanceInches+(1574.00755-verticalTranslation); // add regression here to return the velocity needed given the distance
 //    }
 
-    private double shooterModelV1 (double distanceInches){
-        if (distanceInches < 125){
-            return 7.41521*distanceInches + (1854.98152 - verticalTranslation); // add regression here to return the velocity needed given the distance
-
-        } else {
-            return 7.41521*distanceInches + (1854.98152 - verticalTranslation + 50);
-        }
+    private double shooterModel (double distanceInches){
+            return 8.78571+distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
     }
 
     private void updateLimelightInfo() {
