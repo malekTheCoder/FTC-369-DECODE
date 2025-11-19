@@ -233,10 +233,10 @@ public class TeleopV2Bot extends OpMode {
 
     private void handleRGB(){
         if(Math.abs(targetVel-actualVel)<40 && turnError<.5) {
-            rgbLight.setPosition(0.8);
+            rgbLight.setPosition(0.5);
         }
         else{
-            rgbLight.setPosition(.5);
+            rgbLight.setPosition(.8);
         }
     }
 
