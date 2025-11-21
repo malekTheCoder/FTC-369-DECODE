@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import android.util.Size;
-
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
-import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -12,7 +8,6 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -20,20 +15,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.robotcore.internal.hardware.android.DragonboardIndicatorLED;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Config
 @TeleOp(name = " V2 Bot Teleop")
@@ -108,6 +92,8 @@ public class TeleopV2Bot extends OpMode {
     private double kickerDownPosition = 1;
 
     private double verticalTranslation;
+    private double flyTx;
+    private double d2; // change name
 
 
     @Override
@@ -176,9 +162,12 @@ public class TeleopV2Bot extends OpMode {
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("Ty", llResult.getTy());
             telemetry.addData("Ta", llResult.getTa());
+            telemetry.addData("Turn Error", turnError);
             telemetry.addData("Bot pose", botPose.toString());
             telemetry.addData("Yaw", botPose.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
+            telemetry.addData("Fly Tx", flyTx);
+            telemetry.addData("Fly Distance", d2);
         }
 
 
@@ -190,6 +179,17 @@ public class TeleopV2Bot extends OpMode {
         telemetry.update();
     }
 
+
+    private void limelightOffest(){
+        //Use law of cos with SAS to find the third side (d2)
+        //Use law of sin to find the 2nd base angle of triangle
+        //90-(2nd base angle) to find the error between fly heading and tag heading
+        double B=Math.abs(90-tx);
+        double x = distanceFromLLTOFly;
+        double d = distanceFromLimelightToGoalInches;
+        d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)+((-2*(x*d))*Math.cos(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
+        flyTx = 90 - (Math.asin(d * (Math.sin(B)/d2))); //sin-1(d(Sin(B)/d2
+    }
     private void handleKicker(){
         if (gamepad2.leftBumperWasPressed()){
             if (kickerUp){
@@ -228,15 +228,15 @@ public class TeleopV2Bot extends OpMode {
 //    }
 
     private double shooterModel (double distanceInches){
-            return 8.78571+distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
+            return 8.78571*distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
     }
 
     private void handleRGB(){
-        if(Math.abs(targetVel-actualVel)<40 && turnError<.5) {
+        if((Math.abs(targetVel-actualVel)<80 && Math.abs(turnCommand)<.1)) {
             rgbLight.setPosition(0.5);
         }
         else{
-            rgbLight.setPosition(.8);
+            rgbLight.setPosition(.28);
         }
     }
 
