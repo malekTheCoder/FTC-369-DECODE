@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Config
-@TeleOp(name = " V2 Bot Teleop")
+@TeleOp(name = " V2 Bot Teleop Blue Side")
 public class BlueTeleopV2Bot extends OpMode {
     private FtcDashboard dashboard;
 
@@ -213,7 +213,7 @@ public class BlueTeleopV2Bot extends OpMode {
 //    }
 
     private double shooterModel (double distanceInches){
-            return 8.78571+distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
+            return 8.78571*distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
     }
 
     private void handleRGB(){

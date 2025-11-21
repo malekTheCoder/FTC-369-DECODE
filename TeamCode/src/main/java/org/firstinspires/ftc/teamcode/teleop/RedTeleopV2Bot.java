@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Config
-@TeleOp(name = " V2 Bot Teleop")
+@TeleOp(name = " V2 Bot Teleop Red Side")
 public class RedTeleopV2Bot extends OpMode {
     private FtcDashboard dashboard;
 
@@ -112,8 +112,8 @@ public class RedTeleopV2Bot extends OpMode {
         verticalTranslation = 75;
 
         dashboard = FtcDashboard.getInstance();
-        limelight.start();
         limelight.pipelineSwitch(1);
+        limelight.start();
 
         telemetry.addLine("Hardware Initialized!");
     }
@@ -138,7 +138,7 @@ public class RedTeleopV2Bot extends OpMode {
             if (llResult != null && llResult.isValid()){
                 aiming = true;
                 botHeadingAtCapture = botHeadingIMU;
-                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx - 3.5 )));
+                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx + 3.5 )));
                 // minus 4 from the tx becasue the camera is to the left of the bot, centering the bot gets aroudn 4 tx
             }
         } else if (gamepad1.aWasReleased()){
@@ -213,7 +213,7 @@ public class RedTeleopV2Bot extends OpMode {
 //    }
 
     private double shooterModel (double distanceInches){
-            return 8.78571+distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
+            return 8.78571*distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
     }
 
     private void handleRGB(){
