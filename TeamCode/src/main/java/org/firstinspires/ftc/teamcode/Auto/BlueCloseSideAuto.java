@@ -22,8 +22,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "Blue Far Side Auto..")
-public class BlueFarSideAuto extends LinearOpMode {
+@Autonomous(name = "Blue Close Side Auto..")
+public class BlueCloseSideAuto extends LinearOpMode {
     public class Kicker {
         double KICKER_DOWN_POSITION = 0;
         double KICKER_UP_POSITION = 1;
@@ -142,8 +142,8 @@ public class BlueFarSideAuto extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
 
-                    intakeMotor.setPower(0);
-                    return false;
+                intakeMotor.setPower(0);
+                return false;
             }
         }
 
@@ -165,7 +165,7 @@ public class BlueFarSideAuto extends LinearOpMode {
         public class HoldBeltPower implements Action {
             private final double power;
             private double duration;
-            private ElapsedTime beltTimer = new ElapsedTime();
+            private ElapsedTime beltTimer;
 
             private boolean beltTimerStarted = false;
 
@@ -238,7 +238,7 @@ public class BlueFarSideAuto extends LinearOpMode {
             private double velocity;
 
             private double duration;
-            private ElapsedTime flywheelTimer = new ElapsedTime();
+            private ElapsedTime flywheelTimer;
 
             private boolean flywheelTimerStarted = false;
 
@@ -303,7 +303,7 @@ public class BlueFarSideAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(61, -10, Math.PI);
+        Pose2d initialPose = new Pose2d(-57, -44, Math.toRadians(233));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
@@ -311,127 +311,117 @@ public class BlueFarSideAuto extends LinearOpMode {
         Intake intake = new Intake(hardwareMap);
         Belt belt = new Belt(hardwareMap);
 
-        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(52,-12), Math.toRadians(202.5)); // move to shoot first
 
-        TrajectoryActionBuilder goToFirstRow = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,-21), Math.toRadians(270)) // go to first set of artifacts
-                .waitSeconds(1);
+        TrajectoryActionBuilder moveToShootPreload = drive.actionBuilder(initialPose)
+                .strafeToLinearHeading(new Vector2d(-44,-28),Math.toRadians(240)); // go to shoot preload
 
-        TrajectoryActionBuilder driveIntoFirstRow = goToFirstRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,-34), Math.toRadians(270)); // drive into first set of artifacts
+        TrajectoryActionBuilder goToFirstBatch = moveToShootPreload.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-12,-27), Math.toRadians(270)); // go to get first set of artifacts
 
-        TrajectoryActionBuilder moveBackToFarShotAfterFirstRowIntake = driveIntoFirstRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(51,-14), Math.toRadians(205.5)); // go back to shooting
+        TrajectoryActionBuilder driveIntoFirstBatch = goToFirstBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-12,-50), Math.toRadians(270)); // drive into first set of artifacts
 
-        TrajectoryActionBuilder goToSecondRow = moveBackToFarShotAfterFirstRowIntake.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12,-34), Math.toRadians(270)); // go to second set of artifacts
+        TrajectoryActionBuilder goToShootFirstBatch = driveIntoFirstBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-44,-28),Math.toRadians(240)); // go to shoot first batch
 
-        TrajectoryActionBuilder driveIntoSecondRow = goToSecondRow.endTrajectory().fresh()
+        TrajectoryActionBuilder goToSecondBatch = goToShootFirstBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(12,-30), Math.toRadians(270)); // go to second set of artifacts
+
+        TrajectoryActionBuilder driveIntoSecondBatch = goToSecondBatch.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(12,-50), Math.toRadians(270)); // drive into second set of artifacts
 
-        TrajectoryActionBuilder pushClassifierGate = driveIntoSecondRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0,-58), Math.toRadians(180)); // push classifier gate
+        TrajectoryActionBuilder TurnAndPushClassifierGate = driveIntoSecondBatch.endTrajectory().fresh()
+                .turnTo(Math.toRadians(180))
+                .strafeToLinearHeading(new Vector2d(-2,-58), Math.toRadians(180)); // push classifier gate
 
-        TrajectoryActionBuilder goBackAfterPushingClassifierToShoot = pushClassifierGate.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(51,-12), Math.toRadians(205.5)); // go to shoot second row
+        TrajectoryActionBuilder goToShootSecondBatch = TurnAndPushClassifierGate.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-44,-28),Math.toRadians(240)); // go to shoot second batch
+
+        TrajectoryActionBuilder goToThirdBatch = goToShootSecondBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(35,-30), Math.toRadians(270)); // go to third set of artifacts
+
+        TrajectoryActionBuilder driveIntoThirdBatch = goToThirdBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(35,-50), Math.toRadians(270)); // drive into third set of artifacts
+
+        TrajectoryActionBuilder goToShootThirdBatch = driveIntoThirdBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-44,-28),Math.toRadians(240)); // go to shoot third batch
 
 
-
-
-
-
-
-        ParallelAction prepareToShootPreload = new ParallelAction(
-                goToShootPreload.build()
-        );
-
-
-        SequentialAction shootTripleFromBack = new SequentialAction(
-
-                new ParallelAction(
-                        new SequentialAction(
-                                new SleepAction(2),
-                                kicker.kickerUp(),
-                                kicker.kickerDown(),
-                                new SleepAction(1.5),
-                                kicker.kickerUp(),
-                                kicker.kickerDown()
+        ParallelAction shootTripleClose = new ParallelAction(
+                new SequentialAction(
+                        new SleepAction(2.5),
+                        kicker.kickerUp(),
+                        kicker.kickerDown(),
+                        new SleepAction(1),
+                        kicker.kickerUp(),
+                        kicker.kickerDown(),
+                        new SleepAction(1),
+                        kicker.kickerUp(),
+                        kicker.kickerDown()
                 ),
                 flywheel.holdFlywheelVelocity(2770,5),
-                intake.holdIntakePower(0.5,5),
+                intake.holdIntakePower(0.4,5),
                 belt.holdBeltPower(-0.25,5)
-                ),
-
-                new ParallelAction(
-                        new SequentialAction(
-                                new SleepAction(2.5),
-                                kicker.kickerUp(),
-                                kicker.kickerDown()
-                        ),
-                        flywheel.holdFlywheelVelocity(2770,3),
-                        intake.holdIntakePower(0.8,3),
-                        belt.holdBeltPower(-0.4,3)
-                )
         );
 
-        SequentialAction goGrabAndShootFirstRow = new SequentialAction(
-                flywheel.stopFlywheel(0),
-                goToFirstRow.build(),
-                new ParallelAction(
-                        driveIntoFirstRow.build(),
-                        intake.holdIntakePower(0.6,2),
-                        belt.holdBeltPower(-0.5,2)
-                ),
-                new ParallelAction(
-                        moveBackToFarShotAfterFirstRowIntake.build(),
-                        intake.holdIntakePower(0.2,2),
-                        belt.holdBeltPower(0.1,2)
-                        ),
 
-                new ParallelAction(
-                        new SequentialAction(
-                                new SleepAction(2),
-                                kicker.kickerUp(),
-                                kicker.kickerDown(),
-                                new SleepAction(1.5),
-                                kicker.kickerUp(),
-                                kicker.kickerDown()
-                        ),
-                        flywheel.holdFlywheelVelocity(2770,5),
-                        intake.holdIntakePower(0.5,5),
-                        belt.holdBeltPower(-0.25,5)
-                ),
-
-                new ParallelAction(
-                        new SequentialAction(
-                                new SleepAction(2),
-                                kicker.kickerDown(),
-                                kicker.kickerUp(),
-                                kicker.kickerDown(),
-                                kicker.kickerUp()
-                        ),
-                        flywheel.holdFlywheelVelocity(2770,3),
-                        intake.holdIntakePower(0.8,3),
-                        belt.holdBeltPower(-0.25,3)
-                )
+        SequentialAction goAndShootPreload = new SequentialAction(
+                moveToShootPreload.build(),
+                shootTripleClose
         );
 
-        SequentialAction goGrabAndPushGateThenShootSecondRow = new SequentialAction(
+        SequentialAction goGrabFirstSetAndComeBackAndShoot = new SequentialAction(
                 flywheel.stopFlywheel(0),
                 intake.stopIntake(),
                 belt.stopBelt(),
-                goToSecondRow.build(),
+                goToFirstBatch.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.6,3.5),
-                        belt.holdBeltPower(-0.5,3.5),
-                        driveIntoSecondRow.build()
+                        intake.holdIntakePower(0.6,3),
+                        belt.holdBeltPower(-0.35,3),
+                        driveIntoFirstBatch.build()
                 ),
-                pushClassifierGate.build(),
-                goBackAfterPushingClassifierToShoot.build(),
-                shootTripleFromBack
+                goToShootFirstBatch.build(),
+                shootTripleClose
 
         );
+
+        SequentialAction goGrabSecondBatchAndPushGateAndComeBackAndShoot = new SequentialAction(
+                flywheel.stopFlywheel(0),
+                intake.stopIntake(),
+                belt.stopBelt(),
+                goToSecondBatch.build(),
+                new ParallelAction(
+                        intake.holdIntakePower(0.6,3),
+                        belt.holdBeltPower(-0.35,3),
+                        driveIntoSecondBatch.build()
+                ),
+                intake.stopIntake(),
+                belt.stopBelt(),
+                TurnAndPushClassifierGate.build(),
+                new SleepAction(8),
+                goToShootSecondBatch.build(),
+                shootTripleClose
+        );
+
+        SequentialAction goGrabThirdBatchAndComeBackAndShoot = new SequentialAction(
+                flywheel.stopFlywheel(0),
+                intake.stopIntake(),
+                belt.stopBelt(),
+                goToThirdBatch.build(),
+                new ParallelAction(
+                        intake.holdIntakePower(0.6,3),
+                        belt.holdBeltPower(-0.35,3),
+                        driveIntoThirdBatch.build()
+                ),
+                intake.stopIntake(),
+                belt.stopBelt(),
+                goToShootThirdBatch.build(),
+                shootTripleClose
+
+        );
+
+
+
 
 
 
@@ -444,12 +434,13 @@ public class BlueFarSideAuto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        prepareToShootPreload,
-                        shootTripleFromBack,
-                        goGrabAndShootFirstRow
-                        //goGrabAndPushGateThenShootSecondRow
-
+                        goAndShootPreload,
+                        goGrabFirstSetAndComeBackAndShoot,
+                        goGrabSecondBatchAndPushGateAndComeBackAndShoot,
+                        goGrabThirdBatchAndComeBackAndShoot
                 )
+
+
         );
 
     }
