@@ -25,8 +25,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "Blue Far Side Auto..")
-public class BlueFarSideAuto extends LinearOpMode {
+@Autonomous(name = "Red Far Side Auto..")
+public class RedFarSideAuto extends LinearOpMode {
     public class Kicker {
         double KICKER_DOWN_POSITION = 0;
         double KICKER_UP_POSITION = 1;
@@ -145,8 +145,8 @@ public class BlueFarSideAuto extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
 
-                    intakeMotor.setPower(0);
-                    return false;
+                intakeMotor.setPower(0);
+                return false;
             }
         }
 
@@ -306,7 +306,7 @@ public class BlueFarSideAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(61, -10, Math.PI);
+        Pose2d initialPose = new Pose2d(61, 10, Math.PI);
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
@@ -316,29 +316,33 @@ public class BlueFarSideAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(54,-12), Math.toRadians(206)); // move to shoot first
+                .strafeToLinearHeading(new Vector2d(43,14), Math.toRadians(360 - 203)); // move to shoot first
 
         TrajectoryActionBuilder goToFirstRow = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,-21), Math.toRadians(270)) // go to first set of artifacts
+                .strafeToLinearHeading(new Vector2d(23,40), Math.toRadians(360 - 270)) // go to first set of artifacts
                 .waitSeconds(1);
 
         TrajectoryActionBuilder driveIntoFirstRow = goToFirstRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,-37), Math.toRadians(270)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(23,61), Math.toRadians(360 - 270)); // drive into first set of artifacts
 
         TrajectoryActionBuilder moveBackToFarShotAfterFirstRowIntake = driveIntoFirstRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(53,-14), Math.toRadians(205.5)); // go back to shooting
+                .strafeToLinearHeading(new Vector2d(41,14), Math.toRadians(360 - 202.5)); // go back to shooting
+
+        TrajectoryActionBuilder moveOutOfLaunchZoneAfterShooting = moveBackToFarShotAfterFirstRowIntake.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0,40), Math.toRadians(360 - 270)); // go back to shooting
+
 
         TrajectoryActionBuilder goToSecondRow = moveBackToFarShotAfterFirstRowIntake.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(5,-21), Math.toRadians(270)); // go to second set of artifacts
+                .strafeToLinearHeading(new Vector2d(12,34), Math.toRadians(360 - 270)); // go to second set of artifacts
 
         TrajectoryActionBuilder driveIntoSecondRow = goToSecondRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(12,-50), Math.toRadians(270)); // drive into second set of artifacts
+                .strafeToLinearHeading(new Vector2d(12,50), Math.toRadians(360 - 270)); // drive into second set of artifacts
 
         TrajectoryActionBuilder pushClassifierGate = driveIntoSecondRow.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0,-58), Math.toRadians(180)); // push classifier gate
+                .strafeToLinearHeading(new Vector2d(0,58), Math.toRadians(360 - 180)); // push classifier gate
 
         TrajectoryActionBuilder goBackAfterPushingClassifierToShoot = pushClassifierGate.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(51,-12), Math.toRadians(205.5)); // go to shoot second row
+                .strafeToLinearHeading(new Vector2d(51,12), Math.toRadians(360 - 205.5)); // go to shoot second row
 
 
 
@@ -361,10 +365,10 @@ public class BlueFarSideAuto extends LinearOpMode {
                                 new SleepAction(1.5),
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
-                ),
-                flywheel.holdFlywheelVelocity(2770,5),
-                intake.holdIntakePower(0.6,5),
-                belt.holdBeltPower(-0.2,5)
+                        ),
+                        flywheel.holdFlywheelVelocity(2770,5),
+                        intake.holdIntakePower(0.65,5),
+                        belt.holdBeltPower(-0.25,5)
                 ),
 
                 new ParallelAction(
@@ -391,7 +395,7 @@ public class BlueFarSideAuto extends LinearOpMode {
                         moveBackToFarShotAfterFirstRowIntake.build(),
                         intake.holdIntakePower(0.2,2),
                         belt.holdBeltPower(0.1,2)
-                        ),
+                ),
 
                 new ParallelAction(
                         new SequentialAction(
@@ -417,7 +421,7 @@ public class BlueFarSideAuto extends LinearOpMode {
                         ),
                         flywheel.holdFlywheelVelocity(2770,3),
                         intake.holdIntakePower(0.8,3),
-                        belt.holdBeltPower(-0.4,3)
+                        belt.holdBeltPower(-0.35,3)
                 )
         );
 
@@ -437,6 +441,13 @@ public class BlueFarSideAuto extends LinearOpMode {
 
         );
 
+        ParallelAction MoveOut = new ParallelAction(
+                moveOutOfLaunchZoneAfterShooting.build(),
+                intake.stopIntake(),
+                belt.stopBelt(),
+                flywheel.stopFlywheel(0)
+        );
+
 
 
 
@@ -448,10 +459,17 @@ public class BlueFarSideAuto extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
+//                        goToShootPreload.build(),
+//                        new SleepAction(2),
+//                        goToFirstRow.build(),
+//                        new SleepAction(2),
+//                        driveIntoFirstRow.build(),
+//                        new SleepAction(2),
+//                        moveBackToFarShotAfterFirstRowIntake.build()
                         prepareToShootPreload,
                         shootTripleFromBack,
                         goGrabAndShootFirstRow,
-                        goToSecondRow.build()
+                        MoveOut
                         //goGrabAndPushGateThenShootSecondRow
 
                 )
