@@ -180,7 +180,6 @@ public class BlueTeleopV2Bot extends OpMode {
         telemetry.update();
     }
 
-
     private void limelightOffest(){
         //Use law of cos with SAS to find the third side (d2)
         //Use law of sin to find the 2nd base angle of triangle
@@ -188,8 +187,14 @@ public class BlueTeleopV2Bot extends OpMode {
         double B=Math.abs(90-tx);
         double x = distanceFromLLTOFly;
         double d = distanceFromLimelightToGoalInches;
-        d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)+((-2*(x*d))*Math.cos(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
-        flyTx = 90 - (Math.asin(d * ((Math.sin(B)/d2)))); //sin-1(d(Sin(B)/d2
+        d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)-2*x*d*Math.cos(Math.toRadians(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
+        if(90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))<Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))){
+            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
+            flyTx = flyTx*-1;
+        }
+        else{
+            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
+        }
     }
     private void handleKicker(){
         if (gamepad2.leftBumperWasPressed()){
