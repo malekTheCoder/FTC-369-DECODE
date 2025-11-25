@@ -139,7 +139,7 @@ public class TeleopV2Bot extends OpMode {
             if (llResult != null && llResult.isValid()){
                 aiming = true;
                 botHeadingAtCapture = botHeadingIMU;
-                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx - 3.5 )));
+                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(flyTx)));
                 // minus 4 from the tx becasue the camera is to the left of the bot, centering the bot gets aroudn 4 tx
             }
         } else if (gamepad1.aWasReleased()){
@@ -187,8 +187,8 @@ public class TeleopV2Bot extends OpMode {
         double B=Math.abs(90-tx);
         double x = distanceFromLLTOFly;
         double d = distanceFromLimelightToGoalInches;
-        d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)+((-2*(x*d))*Math.cos(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
-        flyTx = 90 - (Math.asin(d * ((Math.sin(B)/d2)))); //sin-1(d(Sin(B)/d2
+        d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)-2*x*d*Math.cos(Math.toRadians(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
+        flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
     }
     private void handleKicker(){
         if (gamepad2.leftBumperWasPressed()){
