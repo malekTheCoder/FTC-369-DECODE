@@ -140,7 +140,7 @@ public class BlueTeleopV2Bot extends OpMode {
             if (llResult != null && llResult.isValid()){
                 aiming = true;
                 botHeadingAtCapture = botHeadingIMU;
-                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(tx - 3.5 )));
+                desiredHeading = AngleUnit.normalizeRadians(botHeadingAtCapture - AngleUnit.normalizeRadians(Math.toRadians(flyTx)));
                 // minus 4 from the tx becasue the camera is to the left of the bot, centering the bot gets aroudn 4 tx
             }
         } else if (gamepad1.aWasReleased()){
