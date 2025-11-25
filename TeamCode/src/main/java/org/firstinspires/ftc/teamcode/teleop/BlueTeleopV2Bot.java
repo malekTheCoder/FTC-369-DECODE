@@ -188,7 +188,7 @@ public class BlueTeleopV2Bot extends OpMode {
         double x = distanceFromLLTOFly;
         double d = distanceFromLimelightToGoalInches;
         d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)-2*x*d*Math.cos(Math.toRadians(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
-        if(90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))<Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))){
+        if(90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))>Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))){
             flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
             flyTx = flyTx*-1;
         }
