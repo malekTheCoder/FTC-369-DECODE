@@ -157,8 +157,10 @@ public class FinalBlueTeleop extends OpMode {
         telemetry.addData("Actual (tps)", fly.getVelocity());
 
         if (llResult != null && llResult.isValid()){
+
             Pose3D botPoseMT2 = llResult.getBotpose_MT2();
             Pose3D botPoseMT1 = llResult.getBotpose();
+
 
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("Ty", llResult.getTy());
