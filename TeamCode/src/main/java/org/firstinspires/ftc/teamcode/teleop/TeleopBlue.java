@@ -159,16 +159,18 @@ public class TeleopBlue extends OpMode {
         telemetry.addData("Actual (tps)", fly.getVelocity());
 
         if (llResult != null && llResult.isValid()){
-            Pose3D botPose = llResult.getBotpose_MT2();
+            Pose3D botPoseMT2 = llResult.getBotpose_MT2();
+            Pose3D botPoseMT1 = llResult.getBotpose();
+
+
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("Ty", llResult.getTy());
             telemetry.addData("Ta", llResult.getTa());
-            telemetry.addData("Turn Error", turnError);
-            telemetry.addData("Bot pose", botPose.toString());
-            telemetry.addData("Yaw", botPose.getOrientation().getYaw());
+            telemetry.addData("Bot pose MT2", botPoseMT2.toString());
+            telemetry.addData("Yaw MT2", botPoseMT2.getOrientation().getYaw());
+            telemetry.addData("Bot pose MT1", botPoseMT1.toString());
+            telemetry.addData("Yaw MT1", botPoseMT1.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
-            telemetry.addData("Fly Tx", flyTx);
-            telemetry.addData("Fly Distance", d2);
         }
 
 
