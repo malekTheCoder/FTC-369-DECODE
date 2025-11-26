@@ -10,7 +10,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class OneBotClose {
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(500);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setColorScheme(new ColorSchemeRedDark()) // set our bot to be red
@@ -18,7 +18,7 @@ public class OneBotClose {
                 .setConstraints(80, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-44, -28, Math.toRadians(240)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-10, -14.5, Math.toRadians(180)))
                         .waitSeconds(2.5)
                 .strafeToLinearHeading(new Vector2d(-12,-27), Math.toRadians(270)) // go to get first set of artifacts
                 .strafeToLinearHeading(new Vector2d(-12,-50), Math.toRadians(270)) // drive into first set of artifacts
