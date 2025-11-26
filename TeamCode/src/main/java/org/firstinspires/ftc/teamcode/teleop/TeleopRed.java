@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -12,16 +14,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Config
-@TeleOp(name = " V2 Bot Teleop Blue Side")
-public class BlueTeleopV2Bot extends OpMode {
+@TeleOp(name = " TELEOP RED")
+public class TeleopRed extends OpMode {
     private FtcDashboard dashboard;
 
     private Limelight3A limelight;
@@ -93,7 +93,7 @@ public class BlueTeleopV2Bot extends OpMode {
 
     private double verticalTranslation;
     private double flyTx;
-    private double d2; // change name
+    private double d2;
 
 
     @Override
@@ -114,8 +114,8 @@ public class BlueTeleopV2Bot extends OpMode {
         verticalTranslation = 75;
 
         dashboard = FtcDashboard.getInstance();
+        limelight.pipelineSwitch(1);
         limelight.start();
-        limelight.pipelineSwitch(0);
 
         telemetry.addLine("Hardware Initialized!");
     }
@@ -130,7 +130,7 @@ public class BlueTeleopV2Bot extends OpMode {
         handleBelt();
         handleKicker();
         handleRGB();
-        limelightOffest();
+
 
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
@@ -163,12 +163,9 @@ public class BlueTeleopV2Bot extends OpMode {
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("Ty", llResult.getTy());
             telemetry.addData("Ta", llResult.getTa());
-            telemetry.addData("Turn Error", turnError);
             telemetry.addData("Bot pose", botPose.toString());
             telemetry.addData("Yaw", botPose.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
-            telemetry.addData("Fly Tx", flyTx);
-            telemetry.addData("Fly Distance", d2);
         }
 
 
@@ -188,13 +185,7 @@ public class BlueTeleopV2Bot extends OpMode {
         double x = distanceFromLLTOFly;
         double d = distanceFromLimelightToGoalInches;
         d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)-2*x*d*Math.cos(Math.toRadians(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
-        if((90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))))+Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))>Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2)))){
-            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
-            flyTx = flyTx*-1;
-        }
-        else{
-            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
-        }
+        flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
     }
     private void handleKicker(){
         if (gamepad2.leftBumperWasPressed()){
@@ -238,11 +229,11 @@ public class BlueTeleopV2Bot extends OpMode {
     }
 
     private void handleRGB(){
-        if((Math.abs(targetVel-actualVel)<80 && Math.abs(turnCommand)<.1)) {
+        if(Math.abs(targetVel-actualVel)<40 && turnError<.5) {
             rgbLight.setPosition(0.5);
         }
         else{
-            rgbLight.setPosition(.28);
+            rgbLight.setPosition(.8);
         }
     }
 
