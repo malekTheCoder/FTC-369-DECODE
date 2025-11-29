@@ -18,8 +18,12 @@ public class OneBotClose {
                 .setConstraints(80, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-10, -14.5, Math.toRadians(180)))
-                        .waitSeconds(2.5)
+        // old starting pos new Pose2d(-10, -14.5, Math.toRadians(180))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-52,-47, Math.toRadians(237)))
+
+                .strafeToLinearHeading(new Vector2d(-44,-28),Math.toRadians(240)) // go to shoot first batch
+                .waitSeconds(2.5)
+
                 .strafeToLinearHeading(new Vector2d(-12,-27), Math.toRadians(270)) // go to get first set of artifacts
                 .strafeToLinearHeading(new Vector2d(-12,-50), Math.toRadians(270)) // drive into first set of artifacts
 

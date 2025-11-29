@@ -18,7 +18,7 @@ public class OneBotAutoPath {
                 .setConstraints(60, 50, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(61, -10, Math.toRadians(90)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(61, -10, Math.toRadians(180)))
                 .strafeToLinearHeading(new Vector2d(53,-12), Math.toRadians(225)) // position to shoot zero batch
 
                 .strafeToLinearHeading(new Vector2d(35,-30), Math.toRadians(270)) // go to first set of artifacts
@@ -28,14 +28,14 @@ public class OneBotAutoPath {
                 .strafeToLinearHeading(new Vector2d(12,-30), Math.toRadians(270)) // go to second set of artifacts
                 .strafeToLinearHeading(new Vector2d(12,-50), Math.toRadians(270)) // drive into second set of artifacts
 
-                .turnTo(Math.toRadians(180))
-                .strafeToLinearHeading(new Vector2d(0,-58), Math.toRadians(180)) // push classifier gate
+//                .turnTo(Math.toRadians(180))
+//                .strafeToLinearHeading(new Vector2d(0,-58), Math.toRadians(180)) // push classifier gate
 
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195)) // go back after grabbing second set of artifacts to shoot
 
-                .strafeToLinearHeading(new Vector2d(-12,-30), Math.toRadians(270)) // go to third set of artifacts
-                .strafeToLinearHeading(new Vector2d(-12,-50), Math.toRadians(270)) // drive into third set of artifacts
-                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195)) // go back after grabbing third set of artifacts to shoot
+//                .strafeToLinearHeading(new Vector2d(-12,-30), Math.toRadians(270)) // go to third set of artifacts
+//                .strafeToLinearHeading(new Vector2d(-12,-50), Math.toRadians(270)) // drive into third set of artifacts
+//                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195)) // go back after grabbing third set of artifacts to shoot
 
                 .build());
 
