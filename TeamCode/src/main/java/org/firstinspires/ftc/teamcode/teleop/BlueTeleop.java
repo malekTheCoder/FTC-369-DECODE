@@ -90,7 +90,9 @@ public class BlueTeleop extends OpMode {
     private double intakeMultiplier;
 
     private boolean kickerUp;
-    private double kickerUpPosition = 0.5;
+
+    //previous up pos 0.5
+    private double kickerUpPosition = 0.2;
     private double kickerDownPosition = 0;
 
     private double verticalTranslation;
@@ -116,7 +118,7 @@ public class BlueTeleop extends OpMode {
 
         intakeMultiplier = 0.6;
         verticalTranslation = 75;
-        flyAddVelocity = 2110;
+        flyAddVelocity = 1800;
 
         dashboard = FtcDashboard.getInstance();
         limelight.start();
