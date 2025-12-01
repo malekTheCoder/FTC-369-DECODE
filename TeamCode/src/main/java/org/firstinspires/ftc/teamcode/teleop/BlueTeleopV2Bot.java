@@ -8,6 +8,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -37,6 +38,8 @@ public class BlueTeleopV2Bot extends OpMode {
     private IMU imu;
 
     private Servo rgbLight;
+
+    private AnalogInput floodgate;
 
     private double distanceFromLLTOFly = 4.25;
 
@@ -94,6 +97,8 @@ public class BlueTeleopV2Bot extends OpMode {
     private double verticalTranslation;
     private double flyTx;
     private double d2; // change name
+    private double currentAmps;
+    private double voltage;
 
 
     @Override
@@ -106,6 +111,7 @@ public class BlueTeleopV2Bot extends OpMode {
         kicker = hardwareMap.get(Servo.class, "kicker");
         belt = hardwareMap.get(DcMotor.class, "belt");
         rgbLight = hardwareMap.get(Servo.class, "rgb");
+        floodgate = hardwareMap.get(AnalogInput.class, "floodgate");
 
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
@@ -131,7 +137,7 @@ public class BlueTeleopV2Bot extends OpMode {
         handleKicker();
         handleRGB();
         limelightOffest();
-
+        handleFloodgate();
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
 
@@ -157,6 +163,8 @@ public class BlueTeleopV2Bot extends OpMode {
 
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
+        telemetry.addData("Sensor Voltage", "%.3f V", voltage);
+        telemetry.addData("Current Draw", "%.2f A", currentAmps);
 
         if (llResult != null && llResult.isValid()){
             Pose3D botPose = llResult.getBotpose_MT2();
@@ -179,7 +187,10 @@ public class BlueTeleopV2Bot extends OpMode {
 
         telemetry.update();
     }
-
+    private void handleFloodgate(){
+        voltage = floodgate.getVoltage();
+        currentAmps = voltage/ 0.185;
+    }
     private void limelightOffest(){
         //Use law of cos with SAS to find the third side (d2)
         //Use law of sin to find the 2nd base angle of triangle
