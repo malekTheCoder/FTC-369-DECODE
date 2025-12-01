@@ -75,7 +75,7 @@ public class BlueTeleop extends OpMode {
     double limelightMountAngleDegrees = 15;
     double limelightLensHeightInches = 13;
     double goalHeightInches = 29.5;
-    double beltPowerScale = 0.8;
+    double beltPowerScale = 1;
 
     double angleToGoalDegrees;
     double angleToGoalRadians;
@@ -91,9 +91,9 @@ public class BlueTeleop extends OpMode {
 
     private boolean kickerUp;
 
-    //previous up pos 0.5
-    private double kickerUpPosition = 0.2;
-    private double kickerDownPosition = 0;
+    //final positions low = 0.2 and high 0.5
+    private double kickerUpPosition = 0.5;
+    private double kickerDownPosition = 0.2;
 
     private double verticalTranslation;
     private double flyTx;
