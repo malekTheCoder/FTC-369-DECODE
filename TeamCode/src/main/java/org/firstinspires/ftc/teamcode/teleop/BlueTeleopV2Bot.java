@@ -189,7 +189,7 @@ public class BlueTeleopV2Bot extends OpMode {
     }
     private void handleFloodgate(){
         voltage = floodgate.getVoltage();
-        currentAmps = voltage/ 0.185;
+        currentAmps = voltage/ 3;
     }
     private void limelightOffest(){
         //Use law of cos with SAS to find the third side (d2)
