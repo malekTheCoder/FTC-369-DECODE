@@ -73,7 +73,7 @@ public class BlueTeleop extends OpMode {
 
     double targetOffsetAngle_Vertical;
     double limelightMountAngleDegrees = 15;
-    double limelightLensHeightInches = 13;
+    double limelightLensHeightInches = 15.1;
     double goalHeightInches = 29.5;
     double beltPowerScale = 1;
 
