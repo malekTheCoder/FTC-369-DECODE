@@ -164,6 +164,7 @@ public class TeleopRed extends OpMode {
 
 
             telemetry.addData("Tx", llResult.getTx());
+            telemetry.addData("FlyTx", flyTx);
             telemetry.addData("Ty", llResult.getTy());
             telemetry.addData("Ta", llResult.getTa());
             telemetry.addData("Bot pose MT2", botPoseMT2.toString());
