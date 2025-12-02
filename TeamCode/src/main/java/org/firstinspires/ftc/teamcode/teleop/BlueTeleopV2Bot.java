@@ -163,6 +163,15 @@ public class BlueTeleopV2Bot extends OpMode {
 
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
+        /*if(Math.abs(gamepad1.left_stick_y)>.5 && fly.getVelocity()>1600 && gamepad2.left_trigger>.3) {
+            telemetry.addLine("Driving, Shooting, Intake:");
+        }
+        else if(Math.abs(gamepad1.left_stick_y)>.5 && fly.getVelocity()>1600){
+            telemetry.addLine("Driving and Shooting:");
+        }
+        else if(Math.abs(gamepad1.left_stick_y)>.5){
+            telemetry.addLine("Driving:");
+        }*/
         telemetry.addData("Sensor Voltage", "%.3f V", voltage);
         telemetry.addData("Current Draw", "%.2f A", currentAmps);
 
@@ -189,7 +198,7 @@ public class BlueTeleopV2Bot extends OpMode {
     }
     private void handleFloodgate(){
         voltage = floodgate.getVoltage();
-        currentAmps = voltage/ ;
+        currentAmps = voltage * 15.152;
     }
     private void limelightOffest(){
         //Use law of cos with SAS to find the third side (d2)
