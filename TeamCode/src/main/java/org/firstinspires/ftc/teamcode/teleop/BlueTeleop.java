@@ -97,8 +97,7 @@ public class BlueTeleop extends OpMode {
 
     private double verticalTranslation;
     private double flyTx;
-    private double d2; // change name
-
+    private double flyDistance; // change name
 
     @Override
     public void init() {
@@ -127,8 +126,6 @@ public class BlueTeleop extends OpMode {
         telemetry.addLine("Hardware Initialized!");
     }
 
-
-
     @Override
     public void loop() {
         updateLimelightInfo();
@@ -140,7 +137,6 @@ public class BlueTeleop extends OpMode {
         limelightOffest();
 
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-
 
         if (gamepad1.aWasPressed()){
             // if valid detection
@@ -154,13 +150,11 @@ public class BlueTeleop extends OpMode {
             aiming = false;
         }
 
-
         if (gamepad1.a){
             aim();
         } else {
             handleDrivetrain();
         }
-
 
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
@@ -168,7 +162,6 @@ public class BlueTeleop extends OpMode {
         if (llResult != null && llResult.isValid()){
             Pose3D botPoseMT2 = llResult.getBotpose_MT2();
             Pose3D botPoseMT1 = llResult.getBotpose();
-
 
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("FlyTx", flyTx);
@@ -179,8 +172,8 @@ public class BlueTeleop extends OpMode {
             telemetry.addData("Bot pose MT1", botPoseMT1.toString());
             telemetry.addData("Yaw MT1", botPoseMT1.getOrientation().getYaw());
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
+            telemetry.addData("Fly Distance", flyDistance);
         }
-
 
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("targetVel", targetVel);
@@ -197,13 +190,13 @@ public class BlueTeleop extends OpMode {
         double B=Math.abs(90-tx);
         double x = distanceFromLLTOFly;
         double d = distanceFromLimelightToGoalInches;
-        d2 = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)-2*x*d*Math.cos(Math.toRadians(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
+        flyDistance = Math.sqrt(Math.pow(x, 2) + Math.pow(d, 2)-2*x*d*Math.cos(Math.toRadians(B))); // d2 is the distance to the april tag from the fly wheel, formula: sqrt(a^2+c^2-2ac cos(B)
         if(tx<0){
-            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
+            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/ flyDistance))); //sin-1(d(Sin(B)/d2
             flyTx = flyTx*-1;
         }
         else{
-            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/d2))); //sin-1(d(Sin(B)/d2
+            flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/ flyDistance))); //sin-1(d(Sin(B)/d2
         }
     }
     private void handleKicker(){
@@ -219,8 +212,6 @@ public class BlueTeleop extends OpMode {
             } else if(!kickerUp){
                 kickerUp = true;
             }
-
-
         }
     }
 
@@ -250,8 +241,6 @@ public class BlueTeleop extends OpMode {
             fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
 
         }
-
-
 }
 
 //    private double shooterModel (double distanceInches){
@@ -298,7 +287,6 @@ private void handleIntake(){
     intake.setPower(gamepad2.left_trigger * intakeMultiplier);
 }
 private void handleDrivetrain() {
-
     if (gamepad1.x){
         imu.resetYaw();
     }
@@ -306,7 +294,6 @@ private void handleDrivetrain() {
     // drivetrain code to get inputs from controller and call the drive method w/ parameters
     double rightStickX = gamepad1.right_stick_x;
     if (Math.abs(rightStickX) < 0.05) rightStickX = 0;
-
 
     double x = gamepad1.left_stick_x;
     double y = -gamepad1.left_stick_y;
