@@ -15,10 +15,14 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+
+
 
 @Config
 @TeleOp(name = " V2 Bot Teleop Blue Side")
@@ -99,6 +103,7 @@ public class BlueTeleopV2Bot extends OpMode {
     private double d2; // change name
     private double currentAmps;
     private double voltage;
+    private double maxAmp;
 
 
     @Override
@@ -122,7 +127,7 @@ public class BlueTeleopV2Bot extends OpMode {
         dashboard = FtcDashboard.getInstance();
         limelight.start();
         limelight.pipelineSwitch(0);
-
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("Hardware Initialized!");
     }
 
@@ -174,6 +179,7 @@ public class BlueTeleopV2Bot extends OpMode {
         }*/
         telemetry.addData("Sensor Voltage", "%.3f V", voltage);
         telemetry.addData("Current Draw", "%.2f A", currentAmps);
+        telemetry.addData("Max Amps: ", "%.2f A", maxAmp);
 
         if (llResult != null && llResult.isValid()){
             Pose3D botPose = llResult.getBotpose_MT2();
@@ -199,6 +205,9 @@ public class BlueTeleopV2Bot extends OpMode {
     private void handleFloodgate(){
         voltage = floodgate.getVoltage();
         currentAmps = voltage * 15.152;
+        if(currentAmps>maxAmp){
+            maxAmp = currentAmps;
+        }
     }
     private void limelightOffest(){
         //Use law of cos with SAS to find the third side (d2)
