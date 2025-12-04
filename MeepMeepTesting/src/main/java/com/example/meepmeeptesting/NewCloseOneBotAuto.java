@@ -19,7 +19,7 @@ public class NewCloseOneBotAuto {
                 .build();
 
         // old starting pos new Pose2d(-10, -14.5, Math.toRadians(180))
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-52,-47, Math.toRadians(237)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-59,-42, Math.toRadians(233)))
 
                 /*
 
@@ -37,7 +37,7 @@ public class NewCloseOneBotAuto {
 
 
 
-                .strafeToLinearHeading(new Vector2d(-35,-24),Math.toRadians(240)) // go to shoot preload
+                .strafeToLinearHeading(new Vector2d(-35,-24),Math.toRadians(230)) // go to shoot preload
                 .waitSeconds(2)
 
                 .splineToLinearHeading(new Pose2d(-13,-29, Math.toRadians(270)), Math.toRadians(270)) // go to first set of artifacts

@@ -33,14 +33,14 @@ public class TwoBotAutoPath {
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195))
                 .waitSeconds(2)
 
-                // extra
+
+                // extra not part of main auto plan
                 .strafeToLinearHeading(new Vector2d(40,-63), Math.toRadians(180))// go grab anywehre
                 .strafeToLinearHeading(new Vector2d(20,-63), Math.toRadians(180))// go grab anywehre
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195)) // go to shoot
                 .waitSeconds(2)
-                //
 
-                .waitSeconds(1)
+
                 .strafeToLinearHeading(new Vector2d(40,-15), Math.toRadians(180)) // get off launch line
 
 
