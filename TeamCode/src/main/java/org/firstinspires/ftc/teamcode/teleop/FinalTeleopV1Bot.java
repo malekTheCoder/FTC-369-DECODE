@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -44,7 +45,7 @@ public class FinalTeleopV1Bot extends OpMode {
     private DcMotorEx fly;
     private CRServo feeder;
     private IMU imu;
-
+    private Servo hood;
     YawPitchRollAngles orientation;
     LLResult llResult;
 
@@ -102,6 +103,7 @@ public class FinalTeleopV1Bot extends OpMode {
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         feeder = hardwareMap.get(CRServo.class, "feeder");
+        hood = hardwareMap.get(Servo.class, "hood");
 
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
@@ -149,6 +151,8 @@ public class FinalTeleopV1Bot extends OpMode {
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
 
+        telemetry.addData("hood position", hood.getPosition());
+
         if (llResult != null && llResult.isValid()){
             Pose3D botPose = llResult.getBotpose_MT2();
             telemetry.addData("Tx", llResult.getTx());
@@ -164,17 +168,29 @@ public class FinalTeleopV1Bot extends OpMode {
     }
 
     private void handleFlywheel() {
-        targetVel = shooterModel(distanceFromLimelightToGoalInches);
+        if(gamepad2.dpadUpWasPressed()) {
+            targetVel += 25/*shooterModel(distanceFromLimelightToGoalInches)*/;
+        }
+        if(gamepad2.dpadDownWasPressed()) {
+            targetVel -= 25/*shooterModel(distanceFromLimelightToGoalInches)*/;
+        }
 
         if (gamepad2.aWasPressed()){
-            if (flyMultiplier == 1){
-                flyMultiplier = 0;
-            }
-            else{
-                flyMultiplier = 1;
-            }
+            targetVel = 0;
         }
-        fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
+
+        if(gamepad2.xWasPressed()){
+            hood.setPosition(.5);
+        }
+
+        if(gamepad2.dpadRightWasPressed()){
+            hood.setPosition(hood.getPosition()-0.05);
+        }
+        if(gamepad2.dpadLeftWasPressed()){
+            hood.setPosition(hood.getPosition()+0.05);
+        }
+
+        fly.setVelocity(targetVel); // ticks per second (negative allowed)
     }
 
     private double shooterModel (double distanceInches){

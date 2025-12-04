@@ -45,6 +45,7 @@ public class TeleopV2Bot extends OpMode {
     private DcMotorEx fly;
     private DcMotor belt;
     private Servo kicker;
+    private Servo hood;
     private IMU imu;
 
     YawPitchRollAngles orientation;
@@ -98,8 +99,13 @@ public class TeleopV2Bot extends OpMode {
     private double kickerUpPosition = 0;
     private double kickerDownPosition = 1;
 
-    private double verticalTranslation;
+    private double engagedHoodPos = 0;
 
+    private double disengagedHoodPos = 0;
+
+
+    private double verticalTranslation;
+    private double hoodPosition;
 
     @Override
     public void init() {
@@ -110,14 +116,16 @@ public class TeleopV2Bot extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         kicker = hardwareMap.get(Servo.class, "kicker");
         belt = hardwareMap.get(DcMotor.class, "belt");
+        hood = hardwareMap.get(Servo.class, "hood");
 
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
 
         intakeMultiplier = 0;
         verticalTranslation = 50;
+        hoodPosition = 0.5;
 
-        limelight.start();
+                limelight.start();
         telemetry.addLine("Hardware Initialized!");
     }
 
@@ -157,6 +165,7 @@ public class TeleopV2Bot extends OpMode {
 
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
+        telemetry.addData("hood position", hood.getPosition());
 
         if (llResult != null && llResult.isValid()){
             Pose3D botPose = llResult.getBotpose_MT2();
@@ -191,18 +200,36 @@ public class TeleopV2Bot extends OpMode {
     }
 
     private void handleFlywheel() {
-        actualVel = fly.getVelocity();
-        targetVel = shooterModel(distanceFromLimelightToGoalInches);
+        hood.setPosition(hoodPosition);
+        if(gamepad2.dpadUpWasPressed()) {
+            targetVel += 25/*shooterModel(distanceFromLimelightToGoalInches)*/;
+        }
+        if(gamepad2.dpadDownWasPressed()) {
+            targetVel -= 25/*shooterModel(distanceFromLimelightToGoalInches)*/;
+        }
 
         if (gamepad2.aWasPressed()){
-            if (flyMultiplier == 1){
-                flyMultiplier = 0;
-            }
-            else{
-                flyMultiplier = 1;
-            }
+            targetVel = 0;
         }
-        fly.setVelocity(targetVel* flyMultiplier); // ticks per second (negative allowed)
+
+        if(gamepad2.xWasPressed()){
+            hoodPosition = .5;
+        }
+
+        if(gamepad2.dpadRightWasPressed()){
+            hoodPosition-=0.01;
+        }
+        if(gamepad2.dpadLeftWasPressed()){
+            hoodPosition+=0.01;
+        }
+        if(gamepad2.yWasPressed()){
+            hoodPosition = .49 ;
+        }
+        if(gamepad2.bWasPressed()){
+            hoodPosition = .51;
+        }
+        fly.setVelocity(targetVel); // ticks per second (negative allowed)
+
     }
 
     private double shooterModel (double distanceInches){
