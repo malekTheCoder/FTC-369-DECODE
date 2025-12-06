@@ -266,7 +266,7 @@ private double shooterModel (double distanceInches){
         return 3.07759*distanceInches+1524.16547;
     }
     else{
-        return Math.pow(0.0000155316*distanceInches, 3)-Math.pow(0.0139401*distanceInches, 2)+Math.pow(5.68748*distanceInches, 3)+1429.2461;
+        return 1.71136*distanceInches+1790.64967;
     }
 }
 private void handleHood(){
