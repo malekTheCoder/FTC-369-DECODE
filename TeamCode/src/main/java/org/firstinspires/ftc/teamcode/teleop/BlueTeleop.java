@@ -143,9 +143,9 @@ public class BlueTeleop extends OpMode {
         handleKicker();
         handleRGB();
         handleHood();
-
-        limelightOffest();
-
+        if(llResult.isValid()){
+            limelightOffest();
+        }
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
 
         if (gamepad1.aWasPressed()){
