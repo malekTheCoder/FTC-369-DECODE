@@ -184,6 +184,7 @@ public class BlueTeleop extends OpMode {
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
             telemetry.addData("Fly Distance", flyDistance);
         }
+        telemetry.addData("fly distance constant", flyDistance);
 
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("targetVel", targetVel);
