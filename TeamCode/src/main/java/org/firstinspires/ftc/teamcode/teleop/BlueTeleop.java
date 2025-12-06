@@ -184,7 +184,6 @@ public class BlueTeleop extends OpMode {
             telemetry.addData("Distance", distanceFromLimelightToGoalInches);
             telemetry.addData("Fly Distance", flyDistance);
         }
-        telemetry.addData("fly distance constant", flyDistance);
 
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("targetVel", targetVel);
@@ -279,7 +278,7 @@ private void handleHood(){
 }
 
 private void handleRGB(){
-    if((Math.abs(targetVel-actualVel)<80 && Math.abs(flyTx)<.5)) {
+    if((Math.abs(targetVel-actualVel)<80 && Math.abs(flyTx)<.5  && flyMultiplier != 0)) {
         rgbLight.setPosition(0.5);
     }
     else{

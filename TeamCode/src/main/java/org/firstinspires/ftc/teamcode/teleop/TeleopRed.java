@@ -35,6 +35,7 @@ public class TeleopRed extends OpMode {
     private DcMotor belt;
     private Servo kicker;
     private IMU imu;
+    private Servo hood;
 
     private Servo rgbLight;
 
@@ -73,7 +74,7 @@ public class TeleopRed extends OpMode {
 
     double targetOffsetAngle_Vertical;
     double limelightMountAngleDegrees = 15;
-    double limelightLensHeightInches = 13;
+    double limelightLensHeightInches = 16.857;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;
 
@@ -95,6 +96,9 @@ public class TeleopRed extends OpMode {
     private double flyTx;
     private double flyDistance;
 
+    private double engagedHoodPos = 0.61;
+
+    private double disengagedHoodPos = 0.43;
 
     @Override
     public void init() {
@@ -106,6 +110,7 @@ public class TeleopRed extends OpMode {
         kicker = hardwareMap.get(Servo.class, "kicker");
         belt = hardwareMap.get(DcMotor.class, "belt");
         rgbLight = hardwareMap.get(Servo.class, "rgb");
+        hood = hardwareMap.get(Servo.class, "hood");
 
         turnPIDCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, integralSumMax, stabilityThreshold, lowPassGain);
         turnPID = new PIDEx(turnPIDCoeffs);
@@ -126,10 +131,13 @@ public class TeleopRed extends OpMode {
     public void loop() {
         updateLimelightInfo();
         handleFlywheel();
+        handleHood();
         handleIntake();
         handleBelt();
         handleKicker();
-        limelightOffest();
+        if(llResult.isValid()){
+            limelightOffest();
+        }
         handleRGB();
 
 
@@ -238,15 +246,30 @@ public class TeleopRed extends OpMode {
 //    }
 
     private double shooterModel (double distanceInches){
-            return 8.78571*distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
+        if(flyDistance < 60){
+            return(1700);
+        }
+        else if(flyDistance < 145){
+            return 3.07759*distanceInches+1524.16547;
+        }
+        else{
+            return 1.71136*distanceInches+1790.64967;
+        }
     }
-
+    private void handleHood(){
+        if (flyDistance < 60){
+            hood.setPosition(disengagedHoodPos);
+        }
+        if(flyDistance > 62){
+            hood.setPosition(engagedHoodPos);
+        }
+    }
     private void handleRGB(){
-        if(Math.abs(targetVel-actualVel)<40 && turnError<.5) {
+        if(Math.abs(targetVel-actualVel)<40 && Math.abs(flyTx)<.5 && flyMultiplier != 0) {
             rgbLight.setPosition(0.5);
         }
         else{
-            rgbLight.setPosition(.8);
+            rgbLight.setPosition(.28);
         }
     }
 
