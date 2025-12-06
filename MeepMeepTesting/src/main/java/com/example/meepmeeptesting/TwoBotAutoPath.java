@@ -10,7 +10,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class TwoBotAutoPath {
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(400);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setColorScheme(new ColorSchemeRedDark()) // set our bot to be red

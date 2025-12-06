@@ -37,10 +37,10 @@ public class NewCloseOneBotAuto {
 
 
 
-                .strafeToLinearHeading(new Vector2d(-35,-24),Math.toRadians(230)) // go to shoot preload
+                .strafeToLinearHeading(new Vector2d(-16,-14),Math.toRadians(230)) // go to shoot preload
                 .waitSeconds(2)
 
-                .splineToLinearHeading(new Pose2d(-13,-29, Math.toRadians(270)), Math.toRadians(270)) // go to first set of artifacts
+//                .splineToLinearHeading(new Pose2d(-13,-29, Math.toRadians(270)), Math.toRadians(270)) // go to first set of artifacts
                 .strafeToLinearHeading(new Vector2d(-12,-50), Math.toRadians(270)) // drive into first set of artifacts
                 .splineToLinearHeading(new Pose2d(-2,-58, Math.toRadians(270)), Math.toRadians(270)) //push classifier gate
                 .waitSeconds(1)// wait for gate

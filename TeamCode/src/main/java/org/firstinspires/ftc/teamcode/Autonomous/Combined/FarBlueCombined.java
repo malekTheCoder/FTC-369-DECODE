@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Autonomous.Combined;
 
 import androidx.annotation.NonNull;
 
@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -23,11 +22,26 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "New Blue Close Auto w/ Splines")
-public class NewBlueCloseAuto extends LinearOpMode {
+@Autonomous(name = "Far Blue Combined")
+public class FarBlueCombined extends LinearOpMode {
+
+    public class Hood{
+        private double HOOD_ENGAGED_POSITION = 0.61;
+        private double HOOD_DISENGAGED_POSITION = 0.43;
+        private Servo hood;
+
+        private ElapsedTime hoodTimer;
+
+        public Hood(HardwareMap hardwareMap) {
+            hood = hardwareMap.get(Servo.class, "hood");
+            hood.setPosition(HOOD_ENGAGED_POSITION);
+        }
+
+
+    }
     public class Kicker {
-        double KICKER_DOWN_POSITION = 0.2;
-        double KICKER_UP_POSITION = 0.5;
+        double KICKER_DOWN_POSITION = 0;
+        double KICKER_UP_POSITION = 1;
         double INTAKE_POWER = 0.6;
         private DcMotorEx flywheel;
         private Servo kicker;
@@ -304,123 +318,125 @@ public class NewBlueCloseAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(-59,-42, Math.toRadians(233)); // initial pose from meep meep
+        Pose2d initialPose = new Pose2d(61, -15, Math.PI);
+
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
         Kicker kicker = new Kicker(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         Belt belt = new Belt(hardwareMap);
+        Hood hood = new Hood(hardwareMap);
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-35,-24),Math.toRadians(230)); // go to shoot preload
+                .strafeToLinearHeading(new Vector2d(55,-19), Math.toRadians(201.5));
 
-        TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-11,-20), Math.toRadians(270)) // go to first set of artifacts
-                .strafeToLinearHeading(new Vector2d(-11,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(-40,-28),Math.toRadians(230)); // go to shoot first batch
 
-        TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(13,-18), Math.toRadians(270)) // go to second set of artifacts
-                .strafeToLinearHeading(new Vector2d(13,-38),Math.toRadians(270)) // drive in w spline
-                .strafeToLinearHeading(new Vector2d(-40,-28),Math.toRadians(232)); // go to shoot second batch\
+        TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(46,-23), Math.toRadians(270)) // go to first set of artifacts
+                .strafeToLinearHeading(new Vector2d(46,-40), Math.toRadians(270)) // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(203)); // go back after grabbing first set of artifacts to shoot
 
-        TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(38,-20), Math.toRadians(270)) // go to third set of artifacts
-                .strafeToLinearHeading(new Vector2d(38, -45), Math.toRadians(270)) //drive into third row
-                .strafeToLinearHeading(new Vector2d(-40,-28),Math.toRadians(232)); // go to shoot
+        TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(18,-72), Math.toRadians(180)) // go to intake from gate
+                .waitSeconds(3)
+                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(201.5)); // go back to shoot
 
-        TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-50,-28),Math.toRadians(240)); // get off launch line
-
+        TrajectoryActionBuilder goLoopForExtraRandom = goLoopForGateBatch.endTrajectory().endTrajectory()
+                .strafeToLinearHeading(new Vector2d(40,-70), Math.toRadians(180))// go grab anywehre
+                .strafeToLinearHeading(new Vector2d(20,-70), Math.toRadians(180))// go grab anywehre
+                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(195)); // go to shoot
 
 
         SequentialAction shootPreload = new SequentialAction(
-                new RaceAction(
-                        flywheel.holdFlywheelVelocity(1650,3),
-                        goToShootPreload.build()
+                new ParallelAction(
+                        goToShootPreload.build(),
+                        flywheel.holdFlywheelVelocity(2065, 0.75)
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1650,3),
-                        intake.holdIntakePower(0.5,3),
-                        belt.holdBeltPower(-0.5,3),
+                        flywheel.holdFlywheelVelocity(2065,1.2),
+                        intake.holdIntakePower(0.5,1.2),
+                        belt.holdBeltPower(-0.5,1.2),
                         new SequentialAction(
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
-
-                )
-        );
-
-
-        SequentialAction TestingshootPreload = new SequentialAction( // in testing
-                new RaceAction(
-                        flywheel.holdFlywheelVelocity(1650,3),
-                        goToShootPreload.build()
-                ),
-                new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1650,3),
-                        intake.holdIntakePower(0.5,3),
-                        new SequentialAction(
-                                kicker.kickerUp(),
-                                kicker.kickerDown(),
-                                belt.holdBeltPower(-0.5,0.3),
-                                new RaceAction(
-                                        belt.holdBeltPower(-0.5,0.3),
-                                        kicker.kickerUp()
-                                ),
-                                belt.stopBelt(),
-                                kicker.kickerDown(),
-                                belt.holdBeltPower(-0.5,0.3),
-                                new RaceAction(
-                                        belt.holdBeltPower(-0.5,0.3),
-                                        kicker.kickerUp()
-                                ),
-                                kicker.kickerDown()
-                        )
-
                 )
         );
 
         SequentialAction firstBatchLoop = new SequentialAction(
                 flywheel.stopFlywheel(0),
-                intake.stopIntake(),
-                belt.stopBelt(),
                 new ParallelAction(
-                        goToFirstBatchAndDriveInAndGoBackToShoot.build(),
+                        goLoopForFirstSet.build(),
+                        intake.holdIntakePower(0.6,2),
+                        belt.holdBeltPower(-0.8,2),
                         new SequentialAction(
-                                new SleepAction(0.5),
-                                new ParallelAction(
-                                        intake.holdIntakePower(0.6,2),
-                                        belt.holdBeltPower(-0.8,2)
-                                ),
-                                flywheel.holdFlywheelVelocity(1650,1),
-                                new SleepAction(1),
-                                new ParallelAction(
-                                        flywheel.holdFlywheelVelocity(1650,3),
-                                        intake.holdIntakePower(0.5,3),
-                                        belt.holdBeltPower(-0.5,3),
-                                        new SequentialAction(
-                                                kicker.kickerUp(),
-                                                kicker.kickerDown(),
-                                                new SleepAction(0.2),
-                                                kicker.kickerUp(),
-                                                kicker.kickerDown(),
-                                                new SleepAction(0.2),
-                                                kicker.kickerUp(),
-                                                kicker.kickerDown()
-                                        )
-
-                                )
+                                new SleepAction(1.5),
+                                flywheel.holdFlywheelVelocity(2065,0.5)
+                        )
+                ),
+                new ParallelAction(
+                        flywheel.holdFlywheelVelocity(2065,1.2),
+                        intake.holdIntakePower(0.5,1.2),
+                        belt.holdBeltPower(-0.5,1.2),
+                        new SequentialAction(
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown(),
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown(),
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown()
                         )
                 )
 
+
+
+
         );
+
+        SequentialAction gateBatchLoop = new SequentialAction(
+                flywheel.stopFlywheel(0),
+                new ParallelAction(
+                        goLoopForGateBatch.build(),
+                        intake.holdIntakePower(0.6,3.5),
+                        belt.holdBeltPower(-0.8,3.5),
+                        new SequentialAction(
+                                new SleepAction(3),
+                                flywheel.holdFlywheelVelocity(2075,0.5)
+                        )
+                ),
+                new ParallelAction(
+                        flywheel.holdFlywheelVelocity(2075,1.2),
+                        intake.holdIntakePower(0.5,1.2),
+                        belt.holdBeltPower(-0.5,1.2),
+                        new SequentialAction(
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown(),
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown(),
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown()
+                        )
+                )
+        );
+
+
+
+
+
+
 
 
 
@@ -428,10 +444,6 @@ public class NewBlueCloseAuto extends LinearOpMode {
 
 
         while (!opModeIsActive()){
-            if (isStopRequested()){
-                return;
-            }
-
             telemetry.addData("Position during Init", initialPose);
             telemetry.update();
         }
@@ -440,12 +452,11 @@ public class NewBlueCloseAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
 //                        goToShootPreload.build(),
-//                        goToFirstBatchAndDriveInAndGoBackToShoot.build(),
-//                        goLoopPathForSecondBatch.build(),
-//                        goLoopPathForThirdBatch.build(),
-//                        goGetOffLaunchLine.build()
+//                        goLoopForFirstSet.build(),
+//                        goLoopForGateBatch.build()
                         shootPreload,
-                        firstBatchLoop
+                        firstBatchLoop,
+                        gateBatchLoop
                 )
 
 
