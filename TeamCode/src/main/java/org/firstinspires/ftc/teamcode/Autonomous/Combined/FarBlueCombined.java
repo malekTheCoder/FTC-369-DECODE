@@ -334,12 +334,12 @@ public class FarBlueCombined extends LinearOpMode {
         TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,-23), Math.toRadians(270)) // go to first set of artifacts
                 .strafeToLinearHeading(new Vector2d(46,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(203)); // go back after grabbing first set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(204)); // go back after grabbing first set of artifacts to shoot
 
         TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(18,-72), Math.toRadians(180)) // go to intake from gate
+                .strafeToLinearHeading(new Vector2d(30,-73), Math.toRadians(180)) // go to intake from gate
                 .waitSeconds(3)
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(201.5)); // go back to shoot
+                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202.5)); // go back to shoot
 
         TrajectoryActionBuilder goLoopForExtraRandom = goLoopForGateBatch.endTrajectory().endTrajectory()
                 .strafeToLinearHeading(new Vector2d(40,-70), Math.toRadians(180))// go grab anywehre
@@ -350,10 +350,10 @@ public class FarBlueCombined extends LinearOpMode {
         SequentialAction shootPreload = new SequentialAction(
                 new ParallelAction(
                         goToShootPreload.build(),
-                        flywheel.holdFlywheelVelocity(2065, 0.75)
+                        flywheel.holdFlywheelVelocity(2060, 0.75)
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(2065,1.2),
+                        flywheel.holdFlywheelVelocity(2060,1.2),
                         intake.holdIntakePower(0.5,1.2),
                         belt.holdBeltPower(-0.5,1.2),
                         new SequentialAction(
@@ -377,12 +377,12 @@ public class FarBlueCombined extends LinearOpMode {
                         intake.holdIntakePower(0.6,2),
                         belt.holdBeltPower(-0.8,2),
                         new SequentialAction(
-                                new SleepAction(1.5),
-                                flywheel.holdFlywheelVelocity(2065,0.5)
+                                new SleepAction(2.2),
+                                flywheel.holdFlywheelVelocity(2060,0.3)
                         )
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(2065,1.2),
+                        flywheel.holdFlywheelVelocity(2060,1.2),
                         intake.holdIntakePower(0.5,1.2),
                         belt.holdBeltPower(-0.5,1.2),
                         new SequentialAction(
@@ -407,22 +407,23 @@ public class FarBlueCombined extends LinearOpMode {
                 flywheel.stopFlywheel(0),
                 new ParallelAction(
                         goLoopForGateBatch.build(),
+                        flywheel.stopFlywheel(0),
                         intake.holdIntakePower(0.6,3.5),
-                        belt.holdBeltPower(-0.8,3.5),
-                        new SequentialAction(
-                                new SleepAction(3),
-                                flywheel.holdFlywheelVelocity(2075,0.5)
-                        )
+                        belt.holdBeltPower(-0.8,3.5)
+//                        new SequentialAction(
+//                                new SleepAction(4.2),
+//                                flywheel.holdFlywheelVelocity(2060,0.1)
+//                        )
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(2075,1.2),
+                        flywheel.holdFlywheelVelocity(2060,1.2),
                         intake.holdIntakePower(0.5,1.2),
-                        belt.holdBeltPower(-0.5,1.2),
+                        belt.holdBeltPower(-0.4,1.2),
                         new SequentialAction(
-                                new SleepAction(0.4),
+                                new SleepAction(0.7),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.4),
+                                new SleepAction(0.35),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
                                 new SleepAction(0.4),
