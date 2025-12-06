@@ -38,6 +38,8 @@ public class BlueTeleop extends OpMode {
 
     private Servo rgbLight;
 
+    private Servo hood;
+
     private double distanceFromLLTOFly = 4.25;
 
     YawPitchRollAngles orientation;
@@ -73,7 +75,7 @@ public class BlueTeleop extends OpMode {
 
     double targetOffsetAngle_Vertical;
     double limelightMountAngleDegrees = 15;
-    double limelightLensHeightInches = 15.1;
+    double limelightLensHeightInches = 16.857;
     double goalHeightInches = 29.5;
     double beltPowerScale = 1;
 
@@ -95,9 +97,13 @@ public class BlueTeleop extends OpMode {
     private double kickerUpPosition = 0.5;
     private double kickerDownPosition = 0.2;
 
+    private double engagedHoodPos = 0.61;
+
+    private double disengagedHoodPos = 0.43;
+
     private double verticalTranslation;
     private double flyTx;
-    private double flyDistance; // change name
+    private double flyDistance;
 
     @Override
     public void init() {
@@ -109,6 +115,8 @@ public class BlueTeleop extends OpMode {
         kicker = hardwareMap.get(Servo.class, "kicker");
         belt = hardwareMap.get(DcMotor.class, "belt");
         rgbLight = hardwareMap.get(Servo.class, "rgb");
+
+        hood = hardwareMap.get(Servo.class, "hood");
 
         kickerUp = false;
 
@@ -134,6 +142,8 @@ public class BlueTeleop extends OpMode {
         handleBelt();
         handleKicker();
         handleRGB();
+        handleHood();
+
         limelightOffest();
 
         botHeadingIMU = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
@@ -248,11 +258,27 @@ public class BlueTeleop extends OpMode {
 //    }
 
 private double shooterModel (double distanceInches){
-    return 8.78571*distanceInches+1641.42857; // add regression here to return the velocity needed given the distance
+    if(flyDistance < 60){
+        return(1700);
+    }
+    else if(flyDistance < 145){
+        return 3.07759*distanceInches+1524.16547;
+    }
+    else{
+        return Math.pow(0.0000155316*distanceInches, 3)-Math.pow(0.0139401*distanceInches, 2)+Math.pow(5.68748*distanceInches, 3)+1429.2461;
+    }
+}
+private void handleHood(){
+    if (flyDistance < 60){
+        hood.setPosition(disengagedHoodPos);
+    }
+    if(flyDistance > 62){
+        hood.setPosition(engagedHoodPos);
+    }
 }
 
 private void handleRGB(){
-    if((Math.abs(targetVel-actualVel)<80 && Math.abs(turnCommand)<.1)) {
+    if((Math.abs(targetVel-actualVel)<80 && Math.abs(flyTx)<.5)) {
         rgbLight.setPosition(0.5);
     }
     else{
