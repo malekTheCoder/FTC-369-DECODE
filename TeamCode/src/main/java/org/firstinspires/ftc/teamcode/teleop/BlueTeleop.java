@@ -261,11 +261,11 @@ private double shooterModel (double distanceInches){
     if(flyDistance < 60){
         return(1700);
     }
-    else if(flyDistance < 145){
+    else if(flyDistance < 130){
         return 3.07759*distanceInches+1524.16547;
     }
     else{
-        return 1.71136*distanceInches+1790.64967;
+        return 1.71136*distanceInches+1790.64967+135;
     }
 }
 private void handleHood(){
