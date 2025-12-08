@@ -210,18 +210,24 @@ public class BlueTeleop extends OpMode {
         }
     }
     private void handleKicker(){
-        if (gamepad2.leftBumperWasPressed()){
-            if (kickerUp){
-                kicker.setPosition(kickerDownPosition);
-            } else if (!kickerUp){
-                kicker.setPosition(kickerUpPosition);
-            }
+//        if (gamepad2.leftBumperWasPressed()){
+//            if (kickerUp){
+//                kicker.setPosition(kickerDownPosition);
+//            } else if (!kickerUp){
+//                kicker.setPosition(kickerUpPosition);
+//            }
+//
+//            if (kickerUp){
+//                kickerUp = false;
+//            } else if(!kickerUp){
+//                kickerUp = true;
+//            }
+//        }
 
-            if (kickerUp){
-                kickerUp = false;
-            } else if(!kickerUp){
-                kickerUp = true;
-            }
+        if (gamepad2.right_bumper){
+            kicker.setPosition(kickerUpPosition);
+        } else {
+            kicker.setPosition(kickerDownPosition);
         }
     }
 
@@ -253,19 +259,17 @@ public class BlueTeleop extends OpMode {
         }
 }
 
-//    private double shooterModel (double distanceInches){
-//        return 10.80327*distanceInches+(1574.00755-verticalTranslation); // add regression here to return the velocity needed given the distance
-//    }
+
 
 private double shooterModel (double distanceInches){
     if(flyDistance < 60){
         return(1700);
     }
     else if(flyDistance < 130){
-        return 3.07759*distanceInches+1524.16547;
+        return 3.07759*distanceInches+1524.16547+50;
     }
     else{
-        return 1.71136*distanceInches+1790.64967+135;
+        return 1.71136*distanceInches+1790.64967+120;
     }
 }
 private void handleHood(){
