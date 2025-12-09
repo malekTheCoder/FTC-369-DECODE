@@ -40,8 +40,8 @@ public class FarBlueCombined extends LinearOpMode {
 
     }
     public class Kicker {
-        double KICKER_DOWN_POSITION = 0;
-        double KICKER_UP_POSITION = 1;
+        double KICKER_DOWN_POSITION = 0.2 ;
+        double KICKER_UP_POSITION = 0.61;
         double INTAKE_POWER = 0.6;
         private DcMotorEx flywheel;
         private Servo kicker;
@@ -69,7 +69,7 @@ public class FarBlueCombined extends LinearOpMode {
                 }
 
                 kicker.setPosition(KICKER_UP_POSITION);
-                if (timer.seconds() > 0.3){
+                if (timer.seconds() > 0.2){
                     return false;
                 }
 
@@ -93,7 +93,7 @@ public class FarBlueCombined extends LinearOpMode {
                 }
 
                 kicker.setPosition(KICKER_DOWN_POSITION);
-                if (timer.seconds() > 0.3){
+                if (timer.seconds() > 0.2){
                     return false;
                 }
 
@@ -337,7 +337,7 @@ public class FarBlueCombined extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(204)); // go back after grabbing first set of artifacts to shoot
 
         TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(30,-73), Math.toRadians(180)) // go to intake from gate
+                .strafeToLinearHeading(new Vector2d(34,-73), Math.toRadians(180)) // go to intake from gate
                 .waitSeconds(3)
                 .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202.5)); // go back to shoot
 
