@@ -73,7 +73,7 @@ public class TeleopRed extends OpMode {
 
 
     double targetOffsetAngle_Vertical;
-    double limelightMountAngleDegrees = 15;
+    double limelightMountAngleDegrees = (18.6+15)/2;
     double limelightLensHeightInches = 16.857;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;

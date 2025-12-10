@@ -74,7 +74,7 @@ public class BlueTeleop extends OpMode {
 
 
     double targetOffsetAngle_Vertical;
-    double limelightMountAngleDegrees = 15;
+    double limelightMountAngleDegrees = (18.6+15)/2;
     double limelightLensHeightInches = 16.857;
     double goalHeightInches = 29.5;
     double beltPowerScale = 1;
@@ -296,7 +296,7 @@ private void updateLimelightInfo() {
     if (llResult != null && llResult.isValid()) {
         ty = llResult.getTy();
         tx = llResult.getTx();
-    }else {
+    } else {
         ty = 0;
         tx = 0;
     }
