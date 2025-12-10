@@ -96,9 +96,9 @@ public class TeleopRed extends OpMode {
     private double flyTx;
     private double flyDistance;
 
-    private double engagedHoodPos = 0.61;
+    private double engagedHoodPos = 0.63;
 
-    private double disengagedHoodPos = 0.43;
+    private double disengagedHoodPos = 0.41;
 
     @Override
     public void init() {
@@ -221,8 +221,6 @@ public class TeleopRed extends OpMode {
             } else {
                 kickerUp = true;
             }
-
-
         }
     }
 
@@ -247,20 +245,20 @@ public class TeleopRed extends OpMode {
 
     private double shooterModel (double distanceInches){
         if(flyDistance < 60){
-            return(1700);
+            return(12.17105*distanceInches+956.57895);
         }
-        else if(flyDistance < 130){
-            return 3.07759*distanceInches+1524.16547;
+        else if(flyDistance < 100){
+            return 3.66915*distanceInches+1621.33085;
         }
         else{
-            return 1.71136*distanceInches+1790.64967+135;
+            return 10*distanceInches+950;
         }
     }
     private void handleHood(){
         if (flyDistance < 60){
             hood.setPosition(disengagedHoodPos);
         }
-        if(flyDistance > 62){
+        if(flyDistance > 63){
             hood.setPosition(engagedHoodPos);
         }
     }
