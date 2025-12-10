@@ -80,8 +80,8 @@ public class TeleopV2Bot extends OpMode {
 
 
     double targetOffsetAngle_Vertical;
-    double limelightMountAngleDegrees = 14;
-    double limelightLensHeightInches = 10.5;
+    double limelightMountAngleDegrees = (18.6+15)/2;
+    double limelightLensHeightInches = 16.857;
     double goalHeightInches = 29.5;
     double beltPowerScale = 0.8;
 
@@ -208,25 +208,23 @@ public class TeleopV2Bot extends OpMode {
             targetVel -= 25/*shooterModel(distanceFromLimelightToGoalInches)*/;
         }
 
+        if(gamepad2.dpadRightWasPressed()){
+            targetVel=1300;
+        }
+
         if (gamepad2.aWasPressed()){
             targetVel = 0;
         }
 
-        if(gamepad2.xWasPressed()){
+        if(gamepad2.xWasPressed()) {
             hoodPosition = .5;
         }
 
-        if(gamepad2.dpadRightWasPressed()){
-            hoodPosition-=0.01;
-        }
-        if(gamepad2.dpadLeftWasPressed()){
-            hoodPosition+=0.01;
-        }
         if(gamepad2.yWasPressed()){
-            hoodPosition = .49 ;
+            hoodPosition = .63;
         }
         if(gamepad2.bWasPressed()){
-            hoodPosition = .51;
+            hoodPosition = .41;
         }
         fly.setVelocity(targetVel); // ticks per second (negative allowed)
 
