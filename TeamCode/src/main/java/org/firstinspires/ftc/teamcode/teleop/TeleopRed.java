@@ -89,8 +89,8 @@ public class TeleopRed extends OpMode {
     private double intakeMultiplier;
 
     private boolean kickerUp;
-    private double kickerUpPosition = 0;
-    private double kickerDownPosition = 1;
+    private double kickerUpPosition = 0.5;
+    private double kickerDownPosition = 0.2;
 
     private double verticalTranslation;
     private double flyTx;
