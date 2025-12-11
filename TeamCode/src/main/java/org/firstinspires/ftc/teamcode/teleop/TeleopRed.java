@@ -228,15 +228,18 @@ public class TeleopRed extends OpMode {
         actualVel = fly.getVelocity();
         targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
-        if (gamepad2.aWasPressed()){
-            if (flyMultiplier == 1){
+        if (gamepad2.aWasPressed()) {
+            if (flyMultiplier == 1) {
                 flyMultiplier = 0;
-            }
-            else{
+            } else {
                 flyMultiplier = 1;
             }
         }
-        fly.setVelocity(targetVel* flyMultiplier); // ticks per second (negative allowed)
+        if (gamepad1.dpad_up) {
+            fly.setVelocity(targetVel * flyMultiplier + 20);
+        } else {
+            fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
+        }
     }
 
 //    private double shooterModel (double distanceInches){
