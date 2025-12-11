@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "New Blue Close Auto w/ Splines")
+@Autonomous(name = "CLOSE SIDE AUTO BLUE")
 public class NewBlueCloseAuto extends LinearOpMode {
 
     public class Hood{
@@ -41,7 +41,7 @@ public class NewBlueCloseAuto extends LinearOpMode {
     }
     public class Kicker {
         double KICKER_DOWN_POSITION = 0.2;
-        double KICKER_UP_POSITION = 0.5;
+        double KICKER_UP_POSITION = 0.55;
         double INTAKE_POWER = 0.6;
         private DcMotorEx flywheel;
         private Servo kicker;
@@ -69,7 +69,7 @@ public class NewBlueCloseAuto extends LinearOpMode {
                 }
 
                 kicker.setPosition(KICKER_UP_POSITION);
-                if (timer.seconds() > 0.3){
+                if (timer.seconds() > 0.2){
                     return false;
                 }
 
@@ -93,7 +93,7 @@ public class NewBlueCloseAuto extends LinearOpMode {
                 }
 
                 kicker.setPosition(KICKER_DOWN_POSITION);
-                if (timer.seconds() > 0.3){
+                if (timer.seconds() > 0.2){
                     return false;
                 }
 
@@ -358,8 +358,8 @@ public class NewBlueCloseAuto extends LinearOpMode {
                         ),
                 new ParallelAction(
                         flywheel.holdFlywheelVelocity(1810,2.5),
-                        intake.holdIntakePower(0.5,2.5),
-                        belt.holdBeltPower(-0.5,2.5),
+                        intake.holdIntakePower(0.55,2.5),
+                        belt.holdBeltPower(-0.4,2.5),
                         new SequentialAction(
                                 new SleepAction(0.1),
                                 kicker.kickerUp(),
