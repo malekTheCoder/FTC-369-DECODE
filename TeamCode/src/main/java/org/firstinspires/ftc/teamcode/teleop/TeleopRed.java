@@ -209,18 +209,10 @@ public class TeleopRed extends OpMode {
         }
     }
     private void handleKicker(){
-        if (gamepad2.leftBumperWasPressed()){
-            if (kickerUp){
-                kicker.setPosition(kickerDownPosition);
-            } else if (!kickerUp){
-                kicker.setPosition(kickerUpPosition);
-            }
-
-            if (kickerUp){
-                kickerUp = false;
-            } else {
-                kickerUp = true;
-            }
+        if (gamepad2.right_bumper){
+            kicker.setPosition(kickerUpPosition);
+        } else {
+            kicker.setPosition(kickerDownPosition);
         }
     }
 
@@ -247,14 +239,14 @@ public class TeleopRed extends OpMode {
 //    }
 
     private double shooterModel (double distanceInches){
-        if(flyDistance < 60){
-            return(12.17105*distanceInches+956.57895);
+        if(flyDistance < 60){ // super close hood off regression
+            return(12.17105*distanceInches+956.57895 - 35);
         }
-        else if(flyDistance < 100){
-            return 3.66915*distanceInches+1621.33085;
+        else if(flyDistance < 100){ // near zone hood engaged regresison
+            return 3.66915*distanceInches+1621.33085 - 35;
         }
-        else{
-            return 10*distanceInches+950;
+        else { // far regression
+            return 10*distanceInches+950 - 50;
         }
     }
     private void handleHood(){
@@ -281,10 +273,11 @@ public class TeleopRed extends OpMode {
         if (llResult != null && llResult.isValid()) {
             ty = llResult.getTy();
             tx = llResult.getTx();
-        }else {
-            ty = 0;
-            tx = 0;
         }
+//        else {
+//            ty = 0;
+//            tx = 0;
+//        }
 
         targetOffsetAngle_Vertical = ty;
         angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
