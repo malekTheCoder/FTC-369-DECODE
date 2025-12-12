@@ -337,7 +337,7 @@ public class NewBlueCloseAuto extends LinearOpMode {
 
         TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(13,-18), Math.toRadians(270)) // go to second set of artifacts
-                .strafeToLinearHeading(new Vector2d(13,-40),Math.toRadians(270)) // drive in w spline
+                .strafeToLinearHeading(new Vector2d(13,-43),Math.toRadians(270)) // drive in w spline
                 .strafeToLinearHeading(new Vector2d(-9,-12.5),Math.toRadians(221)); // go shoot second batch
 
         TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh()
@@ -361,13 +361,13 @@ public class NewBlueCloseAuto extends LinearOpMode {
                         intake.holdIntakePower(0.55,2.5),
                         belt.holdBeltPower(-0.4,2.5),
                         new SequentialAction(
-                                new SleepAction(0.1),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
@@ -421,13 +421,13 @@ public class NewBlueCloseAuto extends LinearOpMode {
                         intake.holdIntakePower(0.5,2.5),
                         belt.holdBeltPower(-0.5,2.5),
                         new SequentialAction(
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
@@ -454,16 +454,16 @@ public class NewBlueCloseAuto extends LinearOpMode {
 
                 new ParallelAction(
                         flywheel.holdFlywheelVelocity(1810,2.5),
-                        intake.holdIntakePower(0.6,2.5),
-                        belt.holdBeltPower(-0.5,2.5),
+                        intake.holdIntakePower(0.62,2.5),
+                        belt.holdBeltPower(-0.65,2.5),
                         new SequentialAction(
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
@@ -493,29 +493,18 @@ public class NewBlueCloseAuto extends LinearOpMode {
                         intake.holdIntakePower(0.5,2.5),
                         belt.holdBeltPower(-0.5,2.5),
                         new SequentialAction(
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.2),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
-
                 )
-
-
-
-
         );
-
-
-
-
-
-
 
 
         while (!opModeIsActive()){
@@ -537,9 +526,7 @@ public class NewBlueCloseAuto extends LinearOpMode {
                         goGetOffLaunchLine.build(),
                         kicker.kickerDown()
 
-
                 )
-
 
         );
 
