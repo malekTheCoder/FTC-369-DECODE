@@ -22,8 +22,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "CLOSE SIDE AUTO BLUE")
-public class NewBlueCloseAuto extends LinearOpMode {
+@Autonomous(name = "BlueCloseSoloAuto")
+public class BlueCloseSoloAuto extends LinearOpMode {
 
     public class Hood{
         private double HOOD_ENGAGED_POSITION = 0.61;

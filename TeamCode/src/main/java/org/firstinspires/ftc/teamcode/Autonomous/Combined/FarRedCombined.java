@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous(name = "Far Blue Combined")
-public class FarBlueCombined extends LinearOpMode {
+public class FarRedCombined extends LinearOpMode {
 
     public class Hood{
         private double HOOD_ENGAGED_POSITION = 0.61;
@@ -318,7 +318,7 @@ public class FarBlueCombined extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(61, -15, Math.PI);
+        Pose2d initialPose = new Pose2d(61, 15, Math.PI);
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
@@ -328,23 +328,22 @@ public class FarBlueCombined extends LinearOpMode {
         Hood hood = new Hood(hardwareMap);
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(55,-19), Math.toRadians(202));
-
+                .strafeToLinearHeading(new Vector2d(50, 19), Math.toRadians(158));  // was (-19, 202)
 
         TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,-23), Math.toRadians(270)) // go to first set of artifacts
-                .strafeToLinearHeading(new Vector2d(46,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(205)); // go back after grabbing first set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(30, 23), Math.toRadians(90))   // was (-23, 270)
+                .strafeToLinearHeading(new Vector2d(30, 40), Math.toRadians(90))   // was (-40, 270)
+                .strafeToLinearHeading(new Vector2d(54, 19), Math.toRadians(155)); // was (-19, 205)
 
         TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(31,-70), Math.toRadians(180)) // go to intake from gate
+                .strafeToLinearHeading(new Vector2d(31, 70), Math.toRadians(180))     // was (-70, 180)
                 .waitSeconds(3)
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202.5)); // go back to shoot
+                .strafeToLinearHeading(new Vector2d(54, 19), Math.toRadians(157.5));  // was (-19, 202.5)
 
         TrajectoryActionBuilder goLoopForExtraRandom = goLoopForGateBatch.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,-48), Math.toRadians(0)) // go grab anywehre
-                .strafeToLinearHeading(new Vector2d(62,-48), Math.toRadians(0))// go grab anywehre
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202.5)); // go to shoot
+                .strafeToLinearHeading(new Vector2d(40, 48), Math.toRadians(360))      // was (-48, 0)
+                .strafeToLinearHeading(new Vector2d(62, 48), Math.toRadians(360))      // was (-48, 0)
+                .strafeToLinearHeading(new Vector2d(54, 19), Math.toRadians(157.5));   // was (-19, 202.5)
 
 
         SequentialAction shootPreload = new SequentialAction(
@@ -456,14 +455,9 @@ public class FarBlueCombined extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         goToShootPreload.build(),
-                        goLoopForFirstSet.build(),
-                        goLoopForGateBatch.build(),
-                        new ParallelAction(
-                                intake.holdIntakePower(0.6,8),
-                                belt.holdBeltPower(-0.6,8),
-                                goLoopForExtraRandom.build()
+                        goLoopForFirstSet.build()
+//                        goLoopForGateBatch.build(),
 
-                        )
 
 //                        shootPreload,
 //                        firstBatchLoop,
