@@ -87,7 +87,7 @@ public class TeleopRed extends OpMode {
 
     private double flyMultiplier;
     private double intakeMultiplier;
-
+    private boolean manualFlywheelControl = false;
     private boolean kickerUp;
     private double kickerUpPosition = 0.5;
     private double kickerDownPosition = 0.2;
@@ -131,7 +131,6 @@ public class TeleopRed extends OpMode {
     public void loop() {
         updateLimelightInfo();
         handleFlywheel();
-        handleHood();
         handleIntake();
         handleBelt();
         handleKicker();
@@ -220,16 +219,34 @@ public class TeleopRed extends OpMode {
         actualVel = fly.getVelocity();
         targetVel = shooterModel(distanceFromLimelightToGoalInches);
 
-        if (gamepad2.aWasPressed()) {
-            if (flyMultiplier == 1) {
+        if (gamepad2.aWasPressed()){
+            if (flyMultiplier == 1){
                 flyMultiplier = 0;
-            } else {
+            }
+            else{
                 flyMultiplier = 1;
             }
         }
-        if (gamepad1.dpad_up) {
-            fly.setVelocity(targetVel * flyMultiplier + 20);
-        } else {
+
+        if (gamepad2.bWasPressed()){
+            if (!manualFlywheelControl){
+                manualFlywheelControl = true;
+            } else if (manualFlywheelControl){
+                manualFlywheelControl = false;
+            }
+        }
+
+        if (manualFlywheelControl){
+            if (gamepad2.dpad_up){
+                fly.setVelocity(2175);
+                hood.setPosition(engagedHoodPos);
+            }
+            else if(gamepad2.dpad_down){
+                fly.setVelocity(1500);
+                hood.setPosition(disengagedHoodPos);
+            }
+        } else if (!manualFlywheelControl) {
+            handleHood();
             fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
         }
     }

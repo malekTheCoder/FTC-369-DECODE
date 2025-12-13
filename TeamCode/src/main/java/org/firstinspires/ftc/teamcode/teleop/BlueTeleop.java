@@ -142,7 +142,6 @@ public class BlueTeleop extends OpMode {
         handleBelt();
         handleKicker();
         handleRGB();
-        handleHood();
         if(llResult.isValid()){
             limelightOffest();
         }
@@ -236,6 +235,7 @@ public class BlueTeleop extends OpMode {
                 flyMultiplier = 1;
             }
         }
+
         if (gamepad2.bWasPressed()){
             if (!manualFlywheelControl){
                 manualFlywheelControl = true;
@@ -245,10 +245,17 @@ public class BlueTeleop extends OpMode {
         }
 
         if (manualFlywheelControl){
-            fly.setVelocity(flyAddVelocity);
+            if (gamepad2.dpad_up){
+                fly.setVelocity(2175);
+                hood.setPosition(engagedHoodPos);
+            }
+            else if(gamepad2.dpad_down){
+                fly.setVelocity(1500);
+                hood.setPosition(disengagedHoodPos);
+            }
         } else if (!manualFlywheelControl) {
+            handleHood();
             fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
-
         }
 }
 
