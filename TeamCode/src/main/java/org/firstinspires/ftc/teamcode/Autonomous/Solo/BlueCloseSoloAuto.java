@@ -333,17 +333,17 @@ public class BlueCloseSoloAuto extends LinearOpMode {
 
         TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-8.5,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(-9,-12.5),Math.toRadians(221)); // go shoot first batch
+                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221)); // go shoot first batch
 
         TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(13,-18), Math.toRadians(270)) // go to second set of artifacts
                 .strafeToLinearHeading(new Vector2d(13,-43),Math.toRadians(270)) // drive in w spline
-                .strafeToLinearHeading(new Vector2d(-9,-12.5),Math.toRadians(221)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221)); // go shoot second batch
 
         TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36,-19), Math.toRadians(270)) // go to third set of artifacts
+                .strafeToLinearHeading(new Vector2d(36,-17), Math.toRadians(270)) // go to third set of artifacts
                 .strafeToLinearHeading(new Vector2d(36, -42), Math.toRadians(270)) //drive into third row
-                .strafeToLinearHeading(new Vector2d(-9,-12.5),Math.toRadians(221));
+                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221));
                 // go shoot second batch
 
         TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
