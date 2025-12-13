@@ -329,19 +329,19 @@ public class BlueCloseSoloAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-8.5,-12),Math.toRadians(221));
+                .strafeToLinearHeading(new Vector2d(-8.5,-7),Math.toRadians(223));
 
         TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-8.5,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221)); // go shoot first batch
+                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(222)); // go shoot first batch
 
         TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(13,-18), Math.toRadians(270)) // go to second set of artifacts
-                .strafeToLinearHeading(new Vector2d(13,-43),Math.toRadians(270)) // drive in w spline
+                .strafeToLinearHeading(new Vector2d(13,-41),Math.toRadians(270)) // drive in w spline
                 .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221)); // go shoot second batch
 
         TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36,-17), Math.toRadians(270)) // go to third set of artifacts
+                .strafeToLinearHeading(new Vector2d(36,-15), Math.toRadians(270)) // go to third set of artifacts
                 .strafeToLinearHeading(new Vector2d(36, -42), Math.toRadians(270)) //drive into third row
                 .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221));
                 // go shoot second batch
@@ -357,11 +357,11 @@ public class BlueCloseSoloAuto extends LinearOpMode {
                         flywheel.holdFlywheelVelocity(1810,2)
                         ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        flywheel.holdFlywheelVelocity(1815,2.5),
                         intake.holdIntakePower(0.55,2.5),
                         belt.holdBeltPower(-0.4,2.5),
                         new SequentialAction(
-                                new SleepAction(0.4),
+                                new SleepAction(0.5),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
                                 new SleepAction(0.4),

@@ -332,18 +332,18 @@ public class RedCloseSoloAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-8.5, 8), Math.toRadians(138));
 
         TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh() //
-                .strafeToLinearHeading(new Vector2d(-14, 52),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-14, 54),Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(-14, 8), Math.toRadians(138));
 
         TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh() //
-                .strafeToLinearHeading(new Vector2d(6, 26), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(6, 59), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-8.5, 8), Math.toRadians(138));
+                .strafeToLinearHeading(new Vector2d(6, 27), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(5, 58), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-8.5, 6), Math.toRadians(138));
 
         TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh() //
-                .strafeToLinearHeading(new Vector2d(28, 24), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(28, 26), Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(28, 57), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(-4, 8), Math.toRadians(138));
+                .strafeToLinearHeading(new Vector2d(-6, 5), Math.toRadians(138));
 
         TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-9, 20), Math.toRadians(136));
@@ -355,7 +355,7 @@ public class RedCloseSoloAuto extends LinearOpMode {
                         flywheel.holdFlywheelVelocity(1810,2)
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        flywheel.holdFlywheelVelocity(1805,2.5),
                         intake.holdIntakePower(0.55,2.5),
                         belt.holdBeltPower(-0.4,2.5),
                         new SequentialAction(
