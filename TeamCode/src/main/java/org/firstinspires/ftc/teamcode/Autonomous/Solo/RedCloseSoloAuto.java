@@ -336,13 +336,13 @@ public class RedCloseSoloAuto extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-14, 8), Math.toRadians(138));
 
         TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh() //
-                .strafeToLinearHeading(new Vector2d(6, 27), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(5, 58), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(7, 27), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(9.5, 60), Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(-8.5, 6), Math.toRadians(138));
 
         TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh() //
-                .strafeToLinearHeading(new Vector2d(28, 26), Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(28, 57), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(29, 26), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(30, 57), Math.toRadians(90))
                 .strafeToLinearHeading(new Vector2d(-6, 5), Math.toRadians(138));
 
         TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()

@@ -246,8 +246,13 @@ public class TeleopRed extends OpMode {
                 hood.setPosition(engagedHoodPos);
             }
         } else if (!manualFlywheelControl) {
-            handleHood();
-            fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
+            if (gamepad1.dpad_up){
+                handleHood();
+                fly.setVelocity(targetVel * flyMultiplier + 20); // ticks per second (negative allowed)
+            } else {
+                handleHood();
+                fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)
+            }
         }
     }
 
@@ -257,20 +262,20 @@ public class TeleopRed extends OpMode {
 
     private double shooterModel (double distanceInches){
         if(flyDistance < 60){ // super close hood off regression
-            return(12.17105*distanceInches+956.57895 - 35);
+            return(12.17105*distanceInches+956.57895 + 10);
         }
         else if(flyDistance < 100){ // near zone hood engaged regresison
-            return 3.66915*distanceInches+1621.33085 - 35;
+            return 3.66915*distanceInches+1621.33085 - 50;
         }
         else { // far regression
-            return 10*distanceInches+950 - 50;
+            return 10*distanceInches+950 +10;
         }
     }
     private void handleHood(){
-        if (flyDistance < 60){
+        if (flyDistance < 52){
             hood.setPosition(disengagedHoodPos);
         }
-        if(flyDistance > 63){
+        if(flyDistance > 57){
             hood.setPosition(engagedHoodPos);
         }
     }
