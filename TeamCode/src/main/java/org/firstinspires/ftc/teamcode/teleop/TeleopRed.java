@@ -162,7 +162,7 @@ public class TeleopRed extends OpMode {
             handleDrivetrain();
         }
 
-
+        telemetry.addData("Manual  Mode",manualFlywheelControl);
         telemetry.addData("Target (tps)", targetVel);
         telemetry.addData("Actual (tps)", fly.getVelocity());
 
@@ -228,7 +228,7 @@ public class TeleopRed extends OpMode {
             }
         }
 
-        if (gamepad2.bWasPressed()){
+        if (gamepad2.xWasPressed()){
             if (!manualFlywheelControl){
                 manualFlywheelControl = true;
             } else if (manualFlywheelControl){
@@ -242,8 +242,8 @@ public class TeleopRed extends OpMode {
                 hood.setPosition(engagedHoodPos);
             }
             else if(gamepad2.dpad_down){
-                fly.setVelocity(1500);
-                hood.setPosition(disengagedHoodPos);
+                fly.setVelocity(1900);
+                hood.setPosition(engagedHoodPos);
             }
         } else if (!manualFlywheelControl) {
             handleHood();
