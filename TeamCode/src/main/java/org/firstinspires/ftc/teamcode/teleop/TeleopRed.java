@@ -248,7 +248,7 @@ public class TeleopRed extends OpMode {
         } else if (!manualFlywheelControl) {
             if (gamepad1.dpad_up){
                 handleHood();
-                fly.setVelocity(targetVel * flyMultiplier + 20); // ticks per second (negative allowed)
+                fly.setVelocity(targetVel * flyMultiplier + 30); // ticks per second (negative allowed)
             } else {
                 handleHood();
                 fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)

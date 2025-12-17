@@ -329,21 +329,21 @@ public class BlueCloseSoloAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-8.5,-7),Math.toRadians(223));
+                .strafeToLinearHeading(new Vector2d(-11.5,-8),Math.toRadians(223));
 
         TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-8.5,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(222)); // go shoot first batch
+                .strafeToLinearHeading(new Vector2d(-11,-40), Math.toRadians(270)) // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(-9,-11),Math.toRadians(222)); // go shoot first batch
 
         TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(13,-18), Math.toRadians(270)) // go to second set of artifacts
                 .strafeToLinearHeading(new Vector2d(13,-41),Math.toRadians(270)) // drive in w spline
-                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(-11,-11),Math.toRadians(221)); // go shoot second batch
 
         TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(36,-15), Math.toRadians(270)) // go to third set of artifacts
                 .strafeToLinearHeading(new Vector2d(36, -42), Math.toRadians(270)) //drive into third row
-                .strafeToLinearHeading(new Vector2d(-9,-10),Math.toRadians(221));
+                .strafeToLinearHeading(new Vector2d(-11,-11),Math.toRadians(221));
                 // go shoot second batch
 
         TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
@@ -354,10 +354,10 @@ public class BlueCloseSoloAuto extends LinearOpMode {
         SequentialAction shootPreload = new SequentialAction(
                 new ParallelAction(
                         goToShootPreload.build(),
-                        flywheel.holdFlywheelVelocity(1810,2)
+                        flywheel.holdFlywheelVelocity(1815,2)
                         ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1815,2.5),
+                        flywheel.holdFlywheelVelocity(1819,2.5),
                         intake.holdIntakePower(0.55,2.5),
                         belt.holdBeltPower(-0.4,2.5),
                         new SequentialAction(
@@ -413,11 +413,11 @@ public class BlueCloseSoloAuto extends LinearOpMode {
                         belt.holdBeltPower(-0.8,1.5),
                         new SequentialAction(
                                 new SleepAction(0.75),
-                                flywheel.holdFlywheelVelocity(1810,0.75)
+                                flywheel.holdFlywheelVelocity(1819,0.75)
                         )
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        flywheel.holdFlywheelVelocity(1815,2.5),
                         intake.holdIntakePower(0.5,2.5),
                         belt.holdBeltPower(-0.5,2.5),
                         new SequentialAction(
@@ -448,12 +448,12 @@ public class BlueCloseSoloAuto extends LinearOpMode {
                         belt.holdBeltPower(-0.45,2.25),
                         new SequentialAction(
                                 new SleepAction(1.75),
-                                flywheel.holdFlywheelVelocity(1810,.5)
+                                flywheel.holdFlywheelVelocity(1819,.5)
                         )
                 ),
 
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        flywheel.holdFlywheelVelocity(1815,2.5),
                         intake.holdIntakePower(0.62,2.5),
                         belt.holdBeltPower(-0.65,2.5),
                         new SequentialAction(
@@ -485,11 +485,11 @@ public class BlueCloseSoloAuto extends LinearOpMode {
                         belt.holdBeltPower(-0.8,3),
                         new SequentialAction(
                                 new SleepAction(2),
-                                flywheel.holdFlywheelVelocity(1810,1)
+                                flywheel.holdFlywheelVelocity(1819,1)
                         )
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        flywheel.holdFlywheelVelocity(1815,2.5),
                         intake.holdIntakePower(0.5,2.5),
                         belt.holdBeltPower(-0.5,2.5),
                         new SequentialAction(

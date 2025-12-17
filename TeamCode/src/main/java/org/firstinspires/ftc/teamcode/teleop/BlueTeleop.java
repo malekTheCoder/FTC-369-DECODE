@@ -258,7 +258,13 @@ public class BlueTeleop extends OpMode {
         } else if (!manualFlywheelControl) {
             if (gamepad1.dpad_up){
                 handleHood();
-                fly.setVelocity(targetVel * flyMultiplier + 20); // ticks per second (negative allowed)
+                fly.setVelocity(targetVel * flyMultiplier + 30); // ticks per second (negative allowed)
+            } else if (gamepad1.dpad_right){
+                handleHood();
+                fly.setVelocity(targetVel * flyMultiplier + 55); // ticks per second (negative allowed)
+            } else if (gamepad1.dpad_left) {
+                handleHood();
+                fly.setVelocity(targetVel * flyMultiplier + 65); // ticks per second (negative
             } else {
                 handleHood();
                 fly.setVelocity(targetVel * flyMultiplier); // ticks per second (negative allowed)

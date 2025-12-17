@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "Far Blue Combined")
+@Autonomous(name = "...FBC")
 public class FarBlueCombined extends LinearOpMode {
 
     public class Hood{
@@ -334,7 +334,7 @@ public class FarBlueCombined extends LinearOpMode {
         TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,-23), Math.toRadians(270)) // go to first set of artifacts
                 .strafeToLinearHeading(new Vector2d(46,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(205)); // go back after grabbing first set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202)); // go back after grabbing first set of artifacts to shoot
 
         TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(31,-70), Math.toRadians(180)) // go to intake from gate
@@ -455,21 +455,12 @@ public class FarBlueCombined extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        goToShootPreload.build(),
-                        goLoopForFirstSet.build(),
-                        goLoopForGateBatch.build(),
-                        new ParallelAction(
-                                intake.holdIntakePower(0.6,8),
-                                belt.holdBeltPower(-0.6,8),
-                                goLoopForExtraRandom.build()
 
-                        )
-
-//                        shootPreload,
-//                        firstBatchLoop,
-//                        gateBatchLoop,
-//                        goLoopForExtraRandom.build(),
-//                        kicker.kickerDown()
+                        shootPreload,
+                        firstBatchLoop,
+                        gateBatchLoop,
+                        goLoopForExtraRandom.build(),
+                        kicker.kickerDown()
                 )
 
 
