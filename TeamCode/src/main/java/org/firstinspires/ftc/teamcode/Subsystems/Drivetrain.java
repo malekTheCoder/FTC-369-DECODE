@@ -16,7 +16,7 @@ public class Drivetrain {
     private DcMotorEx backRight;
     private DcMotorEx backLeft;
 
-    private IMU imu;
+    public IMU imu;
     double botHeadingIMU;
     private double slowRotationScale = 0.35;
 
@@ -45,19 +45,19 @@ public class Drivetrain {
         botHeadingIMU = imu.getRobotYawPitchRollAngles().getYaw();
     }
 
-    public void handleDrivetrain(){
+    public void handleDrivetrain(double rightStickX, double x, double y, double rx){
         if (gamepad1.x){
             imu.resetYaw();
         }
 
         // drivetrain code to get inputs from controller and call the drive method w/ parameters
-        double rightStickX = gamepad1.right_stick_x;
         if (Math.abs(rightStickX) < 0.05) rightStickX = 0;
-
+/*
+        double rightStickX = gamepad1.right_stick_x
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (rightStickX * slowRotationScale));
-
+*/
         drive(y, x, rx);
     }
 

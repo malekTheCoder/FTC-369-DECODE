@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
@@ -24,12 +25,13 @@ public class Limelight {
     YawPitchRollAngles orientation;
     private double ty;
     private double tx;
+
     Limelight(HardwareMap hardwareMap, int pipeline){
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         limelight.pipelineSwitch(pipeline);
     }
-    private void limelightOffest(){
+    private void limelightOffset(){
         //Use law of cos with SAS to find the third side (d2)
         //Use law of sin to find the 2nd base angle of triangle
         //90-(2nd base angle) to find the error between fly heading and tag heading
@@ -45,7 +47,7 @@ public class Limelight {
             flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/ flyDistance))); //sin-1(d(Sin(B)/d2
         }
     }
-    private void updateLimelightInfo() {
+    private void updateLimelightInfo(IMU imu) {
         orientation = imu.getRobotYawPitchRollAngles();
         limelight.updateRobotOrientation(orientation.getYaw());
         llResult = limelight.getLatestResult();
