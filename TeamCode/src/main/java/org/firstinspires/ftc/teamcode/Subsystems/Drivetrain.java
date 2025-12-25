@@ -45,7 +45,7 @@ public class Drivetrain {
         botHeadingIMU = imu.getRobotYawPitchRollAngles().getYaw();
     }
 
-    private void handleDrivetrain(){
+    public void handleDrivetrain(){
         if (gamepad1.x){
             imu.resetYaw();
         }
