@@ -19,6 +19,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import org.firstinspires.ftc.teamcode.Subsystems.countCycle;
+
 @Config
 @TeleOp(name = " TELEOP BLUE")
 public class BlueTeleop extends OpMode {
@@ -105,6 +107,11 @@ public class BlueTeleop extends OpMode {
     private double flyTx;
     private double flyDistance;
 
+    //TEMP
+    countCycle hoodServoCycle;
+    countCycle kickerServoCycle;
+
+
     @Override
     public void init() {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -127,6 +134,9 @@ public class BlueTeleop extends OpMode {
         verticalTranslation = 75;
         flyAddVelocity = 1800;
 
+        hoodServoCycle = new countCycle("/hoodCycleCount.txt");
+        kickerServoCycle = new countCycle("/kickerCycleCount.txt");
+
         dashboard = FtcDashboard.getInstance();
         limelight.start();
         limelight.pipelineSwitch(0);
@@ -143,6 +153,8 @@ public class BlueTeleop extends OpMode {
         handleKicker();
         handleRGB();
         handleHood();
+        handleCycles();
+
         if(llResult.isValid()){
             limelightOffest();
         }
@@ -198,6 +210,12 @@ public class BlueTeleop extends OpMode {
         dashboard.sendTelemetryPacket(packet);
 
         telemetry.update();
+    }
+
+    @Override
+    public void stop(){
+        hoodServoCycle.updateCount(hoodServoCycle.startCount+hoodServoCycle.currentCount);
+        kickerServoCycle.updateCount(kickerServoCycle.startCount+kickerServoCycle.currentCount);
     }
 
     private void limelightOffest(){
@@ -301,6 +319,15 @@ private void updateLimelightInfo() {
     distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
 }
 
+private void handleCycles(){
+    //TEMPORARY TESTING before implementation into servos
+    if(gamepad1.aWasPressed()){
+        hoodServoCycle.currentCount+=0.5;
+    }
+    if(gamepad1.bWasPressed()){
+        kickerServoCycle.currentCount+=0.5;
+    }
+}
 
 private void handleBelt() {
     belt.setPower(beltPowerScale * gamepad2.left_stick_y);
