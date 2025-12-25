@@ -46,10 +46,6 @@ public class Drivetrain {
     }
 
     public void handleDrivetrain(double rightStickX, double x, double y, double rx){
-        if (gamepad1.x){
-            imu.resetYaw();
-        }
-
         // drivetrain code to get inputs from controller and call the drive method w/ parameters
         if (Math.abs(rightStickX) < 0.05) rightStickX = 0;
 /*
@@ -59,6 +55,9 @@ public class Drivetrain {
         double rx = (gamepad1.right_trigger - gamepad1.left_trigger + (rightStickX * slowRotationScale));
 */
         drive(y, x, rx);
+    }
+    public void resetIMU(){
+        imu.resetYaw();
     }
 
 
