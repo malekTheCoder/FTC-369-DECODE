@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.roadrunner.ftc.OTOSIMU;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,10 +27,14 @@ public class Limelight {
     private double ty;
     private double tx;
 
-    Limelight(HardwareMap hardwareMap, int pipeline){
+    private IMU imu;
+
+    Limelight(HardwareMap hardwareMap, int pipeline, IMU imu){
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        this.imu = imu;
         limelight.start();
         limelight.pipelineSwitch(pipeline);
+
     }
     private void limelightOffset(){
         //Use law of cos with SAS to find the third side (d2)
@@ -47,7 +52,7 @@ public class Limelight {
             flyTx = 90 - Math.toDegrees(Math.asin(d * (Math.sin(Math.toRadians(B))/ flyDistance))); //sin-1(d(Sin(B)/d2
         }
     }
-    private void updateLimelightInfo(IMU imu) {
+    public void updateLimelightInfo() {
         orientation = imu.getRobotYawPitchRollAngles();
         limelight.updateRobotOrientation(orientation.getYaw());
         llResult = limelight.getLatestResult();
@@ -64,5 +69,8 @@ public class Limelight {
         angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
         angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
         distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-    }
+    }/*
+    public void findRobotPos(){
+        double robotYaw = imu.getAngularOrientation().firstAngle;
+    }*/
 }
