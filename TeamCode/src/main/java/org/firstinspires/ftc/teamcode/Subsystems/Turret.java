@@ -24,6 +24,7 @@ public class Turret {
         else{
             turret.setTargetPosition(maxTarget);
         }
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 }
