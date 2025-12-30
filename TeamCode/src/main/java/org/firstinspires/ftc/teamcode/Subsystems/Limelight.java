@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import com.acmerobotics.roadrunner.ftc.OTOSIMU;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class Limelight {
@@ -29,12 +30,13 @@ public class Limelight {
 
     private IMU imu;
 
+    private double[] pose;
+
     Limelight(HardwareMap hardwareMap, int pipeline, IMU imu){
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         this.imu = imu;
         limelight.start();
         limelight.pipelineSwitch(pipeline);
-
     }
     private void limelightOffset(){
         //Use law of cos with SAS to find the third side (d2)
@@ -69,8 +71,30 @@ public class Limelight {
         angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
         angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
         distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-    }/*
-    public void findRobotPos(){
-        double robotYaw = imu.getAngularOrientation().firstAngle;
-    }*/
+    }
+    public double[] findRobotPos(double robotYaw){
+        //double robotYaw = imu.getRobotYawPitchRollAngles().getYaw();
+        limelight.updateRobotOrientation(robotYaw);
+        if(llResult != null && llResult.isValid()){
+            Pose3D botpose_mt2 = llResult.getBotpose_MT2();
+            if(botpose_mt2 != null){
+                double x = botpose_mt2.getPosition().x;
+                double y = botpose_mt2.getPosition().y;
+                double heading = botpose_mt2.getOrientation().getYaw();
+                pose = new double[]{x, y, heading};
+                return pose;
+            }
+        }
+        return null;
+    }
+
+    public void poseToString(Telemetry telemetry){
+        StringBuilder poseString = new StringBuilder();
+        if(pose!= null) {
+            for (int i = 0; i < pose.length; i++) {
+                poseString.append(pose[i]);
+            }
+        }
+        telemetry.addLine(poseString.toString());
+    }
 }
