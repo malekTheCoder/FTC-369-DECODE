@@ -91,8 +91,8 @@ public class Limelight {
     public void poseToString(Telemetry telemetry){
         StringBuilder poseString = new StringBuilder();
         if(pose!= null) {
-            for (int i = 0; i < pose.length; i++) {
-                poseString.append(pose[i]);
+            for(double v : pose) {
+                poseString.append(v);
             }
         }
         telemetry.addLine(poseString.toString());
