@@ -1,0 +1,1718 @@
+{
+  "metadata": {
+    "device": {
+      "deviceId": "8f22bbcdcad5ef98",
+      "name": "REV Robotics Control Hub v1.0",
+      "serialNumber": "8f22bbcdcad5ef98",
+      "isOnline": false,
+      "release": "7.1.2",
+      "sdk": 25,
+      "featureLevel": 25,
+      "model": "Control Hub v1.0",
+      "type": "HANDHELD",
+      "isEmulator": false
+    },
+    "filter": "package:mine ",
+    "projectApplicationIds": [
+      "com.qualcomm.ftcrobotcontroller.test",
+      "com.qualcomm.ftcrobotcontroller"
+    ]
+  },
+  "logcatMessages": [
+    {
+      "header": {
+        "logLevel": "DEBUG",
+        "pid": 375,
+        "tid": 811,
+        "applicationId": "system_process",
+        "processName": "system_process",
+        "tag": "SntpClient",
+        "timestamp": {
+          "seconds": 1766974373,
+          "nanos": 22000000
+        }
+      },
+      "message": "request time failed: java.net.UnknownHostException: Unable to resolve host \"2.android.pool.ntp.org\": No address associated with hostname"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1435,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 720000000
+        }
+      },
+      "message": "received command: CMD_INIT_OP_MODE(11597) $Stop$Robot$"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 742000000
+        }
+      },
+      "message": "container(0x005834b9: OpModeStuckCodeMonitor) added id\u003d167 TID\u003d0 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1499,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 746000000
+        }
+      },
+      "message": "thread: ...terminating \u0027OpModeThread\u0027"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1499,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 750000000
+        }
+      },
+      "message": "container(0x0181c6be: OpModeExecutor) removed id\u003d149 TID\u003d1499 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 751000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Stop of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 754000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode STOPPED, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 757000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 758000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 759000000
+        }
+      },
+      "message": "Attempting to switch to OpMode $Stop$Robot$"
+    },
+    {
+      "header": {
+        "logLevel": "DEBUG",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "HardwareMap",
+        "timestamp": {
+          "seconds": 1766974377,
+          "nanos": 764000000
+        }
+      },
+      "message": "Clearing which device instances have been retrieved"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 259000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Init of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 260000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode INIT, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 261000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 262000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 263000000
+        }
+      },
+      "message": "container(0x0f2051d1: OpModeExecutor) added id\u003d169 TID\u003d0 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2214,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 268000000
+        }
+      },
+      "message": "thread: \u0027OpModeThread\u0027 starting..."
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 268000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Start of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 270000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode RUNNING, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 270000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":1,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 271000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":1,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 272000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 273000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1444,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 282000000
+        }
+      },
+      "message": "sending CMD_NOTIFY_INIT_OP_MODE(1706), attempt: 0"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1444,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974378,
+          "nanos": 283000000
+        }
+      },
+      "message": "sending CMD_NOTIFY_RUN_OP_MODE(1707), attempt: 0"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1435,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974379,
+          "nanos": 999000000
+        }
+      },
+      "message": "received command: CMD_INIT_OP_MODE(11632) $Stop$Robot$"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2214,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 16000000
+        }
+      },
+      "message": "thread: ...terminating \u0027OpModeThread\u0027"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 20000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Stop of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2214,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 21000000
+        }
+      },
+      "message": "container(0x0f2051d1: OpModeExecutor) removed id\u003d169 TID\u003d2214 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 21000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode STOPPED, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 22000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 23000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 23000000
+        }
+      },
+      "message": "Attempting to switch to OpMode $Stop$Robot$"
+    },
+    {
+      "header": {
+        "logLevel": "DEBUG",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "HardwareMap",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 25000000
+        }
+      },
+      "message": "Clearing which device instances have been retrieved"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 213000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Init of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 214000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode INIT, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 215000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 216000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 217000000
+        }
+      },
+      "message": "container(0x090cfe2f: OpModeExecutor) added id\u003d171 TID\u003d0 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2232,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 218000000
+        }
+      },
+      "message": "thread: \u0027OpModeThread\u0027 starting..."
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 219000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Start of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 221000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":0,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 222000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":0,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 223000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode RUNNING, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 225000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 227000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1444,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 242000000
+        }
+      },
+      "message": "sending CMD_NOTIFY_INIT_OP_MODE(1746), attempt: 0"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1444,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974380,
+          "nanos": 243000000
+        }
+      },
+      "message": "sending CMD_NOTIFY_RUN_OP_MODE(1747), attempt: 0"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974385,
+          "nanos": 399000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.BATTERY: (Plugin): Sending: {\"data\":12.769,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974385,
+          "nanos": 400000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":12.769,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974390,
+          "nanos": 400000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.BATTERY: (Plugin): Sending: {\"data\":12.777000000000001,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974390,
+          "nanos": 401000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":12.777000000000001,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 399000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.BATTERY: (Plugin): Sending: {\"data\":12.769,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 400000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":12.769,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1435,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 719000000
+        }
+      },
+      "message": "received command: CMD_SET_MATCH_NUMBER(11850) 0"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1435,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 720000000
+        }
+      },
+      "message": "received command: CMD_INIT_OP_MODE(11851) testing auto"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2232,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 761000000
+        }
+      },
+      "message": "thread: ...terminating \u0027OpModeThread\u0027"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2232,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 764000000
+        }
+      },
+      "message": "container(0x090cfe2f: OpModeExecutor) removed id\u003d171 TID\u003d2232 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 765000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Stop of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 767000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode STOPPED, "
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 772000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 772000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"\",\"name\":\"\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"STOPPED\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 773000000
+        }
+      },
+      "message": "Attempting to switch to OpMode testing auto"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 779000000
+        }
+      },
+      "message": "******************** START - OPMODE testing auto ********************"
+    },
+    {
+      "header": {
+        "logLevel": "DEBUG",
+        "pid": 1134,
+        "tid": 1437,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 798000000
+        }
+      },
+      "message": "system telemetry: key\u003d$System$Warning$ msg\u003d\"Both the Robot Controller and Driver Station support 5 GHz. You should consider selecting a 5 GHz Wi-Fi channel.\""
+    },
+    {
+      "header": {
+        "logLevel": "DEBUG",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "HardwareMap",
+        "timestamp": {
+          "seconds": 1766974395,
+          "nanos": 950000000
+        }
+      },
+      "message": "Clearing which device instances have been retrieved"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 436000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Init of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 437000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode INIT, testing auto"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 438000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"$$$$$$$\",\"name\":\"testing auto\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"INIT\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 438000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"$$$$$$$\",\"name\":\"testing auto\",\"source\":\"ANDROID_STUDIO\"},\"status\":\"INIT\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "ThreadPool",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 439000000
+        }
+      },
+      "message": "container(0x0011a701: OpModeExecutor) added id\u003d173 TID\u003d0 count\u003d1"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 2330,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "RobotCore",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 440000000
+        }
+      },
+      "message": "thread: \u0027OpModeThread\u0027 starting..."
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 2330,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "I2C",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 441000000
+        }
+      },
+      "message": "Automatically initializing I2C device GoBildaPinpointDriver (USB (embedded); module 173; bus 3; addr7\u003d0x31)"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1444,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974396,
+          "nanos": 442000000
+        }
+      },
+      "message": "sending CMD_NOTIFY_INIT_OP_MODE(1980), attempt: 0"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1144,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "art",
+        "timestamp": {
+          "seconds": 1766974397,
+          "nanos": 478000000
+        }
+      },
+      "message": "Do partial code cache collection, code\u003d251KB, data\u003d208KB"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1144,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "art",
+        "timestamp": {
+          "seconds": 1766974397,
+          "nanos": 482000000
+        }
+      },
+      "message": "After code cache collection, code\u003d243KB, data\u003d204KB"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1144,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "art",
+        "timestamp": {
+          "seconds": 1766974397,
+          "nanos": 483000000
+        }
+      },
+      "message": "Increasing code cache capacity to 1024KB"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1435,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 200000000
+        }
+      },
+      "message": "received command: CMD_RUN_OP_MODE(11894) testing auto"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 213000000
+        }
+      },
+      "message": "PANELS: CORE: (Panels): Start of opMode"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 216000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":0,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 217000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":0,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 218000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): New active OpMode RUNNING, testing auto"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 221000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"$$$$$$$\",\"name\":\"testing auto\",\"source\":\"ANDROID_STUDIO\"},\"startTimestamp\":1766974399213,\"status\":\"RUNNING\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1479,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 222000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":{\"opMode\":{\"autoTransition\":\"\",\"defaultGroup\":\"$$$$$$$\",\"flavour\":\"AUTONOMOUS\",\"group\":\"$$$$$$$\",\"name\":\"testing auto\",\"source\":\"ANDROID_STUDIO\"},\"startTimestamp\":1766974399213,\"status\":\"RUNNING\"},\"messageID\":\"activeOpMode\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "VERBOSE",
+        "pid": 1134,
+        "tid": 1444,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "Robocol",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 242000000
+        }
+      },
+      "message": "sending CMD_NOTIFY_RUN_OP_MODE(2021), attempt: 0"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 375,
+        "tid": 526,
+        "applicationId": "system_process",
+        "processName": "system_process",
+        "tag": "UsageStatsService",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 447000000
+        }
+      },
+      "message": "Time changed in UsageStats by 1766974228 seconds"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 375,
+        "tid": 526,
+        "applicationId": "system_process",
+        "processName": "system_process",
+        "tag": "UsageStatsService",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 447000000
+        }
+      },
+      "message": "User[0] Flushing usage stats to disk"
+    },
+    {
+      "header": {
+        "logLevel": "DEBUG",
+        "pid": 883,
+        "tid": 883,
+        "applicationId": "android.process.media",
+        "processName": "android.process.media",
+        "tag": "lvjinhua",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 452000000
+        }
+      },
+      "message": " Failed while trying resolve alarm filter file, not exists"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 469000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":254,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 470000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":254,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 375,
+        "tid": 526,
+        "applicationId": "system_process",
+        "processName": "system_process",
+        "tag": "UsageStatsDatabase",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 475000000
+        }
+      },
+      "message": "Time changed by +20451d2h10m28s443ms. files deleted: 0 files moved: 4"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 375,
+        "tid": 526,
+        "applicationId": "system_process",
+        "processName": "system_process",
+        "tag": "UsageStatsService",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 489000000
+        }
+      },
+      "message": "User[0] Rollover scheduled @ 2025-12-29 21:10:38(1767060638231)"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 721000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":507,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 721000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":507,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 973000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":759,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974399,
+          "nanos": 973000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":759,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 224000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":1011,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 225000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":1011,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 398000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.BATTERY: (Plugin): Sending: {\"data\":12.323,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1382,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 398000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":12.323,\"messageID\":\"battery\",\"pluginID\":\"com.bylazar.battery\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 476000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":1262,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 477000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":1262,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 728000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":1514,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 728000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":1514,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 979000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":1765,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974400,
+          "nanos": 980000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":1765,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974401,
+          "nanos": 231000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":2017,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974401,
+          "nanos": 232000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":2017,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974401,
+          "nanos": 483000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":2269,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974401,
+          "nanos": 483000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":2269,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974401,
+          "nanos": 734000000
+        }
+      },
+      "message": "PANELS: PLUGINS/COM.BYLAZAR.OPMODECONTROL: (Plugin): Sending: {\"data\":2521,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 1134,
+        "tid": 1500,
+        "applicationId": "com.qualcomm.ftcrobotcontroller",
+        "processName": "com.qualcomm.ftcrobotcontroller",
+        "tag": "System.out",
+        "timestamp": {
+          "seconds": 1766974401,
+          "nanos": 735000000
+        }
+      },
+      "message": "PANELS: SOCKET: (Socket): Sent to all clients: {\"data\":2521,\"messageID\":\"deltaMs\",\"pluginID\":\"com.bylazar.opmodecontrol\"}"
+    },
+    {
+      "header": {
+        "logLevel": "INFO",
+        "pid": 0,
+        "tid": 0,
+        "applicationId": "",
+        "processName": "",
+        "tag": "",
+        "timestamp": {
+          "seconds": 0,
+          "nanos": 0
+        }
+      },
+      "message": "---------------------------- PROCESS ENDED (1134) for package com.qualcomm.ftcrobotcontroller ----------------------------"
+    }
+  ]
+}
