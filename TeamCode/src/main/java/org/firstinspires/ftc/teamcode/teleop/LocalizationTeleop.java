@@ -153,6 +153,10 @@ public class LocalizationTeleop extends OpMode {
 
 
             turret.update(angleToGoalRelRobotDeg, telemetry);
+
+             //turret.aim(1);
+
+
         if (gamepad1.a){
             turret.aim(1);
         } else {

@@ -6,9 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class UpdatedTurret {
-    private int totalTurnTicks = -853;
-    private int totalDegrees = 320;
+    private double totalTurnTicks = 853.0;
+    private double totalDegrees = 320.0;
     private double ticksPerDegree = totalTurnTicks / totalDegrees;
+
+
     private double currentPositionTicks;
     private double currentPositionDegrees;
     private double targetPositionTurretTicks;
@@ -34,31 +36,34 @@ public class UpdatedTurret {
     }
 
     public void update (double botErrorDeg, Telemetry t){
-        currentPositionTicks = Math.abs(turret.getCurrentPosition());
-        currentPositionDegrees = minDegrees + (currentPositionTicks * ticksPerDegree);
-        targetPositionTurretDegrees = 360 - botErrorDeg;
-        targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
+        currentPositionTicks = turret.getCurrentPosition();
+        currentPositionDegrees = normalize360(minDegrees + (-currentPositionTicks / ticksPerDegree));
 
-        if (targetPositionTurretDegrees > 360){
-            targetPositionTurretDegrees -= 360;
-            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
-        }
+        // targetPositionTurretDegrees = normalize360(360 - botErrorDeg);
+        targetPositionTurretDegrees = clamp(normalize360(360 - botErrorDeg), safeMinDegrees, safeMaxDegrees);
+        targetPositionTurretTicks = -(targetPositionTurretDegrees - minDegrees) * ticksPerDegree;
 
-        if (targetPositionTurretDegrees > 340 && targetPositionTurretDegrees < 360){
-            targetPositionTurretDegrees = safeMaxDegrees;
-            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
-            inDeadZone = true;
-        } else {
-            inDeadZone = false;
-        }
 
-        if (targetPositionTurretDegrees < 20 && targetPositionTurretTicks > 0){
-            targetPositionTurretDegrees = safeMinDegrees;
-            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
-            inDeadZone = true;
-        } else {
-            inDeadZone = false;
-        }
+//        if (targetPositionTurretDegrees > 360){
+//            targetPositionTurretDegrees -= 360;
+//            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
+//        }
+//
+//        if (targetPositionTurretDegrees > 340 && targetPositionTurretDegrees < 360){
+//            targetPositionTurretDegrees = safeMaxDegrees;
+//            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
+//            inDeadZone = true;
+//        } else {
+//            inDeadZone = false;
+//        }
+//
+//        if (targetPositionTurretDegrees < 20 && targetPositionTurretTicks > 0){
+//            targetPositionTurretDegrees = safeMinDegrees;
+//            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
+//            inDeadZone = true;
+//        } else {
+//            inDeadZone = false;
+//        }
 
         t.addData("bot error deg", botErrorDeg);
 
@@ -79,6 +84,21 @@ public class UpdatedTurret {
 
 
     }
+
+
+
+    private static double clamp(double value, double min, double max) {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
+
+    private static double normalize360(double deg) {
+        deg = deg % 360;
+        if (deg < 0) deg += 360;
+        return deg;
+    }
+
 
     public void aim(double power){
         turret.setTargetPosition((int)targetPositionTurretTicks);
