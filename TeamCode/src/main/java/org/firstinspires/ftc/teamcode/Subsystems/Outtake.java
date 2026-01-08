@@ -16,9 +16,9 @@ public class Outtake {
     private double fly1Multiplier = 1;
     private double fly2Multiplier = -1;
 
-    private double kV = 0; // main feedforward for velocity
-    private double kS = 0; //feedforward just for static friction
-    private double kP = 0; //proportional
+    private double kV = 0.00035; // main feedforward for velocity
+    private double kS = 0.044; //feedforward just for static friction
+    private double kP = 0.005; //proportional
     private double kD = 0; //derivative
 
     private double lastError;
