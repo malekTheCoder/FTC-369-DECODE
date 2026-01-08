@@ -29,7 +29,7 @@ public class FarRedCombine extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(61, 15, Math.PI);
+        Pose2d initialPose = new Pose2d(61, 10, Math.toRadians(90));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 //        Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
@@ -39,146 +39,35 @@ public class FarRedCombine extends LinearOpMode {
 //        Hood hood = new Hood(hardwareMap);
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(50, 19), Math.toRadians(158));  // was (-19, 202)
+                .strafeToLinearHeading(new Vector2d(53,12), Math.toRadians(90));
+
 
         TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(30, 23), Math.toRadians(90))   // was (-23, 270)
-                .strafeToLinearHeading(new Vector2d(30, 40), Math.toRadians(90))   // was (-40, 270)
-                .strafeToLinearHeading(new Vector2d(54, 19), Math.toRadians(155)); // was (-19, 205)
+                .strafeToLinearHeading(new Vector2d(32,30), Math.toRadians(90)) // go to first set of artifacts
+                .strafeToLinearHeading(new Vector2d(32,50), Math.toRadians(90)) // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
-        TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(31, 70), Math.toRadians(180))     // was (-70, 180)
-                .waitSeconds(3)
-                .strafeToLinearHeading(new Vector2d(54, 19), Math.toRadians(157.5));  // was (-19, 202.5)
+        TrajectoryActionBuilder goLoopForSecondSet = goLoopForFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)) // go to second set of artifacts
+                .strafeToLinearHeading(new Vector2d(10,50), Math.toRadians(90)) // drive into second set of artifacts
+                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
-        TrajectoryActionBuilder goLoopForExtraRandom = goLoopForGateBatch.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40, 48), Math.toRadians(360))      // was (-48, 0)
-                .strafeToLinearHeading(new Vector2d(62, 48), Math.toRadians(360))      // was (-48, 0)
-                .strafeToLinearHeading(new Vector2d(54, 19), Math.toRadians(157.5));   // was (-19, 202.5)
-//
-//
-//        SequentialAction shootPreload = new SequentialAction(
-//                new ParallelAction(
-//                        goToShootPreload.build(),
-//                        flywheel.holdFlywheelVelocity(2060, 0.75)
-//                ),
-//                new ParallelAction(
-//                        flywheel.holdFlywheelVelocity(2060,1.2),
-//                        intake.holdIntakePower(0.5,1.2),
-//                        belt.holdBeltPower(-0.5,1.2),
-//                        new SequentialAction(
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown(),
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown(),
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown()
-//                        )
-//                )
-//        );
-//
-//        SequentialAction firstBatchLoop = new SequentialAction(
-//                flywheel.stopFlywheel(0),
-//                new ParallelAction(
-//                        goLoopForFirstSet.build(),
-//                        intake.holdIntakePower(0.6,2),
-//                        belt.holdBeltPower(-0.8,2),
-//                        new SequentialAction(
-//                                new SleepAction(2.2),
-//                                flywheel.holdFlywheelVelocity(2060,0.3)
-//                        )
-//                ),
-//                new ParallelAction(
-//                        flywheel.holdFlywheelVelocity(2060,1.2),
-//                        intake.holdIntakePower(0.5,1.2),
-//                        belt.holdBeltPower(-0.5,1.2),
-//                        new SequentialAction(
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown(),
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown(),
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown()
-//                        )
-//                )
-//
-//
-//
-//
-//        );
-//
-//        SequentialAction gateBatchLoop = new SequentialAction(
-//                flywheel.stopFlywheel(0),
-//                new ParallelAction(
-//                        goLoopForGateBatch.build(),
-//                        flywheel.stopFlywheel(0),
-//                        intake.holdIntakePower(0.6,3.5),
-//                        belt.holdBeltPower(-0.8,3.5),
-//                        new SequentialAction(
-//                                new SleepAction(5.5),
-//                                flywheel.holdFlywheelVelocity(2060,0.2)
-//                        )
-//                ),
-//                new ParallelAction(
-//                        flywheel.holdFlywheelVelocity(2060,1.2),
-//                        intake.holdIntakePower(0.5,1.2),
-//                        belt.holdBeltPower(-0.4,1.2),
-//                        new SequentialAction(
-//                                new SleepAction(1),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown(),
-//                                new SleepAction(0.35),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown(),
-//                                new SleepAction(0.4),
-//                                kicker.kickerUp(),
-//                                kicker.kickerDown()
-//                        )
-//                )
-//        );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        while (!opModeIsActive()){
-            telemetry.addData("Position during Init", initialPose);
-            telemetry.update();
-        }
-
+        TrajectoryActionBuilder goLoopForWallSet = goLoopForSecondSet.endTrajectory().endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(46,79), Math.toRadians(10)) // wall set
+                .strafeToLinearHeading(new Vector2d(67,79), Math.toRadians(10)) // drive in
+                .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
 
         Actions.runBlocking(
                 new SequentialAction(
                         goToShootPreload.build(),
-                        goLoopForFirstSet.build()
-//                        goLoopForGateBatch.build(),
-
-
-//                        shootPreload,
-//                        firstBatchLoop,
-//                        gateBatchLoop,
-//                        goLoopForExtraRandom.build(),
+                        goLoopForFirstSet.build(),
+                        goLoopForSecondSet.build(),
+                        goLoopForWallSet.build()
 //                        kicker.kickerDown()
                 )
 
 
-        );
 
+        );
     }
 }
