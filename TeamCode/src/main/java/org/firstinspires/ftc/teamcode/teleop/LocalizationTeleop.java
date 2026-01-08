@@ -14,9 +14,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.Subsystems.Limelight;
-import org.firstinspires.ftc.teamcode.Subsystems.TurrLog;
-import org.firstinspires.ftc.teamcode.Subsystems.TurretLogic;
 import org.firstinspires.ftc.teamcode.Subsystems.UpdatedTurret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -27,6 +24,8 @@ public class LocalizationTeleop extends OpMode {
     private Follower follower;
     public static Pose startingPose;
     private boolean automatedDrive;
+
+    private boolean holdingPoing;
     private Drivetrain drivetrain;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
@@ -67,16 +66,16 @@ public class LocalizationTeleop extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-//        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
-//                .addPath(new Path(new BezierLine(follower::getPose, new Pose(58, 20))))
-//                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(110), 0.8))
-//                .build();
-
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(58, 20))))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(110), 0.8))
                 .build();
+
+//        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+//                .addPath(new Path(new BezierLine(follower::getPose, new Pose(58, 20))))
+//                .setTangentHeadingInterpolation()
+//                .setReversed()
+//                .build();
 
         telemetryM.addLine("Initialized and ready to start");
         telemetryM.update();
@@ -143,6 +142,12 @@ public class LocalizationTeleop extends OpMode {
             automatedDrive = true;
         }
 
+        if (gamepad1.a){
+            follower.holdPoint(follower.getPose());
+        } else {
+            follower.breakFollowing();
+        }
+
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
             follower.breakFollowing();
@@ -154,12 +159,16 @@ public class LocalizationTeleop extends OpMode {
 
             turret.update(angleToGoalRelRobotDeg, telemetry);
 
-             //turret.aim(1);
+             // turret.aim(1);
 
 
-        if (gamepad1.a){
-            turret.aim(1);
-        } else {
+        if (gamepad2.a){
+            turret.aim(0.1);
+        } else if (gamepad2.x){
+            turret.aim(0.5);
+        }else if (gamepad2.y){
+            turret.aim(0.9);
+        } else{
             turret.aim(0);
         }
 
