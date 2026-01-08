@@ -10,22 +10,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 
-@TeleOp(name = "test outtake")
+@TeleOp(name = "test outtake regression")
 @Config
 public class TestOuttake extends OpMode {
     Outtake outtake;
 
     private DcMotor intake;
 
-    public static double target = 2000; // ticks/sec target
-    public static double KS = 0.044;
-    public static double KV = 0.00035;
-    public static double KP = 0.005;
-    public static double KD = 0.0;
-    public static double multiplier = 0.0;
+    public static double target = 0; // ticks/sec target
 
-    // Optional: threshold for "ready"
-    public static double READY_THRESHOLD_TPS = 20;
 
     @Override
     public void init() {
@@ -37,27 +30,13 @@ public class TestOuttake extends OpMode {
 
     @Override
     public void loop() {
-        if (target <= 0) {
-            outtake.stopOuttake();
-            outtake.resetController();
-            outtake.addTelemetry(telemetry);
-            telemetry.update();
-            return;
-        }
+        intake.setPower(gamepad1.left_stick_y);
 
-        // Push dashboard values into the subsystem each loop
-        outtake.updatePIDValues(KS*multiplier, KV*multiplier, KP*multiplier, KD*multiplier);
         outtake.setTargetVelocity(target);
 
-        // Run the controller
-        outtake.runOuttake();
+        if(gamepad1.dpadUpWasPressed()){
+            target+=25
+        }
 
-        // Telemetry (graph these keys in Dashboard)
-        outtake.addTelemetry(telemetry);
-        telemetry.addData("Ready(threshold)", READY_THRESHOLD_TPS);
-        telemetry.addData("Ready", outtake.atTargetVelocity(READY_THRESHOLD_TPS));
-        telemetry.update();
-
-        intake.setPower(gamepad1.left_stick_y);
     }
 }

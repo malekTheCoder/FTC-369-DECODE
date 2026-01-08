@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -34,6 +35,7 @@ public class Outtake {
         fly2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fly1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         fly2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
         // Initialize timing so the first dt isn't huge
         lastLoopTimeNs = System.nanoTime();
