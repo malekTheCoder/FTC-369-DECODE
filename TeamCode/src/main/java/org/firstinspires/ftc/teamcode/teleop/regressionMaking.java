@@ -92,11 +92,6 @@ public class regressionMaking extends OpMode {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void loop() {
 
         if (gamepad1.x) {
