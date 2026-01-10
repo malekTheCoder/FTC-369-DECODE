@@ -94,7 +94,7 @@ public class Outtake {
     }
 
     public double velocityRegressionModel(double distanceToGoal){
-        return 0.0;
+        return 3.47953*distanceToGoal+1473.50091;
     }
 
     public void setPower(double power){

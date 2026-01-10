@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -25,6 +27,7 @@ import java.util.function.Supplier;
 @TeleOp(name = "MakeRegression")
 @Config
 public class MakeRegression extends OpMode {
+    private FtcDashboard dashboard;
     private Follower follower;
     public static Pose startingPose;
     private boolean automatedDrive;
@@ -33,8 +36,8 @@ public class MakeRegression extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double blueGoalXPosition = 5;
-    private double blueGoalYPosition = 140;
+    private double blueGoalXPosition = 0;
+    private double blueGoalYPosition = 144;
 
     private double distanceToGoal = 0;
 
@@ -60,6 +63,8 @@ public class MakeRegression extends OpMode {
 
     private Intake intake;
 
+    public static int baseline;//DELETE THIS LATEr
+
 
     @Override
     public void init() {
@@ -71,13 +76,13 @@ public class MakeRegression extends OpMode {
         intake = new Intake(hardwareMap);
 
         targetVelocity = 0;
-
+        dashboard = FtcDashboard.getInstance();
 
 
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(7.8, 9, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(8, 8.5, Math.toRadians(90)) : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -171,7 +176,11 @@ public class MakeRegression extends OpMode {
             automatedDrive = false;
 
         }
-
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("targetVelocity", outtake.getTargetVelocity());
+        packet.put("currentVelocity", outtake.getCurrentVelocity());
+        packet.put("line", baseline);
+        dashboard.sendTelemetryPacket(packet);
 
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
@@ -179,9 +188,9 @@ public class MakeRegression extends OpMode {
         // turret.aim(1);
 
 
-        if (track){
-            turret.aim(1);
-        }
+//        if (track){
+//            turret.aim(.5);
+//        }
 
         outtake.setTargetVelocity(targetVelocity);
         outtake.runOuttake();
