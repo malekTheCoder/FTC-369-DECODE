@@ -266,6 +266,9 @@ public class BlueCloseSolo extends LinearOpMode {
         Pose2d initialPose = new Pose2d(-50, -49, Math.toRadians(234)); // initial pose from meep meep
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Turret turret = new Turret(hardwareMap);
+        Flywheel flywheel = new Flywheel(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+        Stopper stopper = new Stopper(hardwareMap);
 
 
 
@@ -304,23 +307,77 @@ public class BlueCloseSolo extends LinearOpMode {
             telemetry.update();
         }
 
+        SequentialAction pathingTest = new SequentialAction(
+                goToShootPreload.build(),
+                goToFirstBatchAndDriveInAndGoBackToShoot.build(),
+                goLoopPathForSecondBatch.build(),
+                goLoopPathForThirdBatch.build(),
+                goGetOffLaunchLine.build()
+        );
+
         ParallelAction shootPreload = new ParallelAction(
+                // will keep flywheel always running for the action so parall with the sequential
+                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        new ParallelAction(
+                                goToShootPreload.build(),
+                                turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                        ),
+                        stopper.disengageStopper()
+                )
+        );
+
+        SequentialAction FirstBatch = new SequentialAction(
+                new ParallelAction(
+                        goToFirstBatchAndDriveInAndGoBackToShoot.build(),
+                        flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
+                        new SequentialAction(
+                                intake.holdIntakePower(0.8, 3), //TODO: finetune values
+                                stopper.disengageStopper(),
+                                intake.holdIntakePower(0.7, 1.5) //TODO finetune values
+                        )
+                )
 
         );
+
+        SequentialAction SecondBatch = new SequentialAction(
+                new ParallelAction(
+                        goLoopPathForSecondBatch.build(),
+                        flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
+                        new SequentialAction(
+                                intake.holdIntakePower(0.8, 3), //TODO: finetune values
+                                stopper.disengageStopper(),
+                                intake.holdIntakePower(0.7, 1.5) //TODO finetune values
+                        )
+                )
+
+        );
+
+        SequentialAction ThirdBarch = new SequentialAction(
+                new ParallelAction(
+                        goLoopPathForThirdBatch.build(),
+                        flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
+                        new SequentialAction(
+                                intake.holdIntakePower(0.8, 3), //TODO: finetune values
+                                stopper.disengageStopper(),
+                                intake.holdIntakePower(0.7, 1.5) //TODO finetune values
+                        )
+                )
+        )
 
 
         Actions.runBlocking(
                 new SequentialAction(
-                        new ParallelAction(
-                                goToShootPreload.build(),
-                                turret.aimTurret(-150,0.9)
-                        )
-
-//                        goToFirstBatchAndDriveInAndGoBackToShoot.build(),
-//                        goLoopPathForSecondBatch.build(),
-//                        goLoopPathForThirdBatch.build(),
-//                        goGetOffLaunchLine.build()
-                        //kicker.kickerDown()
+                        shootPreload,
+                        stopper.engageStopper(),
+                        FirstBatch,
+                        stopper.engageStopper(),
+                        SecondBatch,
+                        stopper.engageStopper(),
+                        ThirdBarch,
+                        stopper.engageStopper(),
+                        goGetOffLaunchLine.build(),
+                        stopper.engageStopper()
 
                 )
 
