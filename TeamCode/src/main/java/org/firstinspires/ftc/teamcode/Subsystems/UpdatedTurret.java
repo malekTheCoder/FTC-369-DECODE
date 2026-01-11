@@ -8,6 +8,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class UpdatedTurret {
     private double totalTurnTicks = 853.0;
     private double totalDegrees = 320.0;
+
+    private double maxSafeTicks = 840.0;
+    private double minSafeTicks = 15.0;
     private double ticksPerDegree = totalTurnTicks / totalDegrees;
 
 
@@ -43,30 +46,18 @@ public class UpdatedTurret {
         targetPositionTurretDegrees = clamp(normalize360(360 - botErrorDeg), safeMinDegrees, safeMaxDegrees);
         targetPositionTurretTicks = -(targetPositionTurretDegrees - minDegrees) * ticksPerDegree;
 
+//        if (targetPositionTurretTicks > maxSafeTicks){
+//            targetPositionTurretTicks = maxSafeTicks;
+//            targetPositionTurretDegrees = minDegrees - (targetPositionTurretTicks / ticksPerDegree);
+//
+//        } else if (targetPositionTurretTicks < minSafeTicks){
+//            targetPositionTurretTicks = minSafeTicks;
+//            targetPositionTurretDegrees = minDegrees - (targetPositionTurretTicks / ticksPerDegree);
+//        }
 
-//        if (targetPositionTurretDegrees > 360){
-//            targetPositionTurretDegrees -= 360;
-//            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
-//        }
-//
-//        if (targetPositionTurretDegrees > 340 && targetPositionTurretDegrees < 360){
-//            targetPositionTurretDegrees = safeMaxDegrees;
-//            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
-//            inDeadZone = true;
-//        } else {
-//            inDeadZone = false;
-//        }
-//
-//        if (targetPositionTurretDegrees < 20 && targetPositionTurretTicks > 0){
-//            targetPositionTurretDegrees = safeMinDegrees;
-//            targetPositionTurretTicks = targetPositionTurretDegrees * ticksPerDegree;
-//            inDeadZone = true;
-//        } else {
-//            inDeadZone = false;
-//        }
+
 
         t.addData("bot error deg", botErrorDeg);
-
         t.addData("curr ticks", currentPositionTicks);
         t.addData("curr deg", currentPositionDegrees);
         t.addLine("---------------");
@@ -77,11 +68,6 @@ public class UpdatedTurret {
         t.addData("on target", isOnTarget(5));
         t.addLine("---------------");
         t.update();
-
-
-
-
-
 
     }
 

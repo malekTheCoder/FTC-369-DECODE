@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.Tele;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -11,16 +11,19 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.UpdatedTurret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@TeleOp(name = "pedro only localization test")
-public class LocalizationTeleop extends OpMode {
+@TeleOp(name = "TURRET RED TELEOP")
+public class RedTeleopTurret extends OpMode {
     private Follower follower;
     public static Pose startingPose;
     private boolean automatedDrive;
@@ -29,8 +32,8 @@ public class LocalizationTeleop extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double blueGoalXPosition = 15;
-    private double blueGoalYPosition = 130;
+    private double redGoalXPosition = 149;
+    private double redGoalYPosition = 125;
 
     private double distanceToGoal = 0;
 
@@ -48,6 +51,12 @@ public class LocalizationTeleop extends OpMode {
     private DcMotorEx turretMotor;
     private UpdatedTurret turret;
 
+    private Servo stopper;
+
+    private Outtake outtake;
+
+    private Intake intake;
+
 
     @Override
     public void init() {
@@ -55,13 +64,16 @@ public class LocalizationTeleop extends OpMode {
         drivetrain = new Drivetrain(hardwareMap);
         turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
         turret = new UpdatedTurret(turretMotor);
+        stopper = hardwareMap.get(Servo.class, "stopper");
+        outtake = new Outtake(hardwareMap);
+        intake = new Intake(hardwareMap);
 
 
 
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(7.8, 9, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(144, 0, Math.toRadians(90)) : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -93,8 +105,28 @@ public class LocalizationTeleop extends OpMode {
     @Override
     public void loop() {
 
+        if (gamepad1.a){
+            stopper.setPosition(0.5);
+            intake.runIntake(-0.7);
+        } else {
+            stopper.setPosition(0.6);
+
+            if (gamepad1.b){
+                intake.runIntake(-0.9);
+            } else {
+                intake.stopIntake();
+            }
+
+        }
+
         if (gamepad1.x) {
             drivetrain.resetIMU();
+        }
+
+        if (gamepad1.leftBumperWasPressed()){
+            redGoalXPosition--;
+        } else if (gamepad1.rightBumperWasPressed()) {
+            redGoalXPosition++;
         }
 
 
@@ -111,9 +143,12 @@ public class LocalizationTeleop extends OpMode {
         telemetry.addData("Pose X", poseX);
         telemetry.addData("Pose Y", poseY);
         telemetry.addData("Heading (deg)", poseHeadingDeg);
+        telemetry.addData("goal x", redGoalXPosition);
 
-        double xDiff = (blueGoalXPosition - pose.getX());
-        double yDiff = (blueGoalYPosition - pose.getY());
+
+
+        double xDiff = (redGoalXPosition - pose.getX());
+        double yDiff = (redGoalYPosition - pose.getY());
         double term1 = xDiff * xDiff;
         double term2 = yDiff * yDiff;
         double sum = term1 + term2;
@@ -141,11 +176,7 @@ public class LocalizationTeleop extends OpMode {
             automatedDrive = true;
         }
 
-        if (gamepad1.a){
-            follower.holdPoint(follower.getPose());
-        } else {
-            follower.breakFollowing();
-        }
+
 
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
@@ -155,27 +186,16 @@ public class LocalizationTeleop extends OpMode {
         }
 
 
+        outtake.setTargetVelocity(outtake.velocityRegressionModel(distanceToGoal));
+        outtake.runOuttake();
 
-            turret.update(angleToGoalRelRobotDeg, telemetry);
-
-             // turret.aim(1);
-
-
-        if (gamepad2.a){
-            turret.aim(0.1);
-        } else if (gamepad2.x){
-            turret.aim(0.5);
-        }else if (gamepad2.y){
-            turret.aim(0.9);
-        } else{
-            turret.aim(0);
-        }
+        turret.update(angleToGoalRelRobotDeg, telemetry);
+        turret.aim(0.9);
 
 
 
-
-            telemetryM.update();
-            telemetry.update();
+        telemetryM.update();
+        telemetry.update();
 
 
 
