@@ -329,6 +329,7 @@ public class BlueCloseSolo extends LinearOpMode {
 
         SequentialAction FirstBatch = new SequentialAction(
                 new ParallelAction(
+                        turret.aimTurret(-150,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         goToFirstBatchAndDriveInAndGoBackToShoot.build(),
                         flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
                         new SequentialAction(
@@ -342,6 +343,7 @@ public class BlueCloseSolo extends LinearOpMode {
 
         SequentialAction SecondBatch = new SequentialAction(
                 new ParallelAction(
+                        turret.aimTurret(-150,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         goLoopPathForSecondBatch.build(),
                         flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
                         new SequentialAction(
@@ -355,6 +357,7 @@ public class BlueCloseSolo extends LinearOpMode {
 
         SequentialAction ThirdBarch = new SequentialAction(
                 new ParallelAction(
+                        turret.aimTurret(-150,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         goLoopPathForThirdBatch.build(),
                         flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
                         new SequentialAction(
@@ -363,7 +366,7 @@ public class BlueCloseSolo extends LinearOpMode {
                                 intake.holdIntakePower(0.7, 1.5) //TODO finetune values
                         )
                 )
-        )
+        );
 
 
         Actions.runBlocking(
