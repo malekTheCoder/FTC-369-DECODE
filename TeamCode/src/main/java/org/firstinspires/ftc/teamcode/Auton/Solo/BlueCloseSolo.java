@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Autonomous.Combined.FarBlueCombined;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Autonomous(name = "BlueCloseSolo")
 public class BlueCloseSolo extends LinearOpMode {
@@ -128,7 +129,60 @@ public class BlueCloseSolo extends LinearOpMode {
     }
 
     public class Flywheel{
-        // to be implemented using outtake subsystem
+        Outtake outtake;
+
+        public Flywheel(HardwareMap hardwareMap){
+            outtake = new Outtake(hardwareMap);
+        }
+
+        public class RunFlywheel implements Action{
+            private double targetVelocity;
+            private double duration;
+
+            private ElapsedTime flywheelTimer = new ElapsedTime();
+            private boolean flywheelTimerStarted = false;
+
+            public RunFlywheel(double targetVelocity, double seconds){
+                this.targetVelocity = targetVelocity;
+                this.duration = seconds;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+                if (!flywheelTimerStarted){
+                    flywheelTimer.reset();
+                    flywheelTimerStarted = true;
+                }
+
+                outtake.setTargetVelocity(targetVelocity);
+                outtake.runOuttake();
+
+                if(flywheelTimer.seconds() > duration){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+        public Action runFlywheel(double targetVelocity, double durationSeconds){
+            return new RunFlywheel(targetVelocity, durationSeconds);
+        }
+
+        public class StopFlywheel implements Action{
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                outtake.stopOuttake();
+                return false;
+            }
+        }
+
+        public Action stopFlywheel(){
+            return new StopFlywheel();
+        }
     }
 
 
