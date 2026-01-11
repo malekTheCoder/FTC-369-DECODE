@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Autonomous.Combined.FarBlueCombined;
@@ -185,6 +186,76 @@ public class BlueCloseSolo extends LinearOpMode {
         }
     }
 
+    public class Stopper{
+        private Servo stopper;
+        private double engagedPosition = 0.5; // fine tune this value
+        private double disengagedPosition = 0.6; //fine tune this value
+        private double servoTime = 0.25; // time it takes servo to move between postions
+
+        public Stopper(HardwareMap hardwareMap){
+            stopper = hardwareMap.get(Servo.class, "stopper");
+        }
+
+        public class EngageStopper implements Action{
+
+            ElapsedTime stopperTimer;
+            private boolean isStopperTimerReset = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if(!isStopperTimerReset){
+                    stopperTimer = new ElapsedTime();
+                    stopperTimer.reset();
+                    isStopperTimerReset = true;
+                }
+
+                stopper.setPosition(engagedPosition);
+
+                if (stopperTimer.seconds() > servoTime){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+        public Action engageStopper(){
+            return new EngageStopper();
+        }
+
+        public class DisengageStopper implements Action{
+
+            ElapsedTime stopperTimer;
+            private boolean isStopperTimerReset = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if(!isStopperTimerReset){
+                    stopperTimer = new ElapsedTime();
+                    stopperTimer.reset();
+                    isStopperTimerReset = true;
+                }
+
+                stopper.setPosition(disengagedPosition);
+
+                if (stopperTimer.seconds() > servoTime){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+        public Action disengageStopper(){
+            return new DisengageStopper();
+        }
+
+
+
+    }
+
 
 
 
@@ -221,6 +292,9 @@ public class BlueCloseSolo extends LinearOpMode {
 
         TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-9,-20),Math.toRadians(224)); // go shoot second batch
+
+
+
         while (!opModeIsActive()){
             if (isStopRequested()){
                 return;
@@ -229,6 +303,10 @@ public class BlueCloseSolo extends LinearOpMode {
             telemetry.addData("Position during Init", initialPose);
             telemetry.update();
         }
+
+        ParallelAction shootPreload = new ParallelAction(
+
+        );
 
 
         Actions.runBlocking(
