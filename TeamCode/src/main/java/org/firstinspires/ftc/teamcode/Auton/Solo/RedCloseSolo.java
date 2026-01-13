@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -22,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Autonomous(name = "RedCloseSolo")
 public class RedCloseSolo extends LinearOpMode {
-    //TODO: work on pathing first anf finalize pathing for this red side, just run the pathing in actions.runblockign and figure that out before adding full auto with actions
+    //TODO: work on pathing first and finalize pathing for this red side, just run the pathing in actions.runblockign and figure that out before adding full auto with actions
 
 
     public class Turret{
@@ -262,6 +264,10 @@ public class RedCloseSolo extends LinearOpMode {
 
           Pose2d initialPose = new Pose2d(-59,42, Math.toRadians(127)); // initial pose from meep meep
           MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+          Turret turret = new Turret(hardwareMap);
+          Flywheel flywheel = new Flywheel(hardwareMap);
+          Intake intake = new Intake(hardwareMap);
+          Stopper stopper = new Stopper(hardwareMap);
 
 
 
@@ -287,6 +293,96 @@ public class RedCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-9, 20), Math.toRadians(136));
 
 
+        SequentialAction pathingTest = new SequentialAction(
+                goToShootPreload.build(),
+                goToFirstBatchAndDriveInAndGoBackToShoot.build(),
+                goLoopPathForSecondBatch.build(),
+                goLoopPathForThirdBatch.build(),
+                goGetOffLaunchLine.build()
+        );
+
+//        SequentialAction pathingTest = new SequentialAction(
+//                goToShootPreload.build(),
+//                goToFirstSet.build(),
+//                driveIntoFirstSet.build(),
+//                goToShootFirstSet.build(),
+//                goToSecondSet.build(),
+//                driveIntoSecondSet.build(),
+//                goToShootSecondSet.build(),
+//                goToThirdSet.build(),
+//                driveIntoThirdSet.build(),
+//                goToShootThirdSet.build(),
+//                goGetOffLaunchLine.build()
+//        );
+//
+//        ParallelAction shootPreload = new ParallelAction(
+//                // will keep flywheel always running for the action so parall with the sequential
+//                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+//                new SequentialAction(
+//                        new ParallelAction(
+//                                goToShootPreload.build(),
+//                                turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+//                        ),
+//                        stopper.disengageStopper(),
+//                        intake.holdIntakePower(0.7,2) //TODO fine tune
+//                )
+//        );
+//
+//        SequentialAction FirstBatch = new SequentialAction(
+//                goToFirstSet.build(),
+//                new ParallelAction(
+//                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+//                        driveIntoFirstSet.build()
+//                ),
+//                new ParallelAction(
+//                        flywheel.runFlywheel(1200,5),
+//                        new SequentialAction(
+//                                goToShootFirstSet.build(),
+//                                stopper.disengageStopper(),
+//                                intake.holdIntakePower(0.7, 2)
+//                        )
+//
+//                )
+//
+//        );
+//
+//        SequentialAction SecondBatch = new SequentialAction(
+//                goToSecondSet.build(),
+//                new ParallelAction(
+//                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+//                        driveIntoSecondSet.build()
+//                ),
+//                new ParallelAction(
+//                        flywheel.runFlywheel(1200,6),
+//                        new SequentialAction(
+//                                goToShootSecondSet.build(),
+//                                stopper.disengageStopper(),
+//                                intake.holdIntakePower(0.7, 2)
+//                        )
+//
+//                )
+//
+//        );
+//
+//        SequentialAction ThirdBatch = new SequentialAction(
+//                goToThirdSet.build(),
+//                new ParallelAction(
+//                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+//                        driveIntoThirdSet.build()
+//                ),
+//                new ParallelAction(
+//                        flywheel.runFlywheel(1200,8), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
+//                        new SequentialAction(
+//                                goToShootThirdSet.build(),
+//                                stopper.disengageStopper(),
+//                                intake.holdIntakePower(0.7, 2)
+//                        )
+//
+//                )
+//
+//        );
+
+
 
         while (!opModeIsActive()){
             if (isStopRequested()){
@@ -298,9 +394,16 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
 
+
+        // TODO when testing go step by step, comment out all but the ffirst and then incremmentallg uncomment the next line
+        // TODO will make testing and troubleshooting easier
         Actions.runBlocking(
                 new SequentialAction(
-
+//                        shootPreload,
+//                        FirstBatch,
+//                        SecondBatch,
+//                        ThirdBatch,
+//                        goGetOffLaunchLine.build()
 
                 )
 

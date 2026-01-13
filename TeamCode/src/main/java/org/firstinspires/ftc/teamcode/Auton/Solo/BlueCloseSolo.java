@@ -276,24 +276,34 @@ public class BlueCloseSolo extends LinearOpMode {
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // position to shoot zero batch
 
-        TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,-20), Math.toRadians(270)) // go to first set of artifacts
-                .strafeToLinearHeading(new Vector2d(-9,-45), Math.toRadians(270)) // drive into first set of artifacts
+        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-9,-20), Math.toRadians(270)); // go to first set of artifacts
+
+        TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-9,-45), Math.toRadians(270)); // drive into first set of artifacts
+
+        TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
 
-        TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(15,-20), Math.toRadians(270)) // go to second set of artifacts
-                .strafeToLinearHeading(new Vector2d(15,-45), Math.toRadians(270)) // drive into second set of artifacts
+        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(15,-20), Math.toRadians(270)); // go to second set of artifacts
+
+        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(15,-45), Math.toRadians(270)); // drive into second set of artifacts
+
+        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
+        TrajectoryActionBuilder goToThirdSet = goToShootSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(40,-20), Math.toRadians(270)); // go to third set of artifacts
 
-        TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,-20), Math.toRadians(270)) // go to third set of artifacts
-                .strafeToLinearHeading(new Vector2d(40,-45), Math.toRadians(270)) // drive into third set of artifacts
+        TrajectoryActionBuilder driveIntoThirdSet = goToThirdSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(40,-45), Math.toRadians(270)); // drive into third set of artifacts
+
+        TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
-
-        TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
+        TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-9,-20),Math.toRadians(224)); // go shoot second batch
 
 
@@ -309,66 +319,90 @@ public class BlueCloseSolo extends LinearOpMode {
 
         SequentialAction pathingTest = new SequentialAction(
                 goToShootPreload.build(),
-                goToFirstBatchAndDriveInAndGoBackToShoot.build(),
-                goLoopPathForSecondBatch.build(),
-                goLoopPathForThirdBatch.build(),
+                goToFirstSet.build(),
+                driveIntoFirstSet.build(),
+                goToShootFirstSet.build(),
+                goToSecondSet.build(),
+                driveIntoSecondSet.build(),
+                goToShootSecondSet.build(),
+                goToThirdSet.build(),
+                driveIntoThirdSet.build(),
+                goToShootThirdSet.build(),
                 goGetOffLaunchLine.build()
         );
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
                                 turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
-                        stopper.disengageStopper()
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(0.7,2) //TODO fine tune
                 )
         );
 
         SequentialAction FirstBatch = new SequentialAction(
+               goToFirstSet.build(),
                 new ParallelAction(
-                        turret.aimTurret(-150,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
-                        goToFirstBatchAndDriveInAndGoBackToShoot.build(),
-                        flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
+                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        driveIntoFirstSet.build()
+                ),
+                new ParallelAction(
+                        flywheel.runFlywheel(1200,5),
                         new SequentialAction(
-                                intake.holdIntakePower(0.8, 3), //TODO: finetune values
+                                goToShootFirstSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 1.5) //TODO finetune values
+                                intake.holdIntakePower(0.7, 2)
                         )
+
                 )
 
         );
 
         SequentialAction SecondBatch = new SequentialAction(
+                goToSecondSet.build(),
                 new ParallelAction(
-                        turret.aimTurret(-150,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
-                        goLoopPathForSecondBatch.build(),
-                        flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
+                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        driveIntoSecondSet.build()
+                ),
+                new ParallelAction(
+                        flywheel.runFlywheel(1200,6),
                         new SequentialAction(
-                                intake.holdIntakePower(0.8, 3), //TODO: finetune values
+                                goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 1.5) //TODO finetune values
+                                intake.holdIntakePower(0.7, 2)
                         )
+
                 )
 
         );
 
-        SequentialAction ThirdBarch = new SequentialAction(
+        SequentialAction ThirdBatch = new SequentialAction(
+                goToThirdSet.build(),
                 new ParallelAction(
-                        turret.aimTurret(-150,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
-                        goLoopPathForThirdBatch.build(),
-                        flywheel.runFlywheel(1200, 8), //TODO: find working target velocity and finetune runnign time
+                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        driveIntoThirdSet.build()
+                ),
+                new ParallelAction(
+                        flywheel.runFlywheel(1200,8), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
                         new SequentialAction(
-                                intake.holdIntakePower(0.8, 3), //TODO: finetune values
+                                goToShootThirdSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 1.5) //TODO finetune values
+                                intake.holdIntakePower(0.7, 2)
                         )
+
                 )
+
         );
 
 
+
+
+        // TODO when testing go step by step, comment out all but the ffirst and then incremmentallg uncomment the next line
+        // TODO will make testing and troubleshooting easier
         Actions.runBlocking(
                 new SequentialAction(
                         shootPreload,
@@ -377,7 +411,7 @@ public class BlueCloseSolo extends LinearOpMode {
                         stopper.engageStopper(),
                         SecondBatch,
                         stopper.engageStopper(),
-                        ThirdBarch,
+                        ThirdBatch,
                         stopper.engageStopper(),
                         goGetOffLaunchLine.build(),
                         stopper.engageStopper()

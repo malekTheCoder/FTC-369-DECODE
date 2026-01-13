@@ -20,11 +20,243 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Auton.Solo.BlueCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Autonomous(name = "Far Red Combined")
 public class FarRedCombine extends LinearOpMode {
 
+    public class Turret{
+        private double turretMinTicks = 0;
+        private double turretMaxTicks = 853;
+        private DcMotorEx turret;
+
+        public Turret(HardwareMap hardwareMap){
+            turret = hardwareMap.get(DcMotorEx.class, "turret");
+            turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            turret.setTargetPosition(0);
+            turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        public class AimTurret implements Action{
+            private double targetPosition;
+            private double turretPow;
+
+            public AimTurret(double targetPos, double turretPow){
+                this.targetPosition = targetPos;
+                this.turretPow = turretPow;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                turret.setTargetPosition((int)targetPosition);
+                turret.setPower(turretPow);
+
+                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 10){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+
+
+
+        }
+
+        public Action aimTurret(double targetPosition, double turretPower){
+            return new Turret.AimTurret(targetPosition, turretPower );
+        }
+
+
+    }
+
+    public class Intake{
+        private DcMotor intakeMotor;
+
+        public Intake (HardwareMap hardwareMap){
+            intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+            intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }// constructor
+
+        public class HoldIntakePower implements Action {
+            private double power;
+            private double duration;
+
+            private ElapsedTime intakeTimer = new ElapsedTime();
+            private boolean intakeTimerStarted = false;
+
+            public HoldIntakePower(double power, double duration) {
+                this.power = power;
+                this.duration = duration;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                if (!intakeTimerStarted){
+                    intakeTimer.reset();
+                    intakeTimerStarted = true;
+                }
+                intakeMotor.setPower(power);
+                packet.put("intakePower", power);
+
+                if(intakeTimer.seconds() > duration){
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        public Action holdIntakePower(double power, double time) {
+            return new Intake.HoldIntakePower(power, time);
+        }
+
+        // stop the intake
+        public class StopIntake implements Action {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                intakeMotor.setPower(0);
+                return false;
+            }
+        }
+
+        public Action stopIntake() {
+            return new Intake.StopIntake();
+        }
+    }
+
+    public class Flywheel{
+        Outtake outtake;
+
+        public Flywheel(HardwareMap hardwareMap){
+            outtake = new Outtake(hardwareMap);
+        }
+
+        public class RunFlywheel implements Action{
+            private double targetVelocity;
+            private double duration;
+
+            private ElapsedTime flywheelTimer = new ElapsedTime();
+            private boolean flywheelTimerStarted = false;
+
+            public RunFlywheel(double targetVelocity, double seconds){
+                this.targetVelocity = targetVelocity;
+                this.duration = seconds;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+
+                if (!flywheelTimerStarted){
+                    flywheelTimer.reset();
+                    flywheelTimerStarted = true;
+                }
+
+                outtake.setTargetVelocity(targetVelocity);
+                outtake.runOuttake();
+
+                if(flywheelTimer.seconds() > duration){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+        public Action runFlywheel(double targetVelocity, double durationSeconds){
+            return new Flywheel.RunFlywheel(targetVelocity, durationSeconds);
+        }
+
+        public class StopFlywheel implements Action{
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                outtake.stopOuttake();
+                return false;
+            }
+        }
+
+        public Action stopFlywheel(){
+            return new Flywheel.StopFlywheel();
+        }
+    }
+
+    public class Stopper{
+        private Servo stopper;
+        private double engagedPosition = 0.5; // fine tune this value
+        private double disengagedPosition = 0.6; //fine tune this value
+        private double servoTime = 0.25; // time it takes servo to move between postions
+
+        public Stopper(HardwareMap hardwareMap){
+            stopper = hardwareMap.get(Servo.class, "stopper");
+        }
+
+        public class EngageStopper implements Action{
+
+            ElapsedTime stopperTimer;
+            private boolean isStopperTimerReset = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if(!isStopperTimerReset){
+                    stopperTimer = new ElapsedTime();
+                    stopperTimer.reset();
+                    isStopperTimerReset = true;
+                }
+
+                stopper.setPosition(engagedPosition);
+
+                if (stopperTimer.seconds() > servoTime){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+        public Action engageStopper(){
+            return new Stopper.EngageStopper();
+        }
+
+        public class DisengageStopper implements Action{
+
+            ElapsedTime stopperTimer;
+            private boolean isStopperTimerReset = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if(!isStopperTimerReset){
+                    stopperTimer = new ElapsedTime();
+                    stopperTimer.reset();
+                    isStopperTimerReset = true;
+                }
+
+                stopper.setPosition(disengagedPosition);
+
+                if (stopperTimer.seconds() > servoTime){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+        public Action disengageStopper(){
+            return new Stopper.DisengageStopper();
+        }
+
+
+
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,40 +264,125 @@ public class FarRedCombine extends LinearOpMode {
         Pose2d initialPose = new Pose2d(61, 10, Math.toRadians(90));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
-//        Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
-//        Kicker kicker = new Kicker(hardwareMap);
-//        Intake intake = new Intake(hardwareMap);
-//        Belt belt = new Belt(hardwareMap);
-//        Hood hood = new Hood(hardwareMap);
+
+        Turret turret = new Turret(hardwareMap);
+        Intake intake = new Intake(hardwareMap);
+        Flywheel flywheel = new Flywheel(hardwareMap);
+        Stopper stopper = new Stopper(hardwareMap);
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(53,12), Math.toRadians(90));
 
+        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(32,30), Math.toRadians(90)); // go to first set of artifacts
 
-        TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(32,30), Math.toRadians(90)) // go to first set of artifacts
-                .strafeToLinearHeading(new Vector2d(32,50), Math.toRadians(90)) // drive into first set of artifacts
+        TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(32,50), Math.toRadians(90)); // drive into first set of artifacts
+
+        TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
-        TrajectoryActionBuilder goLoopForSecondSet = goLoopForFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)) // go to second set of artifacts
-                .strafeToLinearHeading(new Vector2d(10,50), Math.toRadians(90)) // drive into second set of artifacts
+        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
+
+        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,50), Math.toRadians(90)); // drive into second set of artifacts
+
+        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
-        TrajectoryActionBuilder goLoopForWallSet = goLoopForSecondSet.endTrajectory().endTrajectory().fresh()
+        TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,79), Math.toRadians(10)) // wall set
-                .strafeToLinearHeading(new Vector2d(67,79), Math.toRadians(10)) // drive in
+                .strafeToLinearHeading(new Vector2d(67,79), Math.toRadians(10)); // drive in
+
+        TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
+
+
+        //TODO: add trajectory to get off the luanch line
+
+
+
+        SequentialAction pathingTest = new SequentialAction(
+                goToShootPreload.build(),
+                goToFirstSet.build(),
+                driveIntoFirstSet.build(),
+                goToShootFirstSet.build(),
+                goToSecondSet.build(),
+                driveIntoSecondSet.build(),
+                goToShootSecondSet.build(),
+                goToWallSetAndDriveIn.build(),
+                goToShootWallSet.build()
+        );
+
+        ParallelAction shootPreload = new ParallelAction(
+                // will keep flywheel always running for the action so parall with the sequential
+                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        new ParallelAction(
+                                goToShootPreload.build(),
+                                turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                        ),
+                        stopper.disengageStopper()
+                )
+        );
+
+        ParallelAction FirstBatch = new ParallelAction(
+                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        goToFirstSet.build(),
+                        new ParallelAction(
+                                intake.holdIntakePower(0.8,2),
+                                driveIntoFirstSet.build()
+                        ),
+                        goToShootFirstSet.build(),
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(0.7,2.5)
+                )
+
+        );
+
+
+        ParallelAction SecondBatch = new ParallelAction(
+                flywheel.runFlywheel(1200,7), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        goToSecondSet.build(),
+                        new ParallelAction(
+                                intake.holdIntakePower(0.8,2),
+                                driveIntoSecondSet.build()
+                        ),
+                        goToShootSecondSet.build(),
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(0.7,2.5)
+                )
+
+        );
+
+        ParallelAction WallBatch = new ParallelAction(
+                flywheel.runFlywheel(1200,7), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        new ParallelAction(
+                                intake.holdIntakePower(0.8,5),
+                                goToWallSetAndDriveIn.build()
+                        ),
+                        goToShootWallSet.build(),
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(0.7,2.5)
+                )
+
+        );
+
+
 
         Actions.runBlocking(
                 new SequentialAction(
-                        goToShootPreload.build(),
-                        goLoopForFirstSet.build(),
-                        goLoopForSecondSet.build(),
-                        goLoopForWallSet.build()
-//                        kicker.kickerDown()
+                        FirstBatch,
+                        stopper.engageStopper(),
+                        SecondBatch,
+                        stopper.disengageStopper(),
+                        WallBatch,
+                        stopper.disengageStopper()
                 )
-
 
 
         );
