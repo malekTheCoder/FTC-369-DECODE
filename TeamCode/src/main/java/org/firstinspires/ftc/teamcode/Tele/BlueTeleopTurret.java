@@ -32,8 +32,8 @@ public class BlueTeleopTurret extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double blueGoalXPosition = 0;
-    private double blueGoalYPosition = 125;
+    private double blueGoalXPosition = 5;
+    private double blueGoalYPosition = 130;
 
     private double distanceToGoal = 0;
 
@@ -118,6 +118,22 @@ public class BlueTeleopTurret extends OpMode {
             }
 
         }
+
+
+        if(gamepad2.dpadUpWasPressed()){
+            outtake.verticalTranslationClose +=25;
+        }
+        if(gamepad2.dpadDownWasPressed()){
+            outtake.verticalTranslationClose -=25;
+        }
+
+        if(gamepad2.yWasPressed()){
+            outtake.verticalTranslationFar +=25;
+        }
+        if(gamepad2.bWasPressed()){
+            outtake.verticalTranslationFar -=25;
+        }
+
 
         if (gamepad2.xWasPressed()){
             resetBotPose();
@@ -210,7 +226,7 @@ public class BlueTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(new Pose(0, 0, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(144, 0, Math.toRadians(90)));
         follower.update();
     }
 }

@@ -73,7 +73,7 @@ public class LocalizationTeleop extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(7.8, 9, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(0, 0, Math.toRadians(90)) : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -180,8 +180,8 @@ public class LocalizationTeleop extends OpMode {
         }
 
 
-        outtake.setTargetVelocity(outtake.velocityRegressionModel(distanceToGoal));
-        outtake.runOuttake();
+//        outtake.setTargetVelocity(outtake.velocityRegressionModel(distanceToGoal));
+//        outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
         turret.aim(0.9);

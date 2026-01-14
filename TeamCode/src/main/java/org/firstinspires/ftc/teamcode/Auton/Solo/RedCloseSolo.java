@@ -190,8 +190,8 @@ public class RedCloseSolo extends LinearOpMode {
 
     public class Stopper{
         private Servo stopper;
-        private double engagedPosition = 0.5; // fine tune this value
-        private double disengagedPosition = 0.6; //fine tune this value
+        private double engagedPosition = 0.6; // fine tune this value
+        private double disengagedPosition = 0.5; //fine tune this value
         private double servoTime = 0.25; // time it takes servo to move between postions
 
         public Stopper(HardwareMap hardwareMap){
@@ -273,46 +273,39 @@ public class RedCloseSolo extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-9,10), Math.toRadians(90)); // position to shoot zero batch
+                .strafeToLinearHeading(new Vector2d(-15,19), Math.toRadians(90)); // position to shoot zero batch
 
-        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,20), Math.toRadians(90)); // go to first set of artifacts
+//        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(-15,32), Math.toRadians(90)); // go to first set of artifacts
 
-        TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,45), Math.toRadians(90)); // drive into first set of artifacts
+        TrajectoryActionBuilder driveIntoFirstSet = goToShootPreload.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-15,53), Math.toRadians(90)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,10), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
         TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(15,20), Math.toRadians(90)); // go to second set of artifacts
+                .strafeToLinearHeading(new Vector2d(9,32), Math.toRadians(90)); // go to second set of artifacts
 
         TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(15,45), Math.toRadians(90)); // drive into second set of artifacts
+                .strafeToLinearHeading(new Vector2d(9,53), Math.toRadians(90)); // drive into second set of artifacts
 
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,10), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToThirdSet = goToShootSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,20), Math.toRadians(90)); // go to third set of artifacts
+                .strafeToLinearHeading(new Vector2d(34,32), Math.toRadians(90)); // go to third set of artifacts
 
         TrajectoryActionBuilder driveIntoThirdSet = goToThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,45), Math.toRadians(90)); // drive into third set of artifacts
+                .strafeToLinearHeading(new Vector2d(34,53), Math.toRadians(90)); // drive into third set of artifacts
 
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,10), Math.toRadians(90)); // go back after grabbing third set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,20),Math.toRadians(136)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(-69,35),Math.toRadians(90)); // go shoot second batch
 
 
-//        SequentialAction pathingTest = new SequentialAction(
-//                goToShootPreload.build(),
-//                goToFirstBatchAndDriveInAndGoBackToShoot.build(),
-//                goLoopPathForSecondBatch.build(),
-//                goLoopPathForThirdBatch.build(),
-//                goGetOffLaunchLine.build()
-//        );
 
 //        SequentialAction pathingTest = new SequentialAction(
 //                goToShootPreload.build(),
@@ -330,29 +323,30 @@ public class RedCloseSolo extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+                flywheel.runFlywheel(1780,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
-                                goToShootPreload.build(),
-                                turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                            turret.aimTurret(-792,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                            goToShootPreload.build()
+
                         ),
+
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.7,2) //TODO fine tune
+                        intake.holdIntakePower(-0.9,2) //TODO fine tune
                 )
         );
 
         SequentialAction FirstBatch = new SequentialAction(
-                goToFirstSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        intake.holdIntakePower(-0.8, 1.7), //TODO fine tune,
                         driveIntoFirstSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1200,5),
+                        flywheel.runFlywheel(1780,4),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 2)
+                                intake.holdIntakePower(-0.75, 2)
                         )
 
                 )
@@ -362,15 +356,15 @@ public class RedCloseSolo extends LinearOpMode {
         SequentialAction SecondBatch = new SequentialAction(
                 goToSecondSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
                         driveIntoSecondSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1200,6),
+                        flywheel.runFlywheel(1790,3.7),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 2)
+                                intake.holdIntakePower(-0.75, 2)
                         )
 
                 )
@@ -380,15 +374,15 @@ public class RedCloseSolo extends LinearOpMode {
         SequentialAction ThirdBatch = new SequentialAction(
                 goToThirdSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
                         driveIntoThirdSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1200,8), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
+                        flywheel.runFlywheel(1790,4.7), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
                         new SequentialAction(
                                 goToShootThirdSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 2)
+                                intake.holdIntakePower(-0.75, 2)
                         )
 
                 )
@@ -423,6 +417,17 @@ public class RedCloseSolo extends LinearOpMode {
                         goGetOffLaunchLine.build(),
                         stopper.engageStopper()
 
+//                        goToShootPreload.build(),
+//                        goToFirstSet.build(),
+//                        driveIntoFirstSet.build(),
+//                        goToShootFirstSet.build(),
+//                        goToSecondSet.build(),
+//                        driveIntoSecondSet.build(),
+//                        goToShootSecondSet.build(),
+//                        goToThirdSet.build(),
+//                        driveIntoThirdSet.build(),
+//                        goToShootThirdSet.build(),
+//                        goGetOffLaunchLine.build()
                 )
 
         );

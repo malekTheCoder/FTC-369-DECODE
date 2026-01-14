@@ -333,29 +333,29 @@ public class BlueCloseSolo extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+                flywheel.runFlywheel(1780,4.5), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-47,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.7,2) //TODO fine tune
+                        intake.holdIntakePower(-0.75,2) //TODO fine tune
                 )
         );
 
         SequentialAction FirstBatch = new SequentialAction(
                goToFirstSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        intake.holdIntakePower(-0.8, 2), //TODO fine tune,
                         driveIntoFirstSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1200,5),
+                        flywheel.runFlywheel(1790,5),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 2)
+                                intake.holdIntakePower(-0.75, 2)
                         )
 
                 )
@@ -365,15 +365,15 @@ public class BlueCloseSolo extends LinearOpMode {
         SequentialAction SecondBatch = new SequentialAction(
                 goToSecondSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
                         driveIntoSecondSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1200,6),
+                        flywheel.runFlywheel(1790,5),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 2)
+                                intake.holdIntakePower(-0.75, 2)
                         )
 
                 )
@@ -383,15 +383,15 @@ public class BlueCloseSolo extends LinearOpMode {
         SequentialAction ThirdBatch = new SequentialAction(
                 goToThirdSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(0.8, 2), //TODO fine tune,
+                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
                         driveIntoThirdSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1200,8), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
+                        flywheel.runFlywheel(1790,5), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
                         new SequentialAction(
                                 goToShootThirdSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(0.7, 2)
+                                intake.holdIntakePower(-0.7, 2)
                         )
 
                 )

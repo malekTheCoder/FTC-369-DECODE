@@ -32,8 +32,8 @@ public class RedTeleopTurret extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double redGoalXPosition = 149;
-    private double redGoalYPosition = 125;
+    private double redGoalXPosition = 139;
+    private double redGoalYPosition = 130;
 
     private double distanceToGoal = 0;
 
@@ -73,7 +73,7 @@ public class RedTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(0, 0, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(90)) : startingPose); // close initial pose
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -117,6 +117,21 @@ public class RedTeleopTurret extends OpMode {
                 intake.stopIntake();
             }
 
+        }
+
+
+        if(gamepad2.dpadUpWasPressed()){
+            outtake.verticalTranslationClose +=25;
+        }
+        if(gamepad2.dpadDownWasPressed()){
+            outtake.verticalTranslationClose -=25;
+        }
+
+        if(gamepad2.yWasPressed()){
+            outtake.verticalTranslationFar +=25;
+        }
+        if(gamepad2.bWasPressed()){
+            outtake.verticalTranslationFar -=25;
         }
 
         if (gamepad1.x) {
@@ -199,5 +214,12 @@ public class RedTeleopTurret extends OpMode {
 
 
 
+    }
+    private void resetBotPose(){
+        follower = Constants.createFollower(hardwareMap);
+
+        // follower.setStartingPose(new Pose(0,0,0));
+        follower.setStartingPose(new Pose(0, 0, Math.toRadians(90)));
+        follower.update();
     }
 }
