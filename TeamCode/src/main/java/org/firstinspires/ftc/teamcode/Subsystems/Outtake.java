@@ -25,6 +25,9 @@ public class Outtake {
 
     private long lastLoopTimeNs = 0;
 
+    public double verticalTranslationClose = 1390.04635;
+
+    public double verticalTranslationFar = 1909.47368;
 
     public Outtake(HardwareMap hardwareMap){
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
@@ -93,8 +96,13 @@ public class Outtake {
         return currentVelocity;
     }
 
-    public double velocityRegressionModel(double distanceToGoal){
-        return 3.47953*distanceToGoal+1473.50091 + 15;// 15
+    public double velocityRegressionModel(double distanceToGoal) {
+        if (distanceToGoal < 120) {
+            return 4.44522 * distanceToGoal + verticalTranslationClose;// 15
+        }
+        else{
+            return 0.789474*distanceToGoal + verticalTranslationFar;
+        }
     }
 
     public void setPower(double power){

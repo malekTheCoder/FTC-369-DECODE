@@ -73,7 +73,7 @@ public class BlueTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(0, 0, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(144, 0, Math.toRadians(90)) : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
