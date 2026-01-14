@@ -382,7 +382,8 @@ public class RedCloseSolo extends LinearOpMode {
                         new SequentialAction(
                                 goToShootThirdSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(-0.75, 2)
+                                intake.holdIntakePower(-0.75, 2),
+                                turret.aimTurret(0, .9)
                         )
 
                 )
