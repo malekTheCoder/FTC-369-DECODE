@@ -138,6 +138,11 @@ public class RedTeleopTurret extends OpMode {
             drivetrain.resetIMU();
         }
 
+
+        if (gamepad2.xWasPressed()){
+            resetBotPose();
+        }
+
         if (gamepad1.leftBumperWasPressed()){
             redGoalXPosition--;
         } else if (gamepad1.rightBumperWasPressed()) {
