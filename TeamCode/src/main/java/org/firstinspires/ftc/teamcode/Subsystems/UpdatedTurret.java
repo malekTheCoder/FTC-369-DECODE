@@ -96,4 +96,11 @@ public class UpdatedTurret {
         return (tickDiff/ticksPerDegree) < degTolerance;
     }
 
+//    public void manualMode(double power){
+//        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        turret.setPower(power);
+//
+//        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//    }
+
 }

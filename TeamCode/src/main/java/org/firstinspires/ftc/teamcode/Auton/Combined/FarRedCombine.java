@@ -302,18 +302,26 @@ public class FarRedCombine extends LinearOpMode {
         //TODO: add trajectory to get off the luanch line
 
 
+        while (!opModeIsActive()){
+            if (isStopRequested()){
+                return;
+            }
 
-        SequentialAction pathingTest = new SequentialAction(
-                goToShootPreload.build(),
-                goToFirstSet.build(),
-                driveIntoFirstSet.build(),
-                goToShootFirstSet.build(),
-                goToSecondSet.build(),
-                driveIntoSecondSet.build(),
-                goToShootSecondSet.build(),
-                goToWallSetAndDriveIn.build(),
-                goToShootWallSet.build()
-        );
+            telemetry.addData("Position during Init", initialPose);
+            telemetry.update();
+        }
+
+//        SequentialAction pathingTest = new SequentialAction(
+//                goToShootPreload.build(),
+//                goToFirstSet.build(),
+//                driveIntoFirstSet.build(),
+//                goToShootFirstSet.build(),
+//                goToSecondSet.build(),
+//                driveIntoSecondSet.build(),
+//                goToShootSecondSet.build(),
+//                goToWallSetAndDriveIn.build(),
+//                goToShootWallSet.build()
+//        );
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential

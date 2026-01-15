@@ -304,6 +304,16 @@ public class FarBlueCombine extends LinearOpMode {
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(48, -35), Math.toRadians(270));
 
+
+        while (!opModeIsActive()){
+            if (isStopRequested()){
+                return;
+            }
+
+            telemetry.addData("Position during Init", initialPose);
+            telemetry.update();
+        }
+
 //        SequentialAction pathingTest = new SequentialAction(
 //                goToShootPreload.build(),
 //                goToFirstSet.build(),

@@ -44,6 +44,7 @@ public class BlueTeleopTurret extends OpMode {
     // Angle the goal is relative to robot forward ( for turret)
     private double angleToGoalRelRobotRad = 0.0;
     private double angleToGoalRelRobotDeg = 0.0;
+    private double multiplier = 1;//TEMP
 
     // forward is 90 degressd for pedro so this is correction
     private static final double PEDRO_FORWARD_OFFSET_RAD = Math.toRadians(0);
@@ -56,6 +57,7 @@ public class BlueTeleopTurret extends OpMode {
     private Outtake outtake;
 
     private Intake intake;
+
 
 
     @Override
@@ -212,9 +214,18 @@ public class BlueTeleopTurret extends OpMode {
         outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
-        turret.aim(0.9);
+        if(gamepad2.leftBumperWasPressed()){
+            if(multiplier!=0){
+                multiplier=0;
+            } else {
+                multiplier=1;
+            }
+        }
+        turret.aim(0.9*multiplier);
 
-
+//        if(multiplier==0 && gamepad2.left_stick_x != 0){
+//            turret.manualMode(gamepad2.left_stick_x);
+//        }
 
 
         telemetryM.update();
@@ -226,7 +237,7 @@ public class BlueTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(new Pose(144, 0, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(144, 0, Math.toRadians(-180)));
         follower.update();
     }
 }

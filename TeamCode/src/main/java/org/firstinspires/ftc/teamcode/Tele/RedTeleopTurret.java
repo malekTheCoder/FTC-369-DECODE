@@ -45,6 +45,8 @@ public class RedTeleopTurret extends OpMode {
     private double angleToGoalRelRobotRad = 0.0;
     private double angleToGoalRelRobotDeg = 0.0;
 
+    private double multiplier = 1;
+
     // forward is 90 degressd for pedro so this is correction
     private static final double PEDRO_FORWARD_OFFSET_RAD = Math.toRadians(0);
 
@@ -73,7 +75,7 @@ public class RedTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(90)) : startingPose); // close initial pose
+        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(0)) : startingPose); // close initial pose
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -137,6 +139,7 @@ public class RedTeleopTurret extends OpMode {
         if (gamepad1.x) {
             drivetrain.resetIMU();
         }
+
 
 
         if (gamepad2.xWasPressed()){
@@ -210,8 +213,14 @@ public class RedTeleopTurret extends OpMode {
         outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
-        turret.aim(0.9);
-
+        if(gamepad2.leftBumperWasPressed()){
+            if(multiplier!=0){
+                multiplier=0;
+            } else {
+                multiplier=1;
+            }
+        }
+        turret.aim(0.9*multiplier);
 
 
         telemetryM.update();
@@ -224,7 +233,7 @@ public class RedTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(new Pose(0, 0, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
         follower.update();
     }
 }
