@@ -279,7 +279,7 @@ public class FarRedCombine extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(32,30), Math.toRadians(90)); // go to first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(32,50), Math.toRadians(90)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(32,52), Math.toRadians(90)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
@@ -288,7 +288,7 @@ public class FarRedCombine extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
 
         TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(10,50), Math.toRadians(90)); // drive into second set of artifacts
+                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
 
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
@@ -302,7 +302,7 @@ public class FarRedCombine extends LinearOpMode {
 
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(53, 35), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(62, 35), Math.toRadians(90));
         //TODO: add trajectory to get off the luanch line
 
 

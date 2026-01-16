@@ -304,7 +304,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-61.7,-24),Math.toRadians(270)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(-64.5,-24),Math.toRadians(270)); // go shoot second batch
 
 
 

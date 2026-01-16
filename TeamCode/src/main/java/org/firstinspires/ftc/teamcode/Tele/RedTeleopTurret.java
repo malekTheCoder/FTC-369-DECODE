@@ -75,7 +75,7 @@ public class RedTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(0)) : startingPose); // close initial pose
+        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(0)) : startingPose); // close initial pose, far initial pose = 97.5, 0
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -142,13 +142,13 @@ public class RedTeleopTurret extends OpMode {
 
 
 
-        if (gamepad2.rightBumperWasPressed()){
+        if (gamepad2.backWasPressed()){
             resetBotPose();
         }
 
-        if (gamepad1.leftBumperWasPressed()){
+        if (gamepad2.leftBumperWasPressed()){
             redGoalXPosition--;
-        } else if (gamepad1.rightBumperWasPressed()) {
+        } else if (gamepad2.rightBumperWasPressed()) {
             redGoalXPosition++;
         }
 
@@ -213,7 +213,7 @@ public class RedTeleopTurret extends OpMode {
         outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
-        if(gamepad2.leftBumperWasPressed()){
+        if(gamepad2.xWasPressed()){
             if(multiplier!=0){
                 multiplier=0;
             } else {

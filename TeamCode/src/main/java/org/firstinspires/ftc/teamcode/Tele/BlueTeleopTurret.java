@@ -75,7 +75,7 @@ public class BlueTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(144, 0, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(144, 0, Math.toRadians(90)) : startingPose); //farblue x 30.5 y 0, closeblue x 37 y 126.5
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -137,7 +137,7 @@ public class BlueTeleopTurret extends OpMode {
         }
 
 
-        if (gamepad2.rightBumperWasPressed()){
+        if (gamepad2.backWasPressed()){
             resetBotPose();
         }
 
@@ -147,9 +147,9 @@ public class BlueTeleopTurret extends OpMode {
             drivetrain.resetIMU();
         }
 
-        if (gamepad1.leftBumperWasPressed()){
+        if (gamepad2.leftBumperWasPressed()){
             blueGoalXPosition--;
-        } else if (gamepad1.rightBumperWasPressed()) {
+        } else if (gamepad2.rightBumperWasPressed()) {
             blueGoalXPosition++;
         }
 
@@ -194,6 +194,7 @@ public class BlueTeleopTurret extends OpMode {
 
         if (!automatedDrive) {
             drivetrain.handleDrivetrain(gamepad1);
+            drivetrain.setZeroPower(gamepad1.left_stick_x, gamepad1.left_stick_y);//CHECK
         }
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());
@@ -214,7 +215,7 @@ public class BlueTeleopTurret extends OpMode {
         outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
-        if(gamepad2.leftBumperWasPressed()){
+        if(gamepad2.xWasPressed()){
             if(multiplier!=0){
                 multiplier=0;
             } else {
