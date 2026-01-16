@@ -303,7 +303,7 @@ public class RedCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-69,35),Math.toRadians(90)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(-68,35),Math.toRadians(90)); // go shoot second batch
 
 
 

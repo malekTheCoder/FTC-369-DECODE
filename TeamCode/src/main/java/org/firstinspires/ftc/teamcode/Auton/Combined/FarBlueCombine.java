@@ -302,7 +302,7 @@ public class FarBlueCombine extends LinearOpMode {
 
         //TODO: add trajectory to get off the luanch line
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(48, -35), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(53, -35), Math.toRadians(270));
 
 
         while (!opModeIsActive()){
@@ -379,7 +379,7 @@ public class FarBlueCombine extends LinearOpMode {
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.7,1.2)
+                        intake.holdIntakePower(-0.75,1.2)
                 )
 
         );

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -79,6 +80,7 @@ public class FarRedCombine extends LinearOpMode {
         public Intake (HardwareMap hardwareMap){
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }// constructor
 
         public class HoldIntakePower implements Action {
@@ -190,8 +192,8 @@ public class FarRedCombine extends LinearOpMode {
 
     public class Stopper{
         private Servo stopper;
-        private double engagedPosition = 0.5; // fine tune this value
-        private double disengagedPosition = 0.6; //fine tune this value
+        private double engagedPosition = 0.6; // fine tune this value
+        private double disengagedPosition = 0.5; //fine tune this value
         private double servoTime = 0.25; // time it takes servo to move between postions
 
         public Stopper(HardwareMap hardwareMap){
@@ -293,12 +295,14 @@ public class FarRedCombine extends LinearOpMode {
 
         TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,79), Math.toRadians(10)) // wall set
-                .strafeToLinearHeading(new Vector2d(67,79), Math.toRadians(10)); // drive in
+                .strafeToLinearHeading(new Vector2d(68.5,79), Math.toRadians(10)); // drive in
 
         TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
 
 
+        TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(53, 35), Math.toRadians(90));
         //TODO: add trajectory to get off the luanch line
 
 
@@ -325,57 +329,58 @@ public class FarRedCombine extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2020,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-150,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-735 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
-                        stopper.disengageStopper()
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(.8, 1.1)
                 )
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(1200,5), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2045,4), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
-                                intake.holdIntakePower(0.8,2),
+                                intake.holdIntakePower(0.8,1.5),
                                 driveIntoFirstSet.build()
                         ),
                         goToShootFirstSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.7,2.5)
+                        intake.holdIntakePower(0.75,1.2)
                 )
 
         );
 
 
         ParallelAction SecondBatch = new ParallelAction(
-                flywheel.runFlywheel(1200,7), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2100,3.8), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToSecondSet.build(),
                         new ParallelAction(
-                                intake.holdIntakePower(0.8,2),
+                                intake.holdIntakePower(0.8,1.5),
                                 driveIntoSecondSet.build()
                         ),
                         goToShootSecondSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.7,2.5)
+                        intake.holdIntakePower(0.75,2)
                 )
 
         );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(1200,7), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2045,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
-                                intake.holdIntakePower(0.8,5),
+                                intake.holdIntakePower(0.8,2.7),
                                 goToWallSetAndDriveIn.build()
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.7,2.5)
+                        intake.holdIntakePower(0.75,1.2)
                 )
 
         );
@@ -384,12 +389,15 @@ public class FarRedCombine extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
+                        shootPreload,
+                        stopper.engageStopper(),
                         FirstBatch,
                         stopper.engageStopper(),
                         SecondBatch,
-                        stopper.disengageStopper(),
+                        stopper.engageStopper(),
                         WallBatch,
-                        stopper.disengageStopper()
+                        stopper.engageStopper(),
+                        goGetOffLaunchLine.build()
                 )
 
 

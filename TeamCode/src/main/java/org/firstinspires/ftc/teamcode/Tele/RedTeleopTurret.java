@@ -32,8 +32,8 @@ public class RedTeleopTurret extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double redGoalXPosition = 139;
-    private double redGoalYPosition = 130;
+    private double redGoalXPosition = 132;
+    private double redGoalYPosition = 125;
 
     private double distanceToGoal = 0;
 
@@ -142,7 +142,7 @@ public class RedTeleopTurret extends OpMode {
 
 
 
-        if (gamepad2.xWasPressed()){
+        if (gamepad2.rightBumperWasPressed()){
             resetBotPose();
         }
 
