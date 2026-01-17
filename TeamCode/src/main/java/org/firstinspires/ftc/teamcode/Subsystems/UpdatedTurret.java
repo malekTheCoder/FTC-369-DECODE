@@ -38,6 +38,16 @@ public class UpdatedTurret {
         inDeadZone = true;
     }
 
+    public void manual(double stickX){
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret.setPower(stickX);
+    }
+
+    public void resetPosition(){
+        turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
     public void update (double botErrorDeg, Telemetry t){
         currentPositionTicks = turret.getCurrentPosition();
         currentPositionDegrees = normalize360(minDegrees + (-currentPositionTicks / ticksPerDegree));

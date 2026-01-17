@@ -75,7 +75,7 @@ public class RedTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(0)) : startingPose); // close initial pose, far initial pose = 97.5, 0
+        follower.setStartingPose(startingPose == null ? new Pose(97.5, 0, Math.toRadians(0)) : startingPose); // close initial pose x 97 y 124, far initial pose = 97.5, 0
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -191,15 +191,13 @@ public class RedTeleopTurret extends OpMode {
 
 
 
-        if (!automatedDrive) {
-            drivetrain.handleDrivetrain(gamepad1);
-        }
+
+        drivetrain.handleDrivetrain(gamepad1);
+
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());
             automatedDrive = true;
         }
-
-
 
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
@@ -220,6 +218,16 @@ public class RedTeleopTurret extends OpMode {
                 multiplier=1;
             }
         }
+
+
+        if(multiplier == 0){
+            turret.manual(gamepad2.left_stick_x);
+        }
+
+        if(gamepad2.left_trigger>.3){
+            turret.resetPosition();
+        }
+
         turret.aim(0.9*multiplier);
 
 

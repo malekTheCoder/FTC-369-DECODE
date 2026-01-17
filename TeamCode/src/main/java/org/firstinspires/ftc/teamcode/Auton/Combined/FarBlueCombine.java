@@ -379,7 +379,11 @@ public class FarBlueCombine extends LinearOpMode {
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.75,1.2)
+                        intake.holdIntakePower(-0.75,1.2),
+                        new ParallelAction(
+                                goGetOffLaunchLine.build(),
+                                turret.aimTurret(0, .9)
+                        )
                 )
 
         );

@@ -329,7 +329,7 @@ public class FarRedCombine extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(2020,3.3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2060,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
@@ -341,7 +341,7 @@ public class FarRedCombine extends LinearOpMode {
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(2045,4), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2065,4), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
@@ -357,7 +357,7 @@ public class FarRedCombine extends LinearOpMode {
 
 
         ParallelAction SecondBatch = new ParallelAction(
-                flywheel.runFlywheel(2100,3.8), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2110,3.8), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToSecondSet.build(),
                         new ParallelAction(
@@ -372,7 +372,7 @@ public class FarRedCombine extends LinearOpMode {
         );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2045,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2065,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(0.8,2.7),
@@ -380,7 +380,12 @@ public class FarRedCombine extends LinearOpMode {
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.75,1.2)
+                        intake.holdIntakePower(0.75,1.2),
+                        stopper.engageStopper(),
+                        new ParallelAction(
+                            goGetOffLaunchLine.build(),
+                            turret.aimTurret(0, .9)
+                        )
                 )
 
         );
@@ -396,8 +401,7 @@ public class FarRedCombine extends LinearOpMode {
                         SecondBatch,
                         stopper.engageStopper(),
                         WallBatch,
-                        stopper.engageStopper(),
-                        goGetOffLaunchLine.build()
+                        stopper.engageStopper()
                 )
 
 

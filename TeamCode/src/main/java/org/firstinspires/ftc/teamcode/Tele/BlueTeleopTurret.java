@@ -192,10 +192,8 @@ public class BlueTeleopTurret extends OpMode {
 
 
 
-        if (!automatedDrive) {
-            drivetrain.handleDrivetrain(gamepad1);
-            drivetrain.setZeroPower(gamepad1.left_stick_x, gamepad1.left_stick_y);//CHECK
-        }
+        drivetrain.handleDrivetrain(gamepad1);
+
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());
             automatedDrive = true;
@@ -222,6 +220,15 @@ public class BlueTeleopTurret extends OpMode {
                 multiplier=1;
             }
         }
+
+        if(multiplier == 0){
+            turret.manual(gamepad2.left_stick_x);
+        }
+
+        if(gamepad2.left_trigger>.3){
+            turret.resetPosition();
+        }
+
         turret.aim(0.9*multiplier);
 
 //        if(multiplier==0 && gamepad2.left_stick_x != 0){

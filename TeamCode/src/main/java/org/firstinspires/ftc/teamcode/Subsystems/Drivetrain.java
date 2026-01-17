@@ -58,14 +58,6 @@ public class Drivetrain {
         drive(y, x, rx);
     }
 
-    public void setZeroPower(double stickPosX, double stickPosY){
-        if(Math.abs(stickPosX)<.5 && Math.abs(stickPosY)<.5){
-            frontLeft.setPower(0);
-            backLeft.setPower(0);
-            frontRight.setPower(0);
-            backRight.setPower(0);
-        }
-    }
     public void resetIMU(){
         imu.resetYaw();
     }
