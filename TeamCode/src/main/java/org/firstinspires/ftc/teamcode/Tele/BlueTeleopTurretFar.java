@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@TeleOp(name = "TURRET BLUE TELEOP")
-public class BlueTeleopTurret extends OpMode {
+@TeleOp(name = "BLUE TELEOP Far")
+public class BlueTeleopTurretFar extends OpMode {
     private Follower follower;
     public static Pose startingPose;
     private boolean automatedDrive;
@@ -75,7 +75,7 @@ public class BlueTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(37, 126.5, Math.toRadians(-180)) : startingPose); //farblue x 30.5 y 0, closeblue x 37 y 126.5
+        follower.setStartingPose(startingPose == null ? new Pose(30.5, 0, Math.toRadians(-180)) : startingPose); //farblue x 30.5 y 0, closeblue x 37 y 126.5
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 

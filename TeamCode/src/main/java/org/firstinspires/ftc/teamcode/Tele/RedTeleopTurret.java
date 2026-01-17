@@ -32,7 +32,7 @@ public class RedTeleopTurret extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double redGoalXPosition = 132;
+    private double redGoalXPosition = 138;
     private double redGoalYPosition = 125;
 
     private double distanceToGoal = 0;
@@ -75,7 +75,7 @@ public class RedTeleopTurret extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(97.5, 0, Math.toRadians(0)) : startingPose); // close initial pose x 97 y 124, far initial pose = 97.5, 0
+        follower.setStartingPose(startingPose == null ? new Pose(97, 124, Math.toRadians(0)) : startingPose); // close initial pose x 97 y 124, far initial pose = 97.5, 0
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -212,11 +212,7 @@ public class RedTeleopTurret extends OpMode {
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
         if(gamepad2.xWasPressed()){
-            if(multiplier!=0){
-                multiplier=0;
-            } else {
-                multiplier=1;
-            }
+            multiplier=0;
         }
 
 
