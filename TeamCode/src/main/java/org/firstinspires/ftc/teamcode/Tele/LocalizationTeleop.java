@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@TeleOp(name = "pedro local")
+@TeleOp(name = "pedro local DONT CLICK THIS KAICHEN ")
 public class LocalizationTeleop extends OpMode {
     private Follower follower;
     public static Pose startingPose;

@@ -148,12 +148,12 @@ public class BlueTeleopTurret extends OpMode {
             drivetrain.resetIMU();
         }
 
-        if (gamepad2.leftBumperWasPressed()){
-            blueGoalXPosition--;
-        } else if (gamepad2.rightBumperWasPressed()) {
-            blueGoalXPosition++;
-        }
 
+        if (gamepad2.leftBumperWasPressed()){
+            blueGoalXPosition-=3;
+        } else if (gamepad2.rightBumperWasPressed()) {
+            blueGoalXPosition+=3;
+        }
 
         follower.update();
 

@@ -356,7 +356,7 @@ public class FarBlueCombine extends LinearOpMode {
 
 
         ParallelAction SecondBatch = new ParallelAction(
-                flywheel.runFlywheel(2120,3.8), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToSecondSet.build(),
                         new ParallelAction(

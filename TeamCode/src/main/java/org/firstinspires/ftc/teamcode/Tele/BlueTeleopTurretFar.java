@@ -148,9 +148,9 @@ public class BlueTeleopTurretFar extends OpMode {
         }
 
         if (gamepad2.leftBumperWasPressed()){
-            blueGoalXPosition--;
+            blueGoalXPosition-=3;
         } else if (gamepad2.rightBumperWasPressed()) {
-            blueGoalXPosition++;
+            blueGoalXPosition+=3;
         }
 
 

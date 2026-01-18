@@ -33,7 +33,7 @@ public class RedTeleopTurret extends OpMode {
     private TelemetryManager telemetryM;
 
     private double redGoalXPosition = 138;
-    private double redGoalYPosition = 125;
+    private double redGoalYPosition = 120;
 
     private double distanceToGoal = 0;
 
@@ -147,9 +147,9 @@ public class RedTeleopTurret extends OpMode {
         }
 
         if (gamepad2.leftBumperWasPressed()){
-            redGoalXPosition--;
+            redGoalXPosition-=3;
         } else if (gamepad2.rightBumperWasPressed()) {
-            redGoalXPosition++;
+            redGoalXPosition+=3;
         }
 
 
