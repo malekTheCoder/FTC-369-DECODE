@@ -284,14 +284,14 @@ public class FarRedCombine extends LinearOpMode {
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
-//        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
-//
-//        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
-//
-//        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
+        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
+
+        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
+
+        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,79), Math.toRadians(10)) // wall set
@@ -301,7 +301,7 @@ public class FarRedCombine extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
 
 
-        TrajectoryActionBuilder goGetOffLaunchLine = goToShootPreload.endTrajectory().fresh()
+        TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(62, 35), Math.toRadians(90));
         //TODO: add trajectory to get off the luanch line
 
@@ -356,20 +356,20 @@ public class FarRedCombine extends LinearOpMode {
         );
 
 
-//        ParallelAction SecondBatch = new ParallelAction(
-//                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
-//                new SequentialAction(
-//                        goToSecondSet.build(),
-//                        new ParallelAction(
-//                                intake.holdIntakePower(0.8,1.5),
-//                                driveIntoSecondSet.build()
-//                        ),
-//                        goToShootSecondSet.build(),
-//                        stopper.disengageStopper(),
-//                        intake.holdIntakePower(0.75,2)
-//                )
-//
-//        );
+        ParallelAction SecondBatch = new ParallelAction(
+                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        goToSecondSet.build(),
+                        new ParallelAction(
+                                intake.holdIntakePower(0.8,1.5),
+                                driveIntoSecondSet.build()
+                        ),
+                        goToShootSecondSet.build(),
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(0.75,2)
+                )
+
+        );
 
         ParallelAction WallBatch = new ParallelAction(
                 flywheel.runFlywheel(2065,7), //TODO: find working target velocity and finetune runnign time
@@ -400,12 +400,12 @@ public class FarRedCombine extends LinearOpMode {
                 new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
-//                        FirstBatch,
-//                        stopper.engageStopper(),
-//                        SecondBatch,
-//                        stopper.engageStopper(),
-                        //WallBatch,
-                        park,
+                        FirstBatch,
+                        stopper.engageStopper(),
+                        SecondBatch,
+                        stopper.engageStopper(),
+                        WallBatch,
+//                        park,
                         stopper.engageStopper()
                 )
 
