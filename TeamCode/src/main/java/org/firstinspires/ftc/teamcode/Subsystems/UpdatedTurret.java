@@ -41,6 +41,7 @@ public class UpdatedTurret {
     public void manual(double stickX){
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turret.setPower(-stickX*.3);
+        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void resetPosition(){

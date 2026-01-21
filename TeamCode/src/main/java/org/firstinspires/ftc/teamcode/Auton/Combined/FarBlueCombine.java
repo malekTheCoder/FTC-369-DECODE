@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Auton.Solo.BlueCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
-@Autonomous(name = "Far Blue Combined")
+@Autonomous(name = "Far Blue Auto")
 public class FarBlueCombine extends LinearOpMode {
 
     public class Turret{
@@ -301,7 +301,7 @@ public class FarBlueCombine extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         //TODO: add trajectory to get off the luanch line
-        TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goGetOffLaunchLine = goToShootPreload.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(62, -35), Math.toRadians(270));
 
 
@@ -394,12 +394,13 @@ public class FarBlueCombine extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         shootPreload,
-                        stopper.engageStopper(),
-                        FirstBatch,
-                        stopper.engageStopper(),
-                        SecondBatch,
-                        stopper.engageStopper(),
-                        WallBatch,
+//                        stopper.engageStopper(),
+//                        FirstBatch,
+//                        stopper.engageStopper(),
+//                        SecondBatch,
+//                        stopper.engageStopper(),
+//                        WallBatch,
+                        goGetOffLaunchLine.build(),
                         stopper.engageStopper()
                 )
 

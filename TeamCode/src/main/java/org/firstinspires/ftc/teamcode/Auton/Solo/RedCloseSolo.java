@@ -323,7 +323,7 @@ public class RedCloseSolo extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1780,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+                flywheel.runFlywheel(1760,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
                             turret.aimTurret(-792,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
@@ -332,17 +332,17 @@ public class RedCloseSolo extends LinearOpMode {
                         ),
 
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.9,2) //TODO fine tune
+                        intake.holdIntakePower(-0.75,2) //TODO fine tune
                 )
         );
 
         SequentialAction FirstBatch = new SequentialAction(
                 new ParallelAction(
-                        intake.holdIntakePower(-0.8, 1.7), //TODO fine tune,
+                        intake.holdIntakePower(-0.85, 1.7), //TODO fine tune,
                         driveIntoFirstSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1780,4),
+                        flywheel.runFlywheel(1760,4),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
                                 stopper.disengageStopper(),
@@ -360,7 +360,7 @@ public class RedCloseSolo extends LinearOpMode {
                         driveIntoSecondSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1790,3.7),
+                        flywheel.runFlywheel(1770,3.7),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
