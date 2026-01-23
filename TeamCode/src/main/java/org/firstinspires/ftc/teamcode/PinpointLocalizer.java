@@ -35,7 +35,17 @@ public final class PinpointLocalizer implements Localizer {
 
         double mmPerTick = inPerTick * 25.4;
         driver.setEncoderResolution(1 / mmPerTick, DistanceUnit.MM);
-        driver.setOffsets(mmPerTick * PARAMS.parYTicks, mmPerTick * PARAMS.perpXTicks, DistanceUnit.MM);
+        // rr calculation for offsets using angular ramp logger
+        //driver.setOffsets(mmPerTick * PARAMS.parYTicks, mmPerTick * PARAMS.perpXTicks, DistanceUnit.MM);
+
+
+        // OFFSETS FOR MIDDLE OF BOT IN INCHES
+        // driver.setOffsets(6.16023622, 0.0523622, DistanceUnit.INCH);
+
+        //OFFSETS FOR MIDDLE OF DRIVETRAIN (AXIS OF ROTATION) IN MM
+        driver.setOffsets(156.865139, 35.134861, DistanceUnit.MM);
+
+
 
         // TODO: reverse encoder directions if needed
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
