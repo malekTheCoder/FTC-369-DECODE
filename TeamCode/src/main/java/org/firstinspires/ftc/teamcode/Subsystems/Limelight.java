@@ -34,7 +34,7 @@ public class Limelight {
 
     public Limelight(HardwareMap hardwareMap, int pipeline){
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        this.imu = hardwareMap.get(IMU.class, "imu");
+//        this.imu = hardwareMap.get(IMU.class, "imu");
         limelight.start();
         limelight.pipelineSwitch(pipeline);
     }
