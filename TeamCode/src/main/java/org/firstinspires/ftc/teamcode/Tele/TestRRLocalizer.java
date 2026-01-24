@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 public class TestRRLocalizer extends OpMode {
     MecanumDrive mecanumDrive;
     Drivetrain drive;
-     Pose2d startPose = new Pose2d(-59,-47, Math.toRadians(234));
+     Pose2d startPose = new Pose2d(72,-72, Math.toRadians(180));
 
 
     //Pose2d startPose = new Pose2d(-59,-47, 234);
@@ -30,9 +30,9 @@ public class TestRRLocalizer extends OpMode {
         mecanumDrive.updatePoseEstimate();
 
         Pose2d currentPose = mecanumDrive.localizer.getPose();
-        double heading = mecanumDrive.localizer.getPose().heading.toDouble();
+        double heading = Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble());
 
-        double inverseHeading = mecanumDrive.localizer.getPose().heading.inverse().toDouble();
+        double inverseHeading = (360 + Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble())) % 360;
 
 
         drive.handleDrivetrain(gamepad1);
@@ -44,8 +44,7 @@ public class TestRRLocalizer extends OpMode {
 
         telemetry.addData("X", currentPose.position.x);
         telemetry.addData("Y", currentPose.position.y);
-        telemetry.addData("heading (degrees)", heading);
-        telemetry.addData("inverse heading (degrees)", Math.toDegrees(inverseHeading));
+        telemetry.addData("inverse heading (degrees)", inverseHeading);
 
 
 
