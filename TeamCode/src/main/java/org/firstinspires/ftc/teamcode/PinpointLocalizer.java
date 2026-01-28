@@ -34,7 +34,10 @@ public final class PinpointLocalizer implements Localizer {
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         double mmPerTick = inPerTick * 25.4;
-        driver.setEncoderResolution(1 / mmPerTick, DistanceUnit.MM);
+        //driver.setEncoderResolution(1 / mmPerTick, DistanceUnit.MM);
+        driver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        driver.setYawScalar(1.0006);
+
         // rr calculation for offsets using angular ramp logger
         //driver.setOffsets(mmPerTick * PARAMS.parYTicks, mmPerTick * PARAMS.perpXTicks, DistanceUnit.MM);
 
@@ -43,7 +46,8 @@ public final class PinpointLocalizer implements Localizer {
         // driver.setOffsets(6.16023622, 0.0523622, DistanceUnit.INCH);
 
         //OFFSETS FOR MIDDLE OF DRIVETRAIN (AXIS OF ROTATION) IN MM
-        driver.setOffsets(156.865139, 35.134861, DistanceUnit.MM);
+        driver.setOffsets(156, 12, DistanceUnit.MM);
+
 
 
 
@@ -51,11 +55,16 @@ public final class PinpointLocalizer implements Localizer {
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
 
+//        System.out.print(driver.getYawScalar());
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
 
         driver.resetPosAndIMU();
 
         txWorldPinpoint = initialPose;
+    }
+
+    public double printYawScalar(){
+        return driver.getYawScalar();
     }
 
     @Override
