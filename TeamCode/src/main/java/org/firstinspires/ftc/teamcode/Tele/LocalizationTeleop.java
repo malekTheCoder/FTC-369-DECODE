@@ -184,7 +184,7 @@ public class LocalizationTeleop extends OpMode {
 //        outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg, telemetry);
-        turret.aim(0.9);
+//        turret.aim(0.9);
 
 
 

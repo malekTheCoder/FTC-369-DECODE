@@ -32,8 +32,8 @@ public class RedTeleopTurret extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double redGoalXPosition = 138;
-    private double redGoalYPosition = 120;
+    private double redGoalXPosition = 130;
+    private double redGoalYPosition = 125;
 
     private double distanceToGoal = 0;
 

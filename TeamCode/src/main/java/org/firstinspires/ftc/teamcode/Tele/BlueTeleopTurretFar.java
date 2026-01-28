@@ -32,8 +32,8 @@ public class BlueTeleopTurretFar extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double blueGoalXPosition = 2;
-    private double blueGoalYPosition = 120;
+    private double blueGoalXPosition = 10;
+    private double blueGoalYPosition = 125;
 
     private double distanceToGoal = 0;
 

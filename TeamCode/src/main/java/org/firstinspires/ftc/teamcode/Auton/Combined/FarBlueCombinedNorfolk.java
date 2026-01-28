@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -19,13 +18,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Auton.Solo.BlueCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
-@Autonomous(name = "Far Blue Auto")
-public class FarBlueCombine extends LinearOpMode {
+@Autonomous(name = "Far Blue combined NORFOLK 226 combined")
+public class FarBlueCombinedNorfolk extends LinearOpMode {
 
     public class Turret{
         private double turretMinTicks = 0;
@@ -67,7 +64,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action aimTurret(double targetPosition, double turretPower){
-            return new Turret.AimTurret(targetPosition, turretPower );
+            return new AimTurret(targetPosition, turretPower );
         }
 
 
@@ -112,7 +109,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action holdIntakePower(double power, double time) {
-            return new Intake.HoldIntakePower(power, time);
+            return new HoldIntakePower(power, time);
         }
 
         // stop the intake
@@ -127,7 +124,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action stopIntake() {
-            return new Intake.StopIntake();
+            return new StopIntake();
         }
     }
 
@@ -171,7 +168,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action runFlywheel(double targetVelocity, double durationSeconds){
-            return new Flywheel.RunFlywheel(targetVelocity, durationSeconds);
+            return new RunFlywheel(targetVelocity, durationSeconds);
         }
 
         public class StopFlywheel implements Action{
@@ -184,7 +181,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action stopFlywheel(){
-            return new Flywheel.StopFlywheel();
+            return new StopFlywheel();
         }
     }
 
@@ -223,7 +220,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action engageStopper(){
-            return new Stopper.EngageStopper();
+            return new EngageStopper();
         }
 
         public class DisengageStopper implements Action{
@@ -251,7 +248,7 @@ public class FarBlueCombine extends LinearOpMode {
         }
 
         public Action disengageStopper(){
-            return new Stopper.DisengageStopper();
+            return new DisengageStopper();
         }
 
 
@@ -297,7 +294,10 @@ public class FarBlueCombine extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(30,-52), Math.toRadians(-10)) // wall set
                 .strafeToLinearHeading(new Vector2d(47,-51), Math.toRadians(-10)); // drive in
 
-        TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
+        TrajectoryActionBuilder goToWallSet = goToShootPreload.endTrajectory().endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(57,-53), Math.toRadians(270)); // go back after grabbing wall set
+
+        TrajectoryActionBuilder goToShootWallSet = goToWallSet.endTrajectory().endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         //TODO: add trajectory to get off the luanch line
@@ -335,7 +335,7 @@ public class FarBlueCombine extends LinearOpMode {
                                 turret.aimTurret(-125,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-.8, 1.1)
+                        intake.holdIntakePower(-.8, 10)
                 )
         );
 
@@ -375,7 +375,7 @@ public class FarBlueCombine extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(-0.8,3),
-                                goToWallSetAndDriveIn.build()
+                                goToWallSet.build()
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
@@ -394,13 +394,13 @@ public class FarBlueCombine extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         shootPreload,
-//                        stopper.engageStopper(),
+                        stopper.engageStopper(),
 //                        FirstBatch,
 //                        stopper.engageStopper(),
 //                        SecondBatch,
 //                        stopper.engageStopper(),
-//                        WallBatch,
-                        goGetOffLaunchLine.build(),
+                        WallBatch,
+//                        goGetOffLaunchLine.build(),
                         stopper.engageStopper()
                 )
 

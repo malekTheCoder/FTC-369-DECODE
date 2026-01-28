@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Auton.Solo.BlueCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
-@Autonomous(name = "Far Red Combined")
+@Autonomous(name = "Far Red Auto")
 public class FarRedCombine extends LinearOpMode {
 
     public class Turret{
@@ -293,7 +293,7 @@ public class FarRedCombine extends LinearOpMode {
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
-        TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootSecondSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,79), Math.toRadians(10)) // wall set
                 .strafeToLinearHeading(new Vector2d(68.5,79), Math.toRadians(10)); // drive in
 
@@ -389,6 +389,10 @@ public class FarRedCombine extends LinearOpMode {
                 )
 
         );
+        ParallelAction park = new ParallelAction(
+                goGetOffLaunchLine.build(),
+                turret.aimTurret(0, .9)
+        );
 
 
 
@@ -401,6 +405,7 @@ public class FarRedCombine extends LinearOpMode {
                         SecondBatch,
                         stopper.engageStopper(),
                         WallBatch,
+//                        park,
                         stopper.engageStopper()
                 )
 
