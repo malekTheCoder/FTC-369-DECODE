@@ -421,5 +421,10 @@ public class BlueCloseSolo extends LinearOpMode {
 
         );
 
+        Pose2d endPose = drive.localizer.getPose();
+        telemetry.addData("END POSE", endPose);
+        telemetry.update();
+        sleep(2000);
+
     }
 }
