@@ -22,4 +22,8 @@ public interface Localizer {
      * @return the Localizer's current velocity estimate
      */
     PoseVelocity2d update();
+
+    default double printYawScalar(){
+        return -10;
+    };
 }

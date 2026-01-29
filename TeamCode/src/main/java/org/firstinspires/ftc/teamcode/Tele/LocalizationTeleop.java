@@ -48,26 +48,13 @@ public class LocalizationTeleop extends OpMode {
     // forward is 90 degressd for pedro so this is correction
     private static final double PEDRO_FORWARD_OFFSET_RAD = Math.toRadians(0);
 
-    private DcMotorEx turretMotor;
-    private UpdatedTurret turret;
 
-    private Servo stopper;
-
-    private Outtake outtake;
-
-    private Intake intake;
 
 
     @Override
     public void init() {
 
         drivetrain = new Drivetrain(hardwareMap);
-        turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
-        turret = new UpdatedTurret(turretMotor);
-        stopper = hardwareMap.get(Servo.class, "stopper");
-        outtake = new Outtake(hardwareMap);
-        intake = new Intake(hardwareMap);
-
 
 
         follower = Constants.createFollower(hardwareMap);
@@ -105,23 +92,7 @@ public class LocalizationTeleop extends OpMode {
     @Override
     public void loop() {
 
-        if (gamepad2.left_bumper){
-            stopper.setPosition(0.5);
-            intake.runIntake(-0.7);
-        } else {
-            stopper.setPosition(0.6);
-            intake.runIntake(-gamepad2.left_trigger);
-        }
 
-        if (gamepad1.x) {
-            drivetrain.resetIMU();
-        }
-        
-        if (gamepad1.leftBumperWasPressed()){
-            blueGoalXPosition--;
-        } else if (gamepad1.rightBumperWasPressed()) {
-            blueGoalXPosition++;
-        }
 
 
         follower.update();
@@ -163,7 +134,7 @@ public class LocalizationTeleop extends OpMode {
 
 
         if (!automatedDrive) {
-            drivetrain.handleDrivetrain(gamepad1);
+            // drivetrain.handleDrivetrain(gamepad1);
         }
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());
@@ -180,11 +151,6 @@ public class LocalizationTeleop extends OpMode {
         }
 
 
-//        outtake.setTargetVelocity(outtake.velocityRegressionModel(distanceToGoal));
-//        outtake.runOuttake();
-
-        turret.update(angleToGoalRelRobotDeg, telemetry);
-//        turret.aim(0.9);
 
 
 

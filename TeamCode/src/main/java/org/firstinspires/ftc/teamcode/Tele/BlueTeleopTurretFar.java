@@ -143,9 +143,9 @@ public class BlueTeleopTurretFar extends OpMode {
 
 
 
-        if (gamepad1.x) {
-            drivetrain.resetIMU();
-        }
+//        if (gamepad1.x) {
+//            drivetrain.resetIMU();
+//        }
 
         if (gamepad2.leftBumperWasPressed()){
             blueGoalXPosition-=3;
@@ -192,7 +192,7 @@ public class BlueTeleopTurretFar extends OpMode {
 
 
 
-        drivetrain.handleDrivetrain(gamepad1);
+        // drivetrain.handleDrivetrain(gamepad1);
 
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());

@@ -49,9 +49,9 @@ public class Constants {
     // strafe x: 6.17598425 positive
     // forward y: 0.97322835 positive
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(6.16023622) // set correct offsets
-            .strafePodX(0.0523622)
-            .distanceUnit(DistanceUnit.INCH)
+            .forwardPodY(156) // set correct offsets
+            .strafePodX(12)
+            .distanceUnit(DistanceUnit.MM)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD) // check directions for odo pods
