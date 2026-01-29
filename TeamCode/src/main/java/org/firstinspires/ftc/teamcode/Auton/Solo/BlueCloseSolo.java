@@ -262,8 +262,8 @@ public class BlueCloseSolo extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        Pose2d initialPose = new Pose2d(-59, -49, Math.toRadians(234)); // initial pose from meep meep
+//-134,
+        Pose2d initialPose = new Pose2d(-61, -45, Math.toRadians(270)); // initial pose from meep meep
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Turret turret = new Turret(hardwareMap);
         Flywheel flywheel = new Flywheel(hardwareMap);
@@ -274,37 +274,37 @@ public class BlueCloseSolo extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // position to shoot zero batch
+                .strafeToLinearHeading(new Vector2d(-9,-23), Math.toRadians(270)); // position to shoot zero batch
 
 //        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(-9,-20), Math.toRadians(270)); // go to first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,-45), Math.toRadians(270)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(-9,-58), Math.toRadians(270)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-9,-23), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
 
         TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(15,-20), Math.toRadians(270)); // go to second set of artifacts
+                .strafeToLinearHeading(new Vector2d(15,-33), Math.toRadians(270)); // go to second set of artifacts
 
         TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(15,-45), Math.toRadians(270)); // drive into second set of artifacts
+                .strafeToLinearHeading(new Vector2d(15,-58), Math.toRadians(270)); // drive into second set of artifacts
 
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-9,-23), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToThirdSet = goToShootSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,-20), Math.toRadians(270)); // go to third set of artifacts
+                .strafeToLinearHeading(new Vector2d(40,-33), Math.toRadians(270)); // go to third set of artifacts
 
         TrajectoryActionBuilder driveIntoThirdSet = goToThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,-45), Math.toRadians(270)); // drive into third set of artifacts
+                .strafeToLinearHeading(new Vector2d(40,-53), Math.toRadians(270)); // drive into third set of artifacts
 
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-9,-10), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-9,-23), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-64.5,-24),Math.toRadians(270)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(-64.5,-37),Math.toRadians(270)); // go shoot second batch
 
 
 
