@@ -136,9 +136,9 @@ public class RedTeleopTurretFar extends OpMode {
             outtake.verticalTranslationFar -=25;
         }
 
-        if (gamepad1.x) {
-            drivetrain.resetIMU();
-        }
+//        if (gamepad1.x) {
+//            drivetrain.resetIMU();
+//        }
 
 
 
@@ -192,7 +192,7 @@ public class RedTeleopTurretFar extends OpMode {
 
 
 
-        drivetrain.handleDrivetrain(gamepad1);
+       // drivetrain.handleDrivetrain(gamepad1);
 
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());

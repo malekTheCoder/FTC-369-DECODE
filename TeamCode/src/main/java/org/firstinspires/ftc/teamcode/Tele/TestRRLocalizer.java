@@ -3,69 +3,83 @@ package org.firstinspires.ftc.teamcode.Tele;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseHoldController;
+import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
+import org.firstinspires.ftc.teamcode.Subsystems.UpdatedTurret;
 
 
 @TeleOp(name = "test rr localize")
 public class TestRRLocalizer extends OpMode {
-    MecanumDrive mecanumDrive;
-    Drivetrain drive;
-//     Pose2d startPose = new Pose2d(72,-72, Math.toRadians(180));
-   Pose2d startPose = new Pose2d(0,0, Math.toRadians(0));
+    RoadrunnerRobotLocalizer rrLocalizer;
+    UpdatedTurret turret;
+
+     Drivetrain drive;
+    // Pose2d startPose = new Pose2d(72,-72, Math.toRadians(180));
+    Pose2d startPose = new Pose2d(-10, -10, Math.toRadians(180));
 
     double lastHeadingDeg = 0;
     double fullHeading = 0;
     boolean firstLoop = true;
 
+    private final PoseHoldController hold = new PoseHoldController();
+    private final ElapsedTime loopTimer = new ElapsedTime();
+
     // FACTORY YAW SCALAR: 1.0031
-    //NEW ATTEMPTED YAW SCALAR 1.0006
-
-
-
-    //Pose2d startPose = new Pose2d(-59,-47, 234);
+    // NEW ATTEMPTED YAW SCALAR 1.0006
 
     @Override
     public void init() {
-        mecanumDrive = new MecanumDrive(hardwareMap, startPose);
-        drive = new Drivetrain(hardwareMap);
-
+        rrLocalizer = new RoadrunnerRobotLocalizer(hardwareMap, startPose, RoadrunnerRobotLocalizer.AllianceColor.BLUE);
+        drive = new Drivetrain(hardwareMap, 0);
+        turret = new UpdatedTurret(hardwareMap.get(DcMotorEx.class, "turret"));
+        loopTimer.reset();
     }
 
     @Override
     public void loop() {
-        mecanumDrive.updatePoseEstimate();
+        rrLocalizer.updateBotPosition();
 
-        Pose2d currentPose = mecanumDrive.localizer.getPose();
-        double heading = Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble());
+        Pose2d currentPose = rrLocalizer.getBotPosition();
+        double heading = Math.toDegrees(currentPose.heading.toDouble());
 
-        if (firstLoop) {
-            lastHeadingDeg = heading;
-            firstLoop = false;
-        }
-        double delta = heading - lastHeadingDeg;
-        if (delta > 180) delta -= 360;
-        if (delta < -180) delta += 360;
-        fullHeading += delta;
-        lastHeadingDeg = heading;
+        double inverseHeading = rrLocalizer.getBotHeadingDegrees0To360();
+        double yawScalar = rrLocalizer.getYawScalar();
 
-        double inverseHeading = (360 + Math.toDegrees(mecanumDrive.localizer.getPose().heading.toDouble())) % 360;
-
-
-        drive.handleDrivetrain(gamepad1);
-
-        double yawScalar = mecanumDrive.localizer.printYawScalar();
-
-
-
-        if (gamepad1.x){
-            drive.resetIMU();
+        if (gamepad1.x) {
+            drive.setPinpointHeadingAdjuster(-1 * inverseHeading);
             fullHeading = 0;
             firstLoop = true;
             lastHeadingDeg = heading;
         }
+
+        // --- Pose hold (RR pose, PD -> robot-centric drive commands) ---
+        double dt = loopTimer.seconds();
+        loopTimer.reset();
+
+        if (gamepad1.triangleWasPressed()) {
+            hold.startHolding(currentPose);
+        }
+
+        if (gamepad1.triangle && hold.isHolding()) {
+            PoseHoldController.DriveCommand cmd = hold.update(currentPose, dt);
+            drive.driveRobotCentric(cmd.forward, cmd.strafe, cmd.turn);
+        } else {
+            // Normal driver control
+            drive.handleDrivetrainWithPinpoint(gamepad1, inverseHeading);
+        }
+
+        if (gamepad1.triangleWasReleased()) {
+            hold.stopHolding();
+        }
+
+
+        double angleForTurret = -rrLocalizer.getRobotAngleToGoalDegrees();
+        //turret.update(angleForTurret, telemetry);
+        //turret.aim(0.1);
 
 
         telemetry.addData("X", currentPose.position.x);
@@ -73,14 +87,14 @@ public class TestRRLocalizer extends OpMode {
         telemetry.addData("full heading", fullHeading);
         telemetry.addData("inverse heading (degrees)", inverseHeading);
         telemetry.addData("yaw scalar", yawScalar);
+        telemetry.addData("robot angle to goal degrees", rrLocalizer.getRobotAngleToGoalDegrees());
 
-
-
+        if (hold.getTargetPose() != null) {
+            telemetry.addData("hold target x", hold.getTargetPose().position.x);
+            telemetry.addData("hold target y", hold.getTargetPose().position.y);
+            telemetry.addData("hold target heading (deg)", Math.toDegrees(hold.getTargetPose().heading.toDouble()));
+        }
 
         telemetry.update();
-
-
-
-
     }
 }

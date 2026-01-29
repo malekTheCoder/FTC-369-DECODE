@@ -41,9 +41,7 @@ public class LocalizationTeleopNextFTC extends NextFTCOpMode {
 
     @Override
     public void onUpdate(){
-        if (gamepad1.x){
-            drivetrain.resetIMU();
-        }
+
 
         follower.update();
 
@@ -61,7 +59,7 @@ public class LocalizationTeleopNextFTC extends NextFTCOpMode {
         telemetry.addData("headingRad", pose.getHeading());
         telemetry.addData("velocity", follower.getVelocity());
 
-        drivetrain.handleDrivetrain(gamepad1);
+        // drivetrain.handleDrivetrain(gamepad1);
 
         telemetryM.update();
         telemetry.update();

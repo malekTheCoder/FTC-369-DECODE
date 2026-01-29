@@ -134,7 +134,7 @@ public class LocalizationTeleop extends OpMode {
 
 
         if (!automatedDrive) {
-            drivetrain.handleDrivetrain(gamepad1);
+            // drivetrain.handleDrivetrain(gamepad1);
         }
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());

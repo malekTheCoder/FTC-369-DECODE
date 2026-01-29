@@ -143,10 +143,10 @@ public class BlueTeleopTurret extends OpMode {
         }
 
 
-
-        if (gamepad1.x) {
-            drivetrain.resetIMU();
-        }
+//
+//        if (gamepad1.x) {
+//            drivetrain.resetIMU();
+//        }
 
 
         if (gamepad2.leftBumperWasPressed()){
@@ -193,7 +193,7 @@ public class BlueTeleopTurret extends OpMode {
 
 
 
-        drivetrain.handleDrivetrain(gamepad1);
+        // drivetrain.handleDrivetrain(gamepad1);
 
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());

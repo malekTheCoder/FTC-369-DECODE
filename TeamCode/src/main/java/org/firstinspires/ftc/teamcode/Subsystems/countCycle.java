@@ -31,7 +31,7 @@ public class countCycle {
         Double readData = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
-            // Read each line until the end of the file (returns null)
+            // Read each line until the stopHolding of the file (returns null)
             while ((line = reader.readLine()) != null) {
                 readData = Double.parseDouble(line);
             }

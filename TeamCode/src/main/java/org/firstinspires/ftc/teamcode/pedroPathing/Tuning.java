@@ -176,7 +176,7 @@ class LocalizationTest extends OpMode {
  * necessary ticks to inches multiplier. This displayed multiplier is what's necessary to scale the
  * robot's current distance in ticks to the specified distance in inches. So, to use this, run the
  * tuner, then pull/push the robot to the specified distance using a ruler on the ground. When you're
- * at the end of the distance, record the ticks to inches multiplier. Feel free to run multiple trials
+ * at the stopHolding of the distance, record the ticks to inches multiplier. Feel free to run multiple trials
  * and average the results. Then, input the multiplier into the forward ticks to inches in your
  * localizer of choice.
  *
@@ -224,7 +224,7 @@ class ForwardTuner extends OpMode {
  * necessary ticks to inches multiplier. This displayed multiplier is what's necessary to scale the
  * robot's current distance in ticks to the specified distance in inches. So, to use this, run the
  * tuner, then pull/push the robot to the specified distance using a ruler on the ground. When you're
- * at the end of the distance, record the ticks to inches multiplier. Feel free to run multiple trials
+ * at the stopHolding of the distance, record the ticks to inches multiplier. Feel free to run multiple trials
  * and average the results. Then, input the multiplier into the strafe ticks to inches in your
  * localizer of choice.
  *
@@ -272,7 +272,7 @@ class LateralTuner extends OpMode {
  * necessary ticks to inches multiplier. This displayed multiplier is what's necessary to scale the
  * robot's current angle in ticks to the specified angle in radians. So, to use this, run the
  * tuner, then pull/push the robot to the specified angle using a protractor or lines on the ground.
- * When you're at the end of the angle, record the ticks to inches multiplier. Feel free to run
+ * When you're at the stopHolding of the angle, record the ticks to inches multiplier. Feel free to run
  * multiple trials and average the results. Then, input the multiplier into the turning ticks to
  * radians in your localizer of choice.
  *
@@ -319,7 +319,7 @@ class TurnTuner extends OpMode {
 /**
  * This is the ForwardVelocityTuner autonomous follower OpMode. This runs the robot forwards at max
  * power until it reaches some specified distance. It records the most recent velocities, and on
- * reaching the end of the distance, it averages them and prints out the velocity obtained. It is
+ * reaching the stopHolding of the distance, it averages them and prints out the velocity obtained. It is
  * recommended to run this multiple times on a full battery to get the best results. What this does
  * is, when paired with StrafeVelocityTuner, allows FollowerConstants to create a Vector that
  * empirically represents the direction your mecanum wheels actually prefer to go in, allowing for
@@ -425,7 +425,7 @@ class ForwardVelocityTuner extends OpMode {
 /**
  * This is the StrafeVelocityTuner autonomous follower OpMode. This runs the robot left at max
  * power until it reaches some specified distance. It records the most recent velocities, and on
- * reaching the end of the distance, it averages them and prints out the velocity obtained. It is
+ * reaching the stopHolding of the distance, it averages them and prints out the velocity obtained. It is
  * recommended to run this multiple times on a full battery to get the best results. What this does
  * is, when paired with ForwardVelocityTuner, allows FollowerConstants to create a Vector that
  * empirically represents the direction your mecanum wheels actually prefer to go in, allowing for
@@ -530,7 +530,7 @@ class LateralVelocityTuner extends OpMode {
  * stops. The accelerations across the entire time the robot is slowing down is then averaged and
  * that number is then printed. This is used to determine how the robot will decelerate in the
  * forward direction when power is cut, making the estimations used in the calculations for the
- * drive Vector more accurate and giving better braking at the end of Paths.
+ * drive Vector more accurate and giving better braking at the stopHolding of Paths.
  *
  * @author Anyi Lin - 10158 Scott's Bots
  * @author Baron Henderson - 20077 The Indubitables
@@ -636,7 +636,7 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
  * stops. The accelerations across the entire time the robot is slowing down is then averaged and
  * that number is then printed. This is used to determine how the robot will decelerate in the
  * forward direction when power is cut, making the estimations used in the calculations for the
- * drive Vector more accurate and giving better braking at the end of Paths.
+ * drive Vector more accurate and giving better braking at the stopHolding of Paths.
  *
  * @author Anyi Lin - 10158 Scott's Bots
  * @author Aaron Yang - 10158 Scott's Bots
@@ -1022,7 +1022,7 @@ class Line extends OpMode {
 
 /**
  * This is the Centripetal Tuner OpMode. It runs the robot in a specified distance
- * forward and to the left. On reaching the end of the forward Path, the robot runs the backward
+ * forward and to the left. On reaching the stopHolding of the forward Path, the robot runs the backward
  * Path the same distance back to the start. Rinse and repeat! This is good for testing a variety
  * of Vectors, like the drive Vector, the translational Vector, the heading Vector, and the
  * centripetal Vector.
