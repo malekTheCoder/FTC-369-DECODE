@@ -263,7 +263,7 @@ public class FarRedCombine extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(61, 10, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(53, 8.6, Math.toRadians(90));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
