@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -308,7 +309,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-2,-15), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(3,-30),Math.toRadians(0)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(0,-38),Math.toRadians(0)); // go shoot second batch
 
 
 
@@ -356,6 +357,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 ),
                 intake.stopIntake(),
                 goEmptyGate.build(),
+                new SleepAction(0.25),
                 new ParallelAction(
                         flywheel.runFlywheel(1785,3.3),
                         new SequentialAction(
@@ -378,7 +380,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 intake.stopIntake(),
                 new ParallelAction(
                         flywheel.runFlywheel(1790,3),
-                        turret.aimTurret(-71,0.9),
+                        turret.aimTurret(-72,0.9),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
@@ -394,11 +396,12 @@ public class BlueCloseSolo extends LinearOpMode {
                 goToThirdSet.build(),
                 new ParallelAction(
                         intake.holdIntakePower(-0.8 , 1.5), //TODO fine tune,
+                        turret.aimTurret(-73,0.9),
                         driveIntoThirdSet.build()
                 ),
                 intake.stopIntake(),
                 new ParallelAction(
-                        flywheel.runFlywheel(1790,4), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
+                        flywheel.runFlywheel(1787,4), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
                         new SequentialAction(
                                 goToShootThirdSet.build(),
                                 stopper.disengageStopper(),
