@@ -262,6 +262,9 @@ public class FarBlueCombine extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        //original pos: x=61, y=-10
+        //62.5/72 = .868 (multiplier between small field and big field size
+        //.868 * 61, .868 * -10, updated pose
         Pose2d initialPose = new Pose2d(53, -8.6, Math.toRadians(270));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
