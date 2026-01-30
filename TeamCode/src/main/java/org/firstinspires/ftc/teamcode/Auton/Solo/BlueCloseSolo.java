@@ -52,7 +52,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 turret.setTargetPosition((int)targetPosition);
                 turret.setPower(turretPow);
 
-                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 10){
+                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 7){
                     return false;
                 } else {
                     return true;
@@ -87,6 +87,7 @@ public class BlueCloseSolo extends LinearOpMode {
             private boolean intakeTimerStarted = false;
 
             public HoldIntakePower(double power, double duration) {
+                intakeTimer = new ElapsedTime();
                 this.power = power;
                 this.duration = duration;
             }
@@ -283,7 +284,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-11,-53), Math.toRadians(270)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goEmptyGate = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-1,-55), Math.toRadians(153)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(-2,-55), Math.toRadians(165)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = goEmptyGate.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-11,-18), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
@@ -295,16 +296,16 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(13,-53), Math.toRadians(270)); // drive into second set of artifacts
 
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-7,-18), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-2,-15), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToThirdSet = goToShootSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(38,-28), Math.toRadians(270)); // go to third set of artifacts
 
         TrajectoryActionBuilder driveIntoThirdSet = goToThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(38,-53), Math.toRadians(270)); // drive into third set of artifacts
+                .strafeToLinearHeading(new Vector2d(38,-56), Math.toRadians(270)); // drive into third set of artifacts
 
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-7,-18), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-2,-15), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(3,-30),Math.toRadians(0)); // go shoot second batch
@@ -336,29 +337,32 @@ public class BlueCloseSolo extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1800,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+                flywheel.runFlywheel(1785,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-55,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-66,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.8,1.5) //TODO fine tune
+                        intake.holdIntakePower(-0.85,1.25), //TODO fine tune
+                        intake.stopIntake()
                 )
         );
 
         SequentialAction FirstBatch = new SequentialAction(
                 new ParallelAction(
-                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
+                        intake.holdIntakePower(-0.9, 1.5), //TODO fine tune,
                         driveIntoFirstSet.build()
                 ),
+                intake.stopIntake(),
                 goEmptyGate.build(),
                 new ParallelAction(
-                        flywheel.runFlywheel(1790,3.3),
+                        flywheel.runFlywheel(1785,3.3),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(-0.8, 1.7)
+                                intake.holdIntakePower(-0.85, 1.5),
+                                intake.stopIntake()
                         )
 
                 )
@@ -368,15 +372,18 @@ public class BlueCloseSolo extends LinearOpMode {
         SequentialAction SecondBatch = new SequentialAction(
                 goToSecondSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
+                        intake.holdIntakePower(-0.85, 1.5), //TODO fine tune,
                         driveIntoSecondSet.build()
                 ),
+                intake.stopIntake(),
                 new ParallelAction(
                         flywheel.runFlywheel(1790,3),
+                        turret.aimTurret(-71,0.9),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(-0.8, 1.7)
+                                intake.holdIntakePower(-0.85, 1.7),
+                                intake.stopIntake()
                         )
 
                 )
@@ -389,12 +396,13 @@ public class BlueCloseSolo extends LinearOpMode {
                         intake.holdIntakePower(-0.8 , 1.5), //TODO fine tune,
                         driveIntoThirdSet.build()
                 ),
+                intake.stopIntake(),
                 new ParallelAction(
-                        flywheel.runFlywheel(1790,3), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
+                        flywheel.runFlywheel(1790,4), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
                         new SequentialAction(
                                 goToShootThirdSet.build(),
                                 stopper.disengageStopper(),
-                                intake.holdIntakePower(-0.8, 1.7),
+                                intake.holdIntakePower(-0.85, 1.7),
                                 turret.aimTurret(0, .9)
                         )
 
