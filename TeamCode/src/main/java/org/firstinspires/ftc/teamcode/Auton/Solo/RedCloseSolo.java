@@ -262,7 +262,7 @@ public class RedCloseSolo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-          Pose2d initialPose = new Pose2d(-59,42, Math.toRadians(127)); // initial pose from meep meep
+          Pose2d initialPose = new Pose2d(-61, 37.5, Math.toRadians(90)); // initial pose from meep meep
           MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
           Turret turret = new Turret(hardwareMap);
           Flywheel flywheel = new Flywheel(hardwareMap);
