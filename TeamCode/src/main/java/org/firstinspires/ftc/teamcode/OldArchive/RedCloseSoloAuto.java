@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous.Combined;
+package org.firstinspires.ftc.teamcode.OldArchive;
 
 import androidx.annotation.NonNull;
 
@@ -23,8 +23,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 @Disabled
-@Autonomous(name = "Far Blue Combined")
-public class FarBlueCombined extends LinearOpMode {
+@Autonomous(name = "RedCloseSoloAuto")
+public class RedCloseSoloAuto extends LinearOpMode {
 
     public class Hood{
         private double HOOD_ENGAGED_POSITION = 0.61;
@@ -41,8 +41,8 @@ public class FarBlueCombined extends LinearOpMode {
 
     }
     public class Kicker {
-        double KICKER_DOWN_POSITION = 0.2 ;
-        double KICKER_UP_POSITION = 0.61;
+        double KICKER_DOWN_POSITION = 0.2;
+        double KICKER_UP_POSITION = 0.55;
         double INTAKE_POWER = 0.6;
         private DcMotorEx flywheel;
         private Servo kicker;
@@ -319,8 +319,7 @@ public class FarBlueCombined extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(61, -15, Math.PI);
-
+        Pose2d initialPose = new Pose2d(-59,42, Math.toRadians(127)); // initial pose from meep meep
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Flywheel flywheel = new Flywheel(hardwareMap, telemetry);
         Kicker kicker = new Kicker(hardwareMap);
@@ -328,35 +327,38 @@ public class FarBlueCombined extends LinearOpMode {
         Belt belt = new Belt(hardwareMap);
         Hood hood = new Hood(hardwareMap);
 
-        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(55,-19), Math.toRadians(202));
 
 
-        TrajectoryActionBuilder goLoopForFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,-23), Math.toRadians(270)) // go to first set of artifacts
-                .strafeToLinearHeading(new Vector2d(46,-40), Math.toRadians(270)) // drive into first set of artifacts
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(205)); // go back after grabbing first set of artifacts to shoot
+        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose) //
+                .strafeToLinearHeading(new Vector2d(-8.5, 8), Math.toRadians(138));
 
-        TrajectoryActionBuilder goLoopForGateBatch = goLoopForFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(31,-70), Math.toRadians(180)) // go to intake from gate
-                .waitSeconds(3)
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202.5)); // go back to shoot
+        TrajectoryActionBuilder goToFirstBatchAndDriveInAndGoBackToShoot = goToShootPreload.endTrajectory().fresh() //
+                .strafeToLinearHeading(new Vector2d(-14, 52),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-14, 8), Math.toRadians(138));
 
-        TrajectoryActionBuilder goLoopForExtraRandom = goLoopForGateBatch.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,-48), Math.toRadians(0)) // go grab anywehre
-                .strafeToLinearHeading(new Vector2d(62,-48), Math.toRadians(0))// go grab anywehre
-                .strafeToLinearHeading(new Vector2d(54,-19), Math.toRadians(202.5)); // go to shoot
+        TrajectoryActionBuilder goLoopPathForSecondBatch = goToFirstBatchAndDriveInAndGoBackToShoot.endTrajectory().fresh() //
+                .strafeToLinearHeading(new Vector2d(6, 26), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(6, 59), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-8.5, 8), Math.toRadians(138));
+
+        TrajectoryActionBuilder goLoopPathForThirdBatch = goLoopPathForSecondBatch.endTrajectory().fresh() //
+                .strafeToLinearHeading(new Vector2d(28, 24), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(28, 57), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-4, 8), Math.toRadians(138));
+
+        TrajectoryActionBuilder goGetOffLaunchLine = goLoopPathForThirdBatch.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-9, 20), Math.toRadians(136));
 
 
         SequentialAction shootPreload = new SequentialAction(
                 new ParallelAction(
                         goToShootPreload.build(),
-                        flywheel.holdFlywheelVelocity(2060, 0.75)
+                        flywheel.holdFlywheelVelocity(1810,2)
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(2060,1.2),
-                        intake.holdIntakePower(0.5,1.2),
-                        belt.holdBeltPower(-0.5,1.2),
+                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        intake.holdIntakePower(0.55,2.5),
+                        belt.holdBeltPower(-0.4,2.5),
                         new SequentialAction(
                                 new SleepAction(0.4),
                                 kicker.kickerUp(),
@@ -368,26 +370,29 @@ public class FarBlueCombined extends LinearOpMode {
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
+
                 )
+
         );
+
 
         SequentialAction firstBatchLoop = new SequentialAction(
                 flywheel.stopFlywheel(0),
                 new ParallelAction(
-                        goLoopForFirstSet.build(),
-                        intake.holdIntakePower(0.6,2),
-                        belt.holdBeltPower(-0.8,2),
+                        goToFirstBatchAndDriveInAndGoBackToShoot.build(),
+                        intake.holdIntakePower(0.6,1.5),
+                        belt.holdBeltPower(-0.8,1.5),
                         new SequentialAction(
-                                new SleepAction(2.2),
-                                flywheel.holdFlywheelVelocity(2060,0.3)
+                                new SleepAction(0.7),
+                                flywheel.holdFlywheelVelocity(1810,0.8)
                         )
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(2060,1.2),
-                        intake.holdIntakePower(0.5,1.2),
-                        belt.holdBeltPower(-0.5,1.2),
+                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        intake.holdIntakePower(0.5,2.5),
+                        belt.holdBeltPower(-0.5,2.5),
                         new SequentialAction(
-                                new SleepAction(0.4),
+                                new SleepAction(0.5),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
                                 new SleepAction(0.4),
@@ -397,6 +402,7 @@ public class FarBlueCombined extends LinearOpMode {
                                 kicker.kickerUp(),
                                 kicker.kickerDown()
                         )
+
                 )
 
 
@@ -404,27 +410,64 @@ public class FarBlueCombined extends LinearOpMode {
 
         );
 
-        SequentialAction gateBatchLoop = new SequentialAction(
+
+        SequentialAction SecondBatchLoop = new SequentialAction(
                 flywheel.stopFlywheel(0),
                 new ParallelAction(
-                        goLoopForGateBatch.build(),
-                        flywheel.stopFlywheel(0),
-                        intake.holdIntakePower(0.6,3.5),
-                        belt.holdBeltPower(-0.8,3.5),
+                        goLoopPathForSecondBatch.build(),
+                        intake.holdIntakePower(0.55,2.25),
+                        belt.holdBeltPower(-0.45,2.25),
                         new SequentialAction(
-                                new SleepAction(5.5),
-                                flywheel.holdFlywheelVelocity(2060,0.2)
+                                new SleepAction(1.75),
+                                flywheel.holdFlywheelVelocity(1810,.5)
+                        )
+                ),
+
+                new ParallelAction(
+                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        intake.holdIntakePower(0.62,2.5),
+                        belt.holdBeltPower(-0.65,2.5),
+                        new SequentialAction(
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown(),
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown(),
+                                new SleepAction(0.4),
+                                kicker.kickerUp(),
+                                kicker.kickerDown()
+                        )
+
+                )
+
+
+
+
+        );
+
+
+
+        SequentialAction ThirdBatchLoop = new SequentialAction(
+                flywheel.stopFlywheel(0),
+                new ParallelAction(
+                        goLoopPathForThirdBatch.build(),
+                        intake.holdIntakePower(0.6,3),
+                        belt.holdBeltPower(-0.8,3),
+                        new SequentialAction(
+                                new SleepAction(2),
+                                flywheel.holdFlywheelVelocity(1810,1)
                         )
                 ),
                 new ParallelAction(
-                        flywheel.holdFlywheelVelocity(2060,1.2),
-                        intake.holdIntakePower(0.5,1.2),
-                        belt.holdBeltPower(-0.4,1.2),
+                        flywheel.holdFlywheelVelocity(1810,2.5),
+                        intake.holdIntakePower(0.5,2.5),
+                        belt.holdBeltPower(-0.5,2.5),
                         new SequentialAction(
-                                new SleepAction(1),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
-                                new SleepAction(0.35),
+                                new SleepAction(0.4),
                                 kicker.kickerUp(),
                                 kicker.kickerDown(),
                                 new SleepAction(0.4),
@@ -433,22 +476,13 @@ public class FarBlueCombined extends LinearOpMode {
                         )
                 )
         );
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         while (!opModeIsActive()){
+            if (isStopRequested()){
+                return;
+            }
+
             telemetry.addData("Position during Init", initialPose);
             telemetry.update();
         }
@@ -456,23 +490,16 @@ public class FarBlueCombined extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
-                        goToShootPreload.build(),
-                        goLoopForFirstSet.build(),
-                        goLoopForGateBatch.build(),
-                        new ParallelAction(
-                                intake.holdIntakePower(0.6,8),
-                                belt.holdBeltPower(-0.6,8),
-                                goLoopForExtraRandom.build()
+                        shootPreload,
+                        firstBatchLoop,
+                        SecondBatchLoop,
+                        ThirdBatchLoop,
+                        goGetOffLaunchLine.build(),
+                        kicker.kickerDown()
 
-                        )
 
-//                        shootPreload,
-//                        firstBatchLoop,
-//                        gateBatchLoop,
-//                        goLoopForExtraRandom.build(),
-//                        kicker.kickerDown()
+
                 )
-
 
         );
 

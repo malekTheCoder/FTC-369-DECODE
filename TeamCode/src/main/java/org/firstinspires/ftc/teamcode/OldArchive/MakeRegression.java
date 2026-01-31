@@ -1,5 +1,7 @@
-package org.firstinspires.ftc.teamcode.Tele;
+package org.firstinspires.ftc.teamcode.OldArchive;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -8,10 +10,10 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
@@ -21,9 +23,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.UpdatedTurret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
-
-@TeleOp(name = "pedro local DONT CLICK THIS KAICHEN ")
-public class LocalizationTeleop extends OpMode {
+@Disabled
+@TeleOp(name = "MakeRegression")
+public class MakeRegression extends OpMode {
+    private FtcDashboard dashboard;
     private Follower follower;
     public static Pose startingPose;
     private boolean automatedDrive;
@@ -32,8 +35,8 @@ public class LocalizationTeleop extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double blueGoalXPosition = 5;
-    private double blueGoalYPosition = 130;
+    private double blueGoalXPosition = 0;
+    private double blueGoalYPosition = 144;
 
     private double distanceToGoal = 0;
 
@@ -48,19 +51,37 @@ public class LocalizationTeleop extends OpMode {
     // forward is 90 degressd for pedro so this is correction
     private static final double PEDRO_FORWARD_OFFSET_RAD = Math.toRadians(0);
 
+    private DcMotorEx turretMotor;
+    private UpdatedTurret turret;
 
+    public static boolean track = false;
+    public static double targetVelocity;
+    public static double currentVelocity;
+
+    private Outtake outtake;
+
+    private Intake intake;
+
+    public static int baseline;//DELETE THIS LATEr
 
 
     @Override
     public void init() {
 
         drivetrain = new Drivetrain(hardwareMap);
+        turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
+        turret = new UpdatedTurret(turretMotor);
+        outtake = new Outtake(hardwareMap);
+        intake = new Intake(hardwareMap);
+
+        targetVelocity = 0;
+        dashboard = FtcDashboard.getInstance();
 
 
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(0, 0, Math.toRadians(90)) : startingPose);
+        follower.setStartingPose(startingPose == null ? new Pose(8, 8.5, Math.toRadians(90)) : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -108,8 +129,7 @@ public class LocalizationTeleop extends OpMode {
         telemetry.addData("Pose X", poseX);
         telemetry.addData("Pose Y", poseY);
         telemetry.addData("Heading (deg)", poseHeadingDeg);
-        telemetry.addData("goal x", blueGoalXPosition);
-
+        telemetry.addData("distance", distanceToGoal);
 
 
         double xDiff = (blueGoalXPosition - pose.getX());
@@ -141,7 +161,11 @@ public class LocalizationTeleop extends OpMode {
             automatedDrive = true;
         }
 
-
+//        if (gamepad1.a){
+//            follower.holdPoint(follower.getPose());
+//        } else {
+//            follower.breakFollowing();
+//        }
 
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
@@ -149,13 +173,32 @@ public class LocalizationTeleop extends OpMode {
             automatedDrive = false;
 
         }
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("targetVelocity", outtake.getTargetVelocity());
+        packet.put("currentVelocity", outtake.getCurrentVelocity());
+        packet.put("line", baseline);
+        dashboard.sendTelemetryPacket(packet);
+
+
+        turret.update(angleToGoalRelRobotDeg, telemetry);
+
+        // turret.aim(1);
+
+
+//        if (track){
+//            turret.aim(.5);
+//        }
+
+        outtake.setTargetVelocity(targetVelocity);
+        outtake.runOuttake();
+        currentVelocity = outtake.getAverageVelocity();
+        intake.runIntake(gamepad1.right_stick_y);
 
 
 
 
-
-            telemetryM.update();
-            telemetry.update();
+        telemetryM.update();
+        telemetry.update();
 
 
 
