@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseHoldController;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
 import org.firstinspires.ftc.teamcode.Subsystems.UpdatedTurret;
 
@@ -19,7 +20,7 @@ public class TestRRLocalizer extends OpMode {
 
      Drivetrain drive;
     // Pose2d startPose = new Pose2d(72,-72, Math.toRadians(180));
-    Pose2d startPose = new Pose2d(-10, -10, Math.toRadians(180));
+    Pose2d startPose = PoseStorage.savedPose;
 
     double lastHeadingDeg = 0;
     double fullHeading = 0;
@@ -77,17 +78,18 @@ public class TestRRLocalizer extends OpMode {
         }
 
 
-        double angleForTurret = -rrLocalizer.getRobotAngleToGoalDegrees();
-        //turret.update(angleForTurret, telemetry);
-        //turret.aim(0.1);
+        turret.update(rrLocalizer.getAngleForTurretDegrees(), telemetry);
+
+        turret.aimPIDF();
 
 
-        telemetry.addData("X", currentPose.position.x);
-        telemetry.addData("Y", currentPose.position.y);
-        telemetry.addData("full heading", fullHeading);
-        telemetry.addData("inverse heading (degrees)", inverseHeading);
-        telemetry.addData("yaw scalar", yawScalar);
-        telemetry.addData("robot angle to goal degrees", rrLocalizer.getRobotAngleToGoalDegrees());
+
+//        telemetry.addData("X", currentPose.position.x);
+//        telemetry.addData("Y", currentPose.position.y);
+//        telemetry.addData("full heading", fullHeading);
+//        telemetry.addData("inverse heading (degrees)", inverseHeading);
+//        telemetry.addData("yaw scalar", yawScalar);
+//        telemetry.addData("robot angle to goal degrees", rrLocalizer.getRobotAngleToGoalDegrees());
 
         if (hold.getTargetPose() != null) {
             telemetry.addData("hold target x", hold.getTargetPose().position.x);

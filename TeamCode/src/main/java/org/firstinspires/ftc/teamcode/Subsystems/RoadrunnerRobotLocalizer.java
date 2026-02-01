@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class RoadrunnerRobotLocalizer {
     MecanumDrive drive;
-    private double blueGoalX = 135;
-    private double blueGoalY = -10;
+    private double blueGoalX = -67;
+    private double blueGoalY = -67;
     private double redGoalX = -67;
     private double redGoalY = 67;
 
@@ -18,6 +18,9 @@ public class RoadrunnerRobotLocalizer {
 
     public enum AllianceColor {BLUE, RED}
     AllianceColor allianceColor;
+
+    Pose2d blueSideCornerResetPose = new Pose2d(67,-67, Math.toRadians(180));
+    Pose2d redSideCornerResetPose = new Pose2d(67,67,Math.toRadians(180));
 
 
     public RoadrunnerRobotLocalizer(HardwareMap hardwareMap, Pose2d startPose, AllianceColor allianceColor){
@@ -76,8 +79,22 @@ public class RoadrunnerRobotLocalizer {
         return Math.toDegrees(getRobotAngleToGoalRadians());
     }
 
+    public double getAngleForTurretDegrees(){
+        return Math.toDegrees(getRobotAngleToGoalRadians());
+    }
+
     public double getYawScalar(){
         return drive.localizer.printYawScalar();
+    }
+
+    public void resetBotPoseInCorner(){
+        if (this.allianceColor == AllianceColor.BLUE){
+            drive.localizer.setPose(blueSideCornerResetPose);
+            drive.updatePoseEstimate();
+        } else if (this.allianceColor == AllianceColor.RED){
+            drive.localizer.setPose(redSideCornerResetPose);
+            drive.updatePoseEstimate();
+        }
     }
 
 }

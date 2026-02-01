@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Subsystems.TurretPID;
 
 public class UpdatedTurret {
     private double totalTurnTicks = 853.0;
@@ -28,25 +29,45 @@ public class UpdatedTurret {
 
     private DcMotorEx turret;
 
+    // Reusable PIDF controller
+    private final TurretPID pid = new TurretPID();
+
+    // ---- Target velocity tracking (ticks/sec) ----
+    private double targetVelTicksPerSec = 0.0;
+    private double lastTargetTicks = 0.0;
+    private long lastTargetTimeNanos = 0;
+
+    // ---- Low-pass filter on target ticks (reduces jitter from noisy botErrorDeg) ----
+    private double filteredTargetTicks = 0.0;
+    private boolean filterInitialized = false;
+
+    // 0..1 (higher = faster, lower = smoother). Start at 0.20.
+    private static final double TARGET_ALPHA = 0.125;
+
     public UpdatedTurret(DcMotorEx turret) {
         this.turret = turret;
-
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
         inDeadZone = true;
     }
 
     public void manual(double stickX){
-        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turret.setPower(-stickX*.3);
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Still RUN_WITHOUT_ENCODER; direct manual power
+        turret.setPower(-stickX * 0.3);
     }
 
     public void resetPosition(){
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pid.reset();
+        lastTargetTimeNanos = 0;
+        lastTargetTicks = 0.0;
+        targetVelTicksPerSec = 0.0;
+        filterInitialized = false;
+        filteredTargetTicks = 0.0;
     }
 
     public void update (double botErrorDeg, Telemetry t){
@@ -57,15 +78,15 @@ public class UpdatedTurret {
         targetPositionTurretDegrees = clamp(normalize360(360 - botErrorDeg), safeMinDegrees, safeMaxDegrees);
         targetPositionTurretTicks = -(targetPositionTurretDegrees - minDegrees) * ticksPerDegree;
 
-//        if (targetPositionTurretTicks > maxSafeTicks){
-//            targetPositionTurretTicks = maxSafeTicks;
-//            targetPositionTurretDegrees = minDegrees - (targetPositionTurretTicks / ticksPerDegree);
-//
-//        } else if (targetPositionTurretTicks < minSafeTicks){
-//            targetPositionTurretTicks = minSafeTicks;
-//            targetPositionTurretDegrees = minDegrees - (targetPositionTurretTicks / ticksPerDegree);
-//        }
+        // Low-pass filter the target ticks so tiny botErrorDeg noise doesn't cause jitter
+        if (!filterInitialized) {
+            filteredTargetTicks = targetPositionTurretTicks;
+            filterInitialized = true;
+        } else {
+            filteredTargetTicks = filteredTargetTicks + TARGET_ALPHA * (targetPositionTurretTicks - filteredTargetTicks);
+        }
 
+        updateTargetVelocity();
 
 
         t.addData("bot error deg", botErrorDeg);
@@ -74,6 +95,7 @@ public class UpdatedTurret {
         t.addLine("---------------");
         t.addData("target ticks", targetPositionTurretTicks);
         t.addData("target deg", targetPositionTurretDegrees);
+        t.addData("target vel (ticks/sec)", targetVelTicksPerSec);
         t.addLine("---------------");
         t.addData("in deadzone", inDeadZone);
         t.addData("on target", isOnTarget(5));
@@ -97,9 +119,41 @@ public class UpdatedTurret {
     }
 
 
-    public void aim(double power){
-        turret.setTargetPosition((int)targetPositionTurretTicks);
+
+    public void aimPIDF(){
+        pid.setTarget(filteredTargetTicks, targetVelTicksPerSec);
+        double currentTicks = turret.getCurrentPosition();
+        double power = pid.update(currentTicks);
         turret.setPower(power);
+    }
+
+    public TurretPID getPid(){
+        return pid;
+    }
+
+    public double getTargetVelocityTicksPerSec(){
+        return targetVelTicksPerSec;
+    }
+
+
+    private void updateTargetVelocity() {
+        long now = System.nanoTime();
+
+        if (lastTargetTimeNanos == 0) {
+            lastTargetTimeNanos = now;
+            lastTargetTicks = filteredTargetTicks;
+            targetVelTicksPerSec = 0.0;
+            return;
+        }
+
+        double dt = (now - lastTargetTimeNanos) / 1e9;
+        lastTargetTimeNanos = now;
+
+        // error time correction
+        if (dt <= 0 || dt > 0.1) dt = 0.02;
+
+        targetVelTicksPerSec = (filteredTargetTicks - lastTargetTicks) / dt;
+        lastTargetTicks = filteredTargetTicks;
     }
 
     public boolean isOnTarget(double degTolerance){
@@ -107,11 +161,14 @@ public class UpdatedTurret {
         return (tickDiff/ticksPerDegree) < degTolerance;
     }
 
-//    public void manualMode(double power){
-//        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        turret.setPower(power);
-//
-//        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//    }
+    public double getTargetTicks() {
+        return filteredTargetTicks;
+    }
+
+    public double getCurrentTicks() {
+        return turret.getCurrentPosition();
+    }
+
+
 
 }

@@ -1,54 +1,51 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-/**
- * Small reusable PIDF helper.
- *
- * - Call setTarget(...) each loop (optionally with target velocity for FF)
- * - Call update(measurement) each loop to get output (e.g., motor power)
- *
- * Notes:
- * - For a tracking turret, you typically keep kI = 0 to avoid windup.
- * - Feedforward here is tuned for turrets: kS*sign(v) + kV*v.
- */
+
 public class TurretPID {
 
-    public double kP = 0.012;
+    public double kP = 0.011;
     public double kI = 0.0; // wont use
-    public double kD = 0.0008;
+    public double kD = 0.0004;
 
-    public double kS = 0.06; // static friction feedforward
-    public double kV = 0.0009; // velocity feedforward
+    public double kS = 0.09; // static friction feedforward
+    public double kV = 0.0015; // velocity feedforward - need to tune
 
-    // Output clamp
     public double maxOutput = 1.0;
 
     // wont use integral for now
     public double integralMax = 2000.0;
 
-    // --------- State ---------
+
     private double target = 0.0;
-    private double targetVel = 0.0; // units: target units per second (e.g., ticks/sec)
+    private double targetVel = 0.0; // ticks/second
 
     private double integral = 0.0;
     private double lastError = 0.0;
     private long lastTimeNanos = 0;
 
-    /** Set target position only. Feedforward uses 0 velocity. */
+
     public void setTarget(double target) {
         this.target = target;
         this.targetVel = 0.0;
     }
 
-    /** Set target position and target velocity (recommended for feedforward). */
     public void setTarget(double target, double targetVel) {
         this.target = target;
         this.targetVel = targetVel;
     }
 
-    /**
-     * Update using the provided measurement and return the control output.
-     * This method internally computes dt using System.nanoTime().
-     */
+    public void setCoefficients(double kP, double kI, double kD,
+                                double kS, double kV,
+                                double maxOutput) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        this.kS = kS;
+        this.kV = kV;
+        this.maxOutput = maxOutput;
+    }
+
+
     public double update(double measurement) {
         long now = System.nanoTime();
 
@@ -75,16 +72,25 @@ public class TurretPID {
 
         double pid = kP * error + kI * integral + kD * derivative;
 
-        // Feedforward: kS*sign(v) + kV*v
+        // Feedforward: kS helps overcome static friction
         double ff = 0.0;
+
+// If target is still changing, use target velocity direction
         if (Math.abs(targetVel) > 1e-6) {
             ff += kS * Math.signum(targetVel);
         }
+// Otherwise, if we are still not at the target, push in error direction
+        else if (Math.abs(error) > 1.0) {  // 1 tick deadband
+            ff += kS * Math.signum(error);
+        }
+
+// Velocity feedforward
         ff += kV * targetVel;
 
         double out = pid + ff;
         return clamp(out, -maxOutput, maxOutput);
     }
+
 
     public void reset() {
         integral = 0.0;

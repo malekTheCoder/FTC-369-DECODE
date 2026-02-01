@@ -227,7 +227,7 @@ public class BlueTeleopTurret extends OpMode {
             turret.resetPosition();
         }
 
-        turret.aim(0.9*multiplier);
+        //turret.aim(0.9*multiplier);
 
         telemetryM.update();
         telemetry.update();

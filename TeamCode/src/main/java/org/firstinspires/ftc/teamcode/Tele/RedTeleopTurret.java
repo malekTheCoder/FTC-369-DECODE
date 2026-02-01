@@ -224,7 +224,7 @@ public class RedTeleopTurret extends OpMode {
             turret.resetPosition();
         }
 
-        turret.aim(0.9*multiplier);
+        //turret.aim(0.9*multiplier);
 
 
         telemetryM.update();
