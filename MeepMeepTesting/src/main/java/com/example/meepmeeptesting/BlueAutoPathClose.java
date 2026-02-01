@@ -17,7 +17,7 @@ public class BlueAutoPathClose {
                 .setConstraints(60, 50, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-50, -49, Math.toRadians(234)))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-61, -37, Math.toRadians(270)))
                 .strafeToLinearHeading(new Vector2d(-12,-20), Math.toRadians(270)) // position to shoot zero batch
                 .waitSeconds(3)
 

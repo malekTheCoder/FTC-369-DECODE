@@ -19,9 +19,9 @@ public class TestRRLocalizer extends OpMode {
     UpdatedTurret turret;
 
      Drivetrain drive;
-    // Pose2d startPose = new Pose2d(72,-72, Math.toRadians(180));
-    Pose2d startPose = PoseStorage.savedPose;
-
+//     Pose2d startPose = new Pose2d(62.5,-62.5, Math.toRadians(180));
+    Pose2d startPose = new Pose2d(3, -30, Math.toRadians(0));
+//    Pose2d startPose = new Pose2d(-10, 10, Math.toRadians(180));
     double lastHeadingDeg = 0;
     double fullHeading = 0;
     boolean firstLoop = true;
