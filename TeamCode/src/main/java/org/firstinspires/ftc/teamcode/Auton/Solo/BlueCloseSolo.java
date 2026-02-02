@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Autonomous(name = "BlueCloseSolo")
 public class BlueCloseSolo extends LinearOpMode {
@@ -264,7 +265,7 @@ public class BlueCloseSolo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 //-134,
-        Pose2d initialPose = new Pose2d(-61, -37.5, Math.toRadians(270)); // initial pose from meep meep
+        Pose2d initialPose = new Pose2d(-62, -37.5, Math.toRadians(270)); // initial pose from meep meep
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Turret turret = new Turret(hardwareMap);
         Flywheel flywheel = new Flywheel(hardwareMap);
@@ -436,6 +437,7 @@ public class BlueCloseSolo extends LinearOpMode {
         );
 
         Pose2d endPose = drive.localizer.getPose();
+        PoseStorage.savedPose = endPose;
         telemetry.addData("END POSE", endPose);
         telemetry.update();
         sleep(2000);
