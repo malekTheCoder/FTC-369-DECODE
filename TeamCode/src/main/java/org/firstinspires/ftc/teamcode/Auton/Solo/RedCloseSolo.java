@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Autonomous(name = "RedCloseSolo")
 public class RedCloseSolo extends LinearOpMode {
@@ -40,7 +41,7 @@ public class RedCloseSolo extends LinearOpMode {
             turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        public class AimTurret implements Action {
+        public class AimTurret implements Action{
             private double targetPosition;
             private double turretPow;
 
@@ -54,7 +55,7 @@ public class RedCloseSolo extends LinearOpMode {
                 turret.setTargetPosition((int)targetPosition);
                 turret.setPower(turretPow);
 
-                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 10){
+                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 7){
                     return false;
                 } else {
                     return true;
@@ -67,7 +68,7 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action aimTurret(double targetPosition, double turretPower){
-            return new Turret.AimTurret(targetPosition, turretPower );
+            return new AimTurret(targetPosition, turretPower );
         }
 
 
@@ -89,6 +90,7 @@ public class RedCloseSolo extends LinearOpMode {
             private boolean intakeTimerStarted = false;
 
             public HoldIntakePower(double power, double duration) {
+                intakeTimer = new ElapsedTime();
                 this.power = power;
                 this.duration = duration;
             }
@@ -112,7 +114,7 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action holdIntakePower(double power, double time) {
-            return new Intake.HoldIntakePower(power, time);
+            return new HoldIntakePower(power, time);
         }
 
         // stop the intake
@@ -127,7 +129,7 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action stopIntake() {
-            return new Intake.StopIntake();
+            return new StopIntake();
         }
     }
 
@@ -171,7 +173,7 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action runFlywheel(double targetVelocity, double durationSeconds){
-            return new Flywheel.RunFlywheel(targetVelocity, durationSeconds);
+            return new RunFlywheel(targetVelocity, durationSeconds);
         }
 
         public class StopFlywheel implements Action{
@@ -184,7 +186,7 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action stopFlywheel(){
-            return new Flywheel.StopFlywheel();
+            return new StopFlywheel();
         }
     }
 
@@ -223,7 +225,7 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action engageStopper(){
-            return new Stopper.EngageStopper();
+            return new EngageStopper();
         }
 
         public class DisengageStopper implements Action{
@@ -251,18 +253,43 @@ public class RedCloseSolo extends LinearOpMode {
         }
 
         public Action disengageStopper(){
-            return new Stopper.DisengageStopper();
+            return new DisengageStopper();
         }
 
 
 
     }
 
+//    public class PoseUpdater{
+//        Pose2d currentPose;
+//        public PoseUpdater(Pose2d currentPose){
+//            this.currentPose = currentPose;
+//        }
+//
+//        public class UpdateCurrentPose implements Action{
+//            MecanumDrive drive;
+//
+//            public UpdateCurrentPose(MecanumDrive drive){
+//                this.drive = drive;
+//            }
+//
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                currentPose = drive.localizer.getPose();
+//                PoseStorage.savedPose = currentPose;
+//                return true;
+//
+//
+//            }
+//        }
+//
+//    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-          Pose2d initialPose = new Pose2d(-59,42, Math.toRadians(127)); // initial pose from meep meep
+          Pose2d initialPose = new Pose2d(-61,37.5, Math.toRadians(127)); // initial pose from meep meep
           MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
           Turret turret = new Turret(hardwareMap);
           Flywheel flywheel = new Flywheel(hardwareMap);
@@ -418,20 +445,16 @@ public class RedCloseSolo extends LinearOpMode {
                         goGetOffLaunchLine.build(),
                         stopper.engageStopper()
 
-//                        goToShootPreload.build(),
-//                        goToFirstSet.build(),
-//                        driveIntoFirstSet.build(),
-//                        goToShootFirstSet.build(),
-//                        goToSecondSet.build(),
-//                        driveIntoSecondSet.build(),
-//                        goToShootSecondSet.build(),
-//                        goToThirdSet.build(),
-//                        driveIntoThirdSet.build(),
-//                        goToShootThirdSet.build(),
-//                        goGetOffLaunchLine.build()
                 )
 
         );
+
+        Pose2d endPose = drive.localizer.getPose();
+        PoseStorage.savedPose = drive.localizer.getPose();
+        telemetry.addData("END POSE", endPose);
+        telemetry.update();
+        sleep(2000);
+
 
     }
 }

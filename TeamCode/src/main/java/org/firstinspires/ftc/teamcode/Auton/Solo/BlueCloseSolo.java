@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Autonomous(name = "BlueCloseSolo")
 public class BlueCloseSolo extends LinearOpMode {
@@ -436,9 +437,11 @@ public class BlueCloseSolo extends LinearOpMode {
         );
 
         Pose2d endPose = drive.localizer.getPose();
+        PoseStorage.savedPose = drive.localizer.getPose();
         telemetry.addData("END POSE", endPose);
         telemetry.update();
         sleep(2000);
+
 
     }
 }

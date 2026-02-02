@@ -32,12 +32,12 @@ public class UpdatedTurret {
     // Reusable PIDF controller
     private final TurretPID pid = new TurretPID();
 
-    // ---- Target velocity tracking (ticks/sec) ----
+
     private double targetVelTicksPerSec = 0.0;
     private double lastTargetTicks = 0.0;
     private long lastTargetTimeNanos = 0;
 
-    // ---- Low-pass filter on target ticks (reduces jitter from noisy botErrorDeg) ----
+
     private double filteredTargetTicks = 0.0;
     private boolean filterInitialized = false;
 
@@ -70,7 +70,7 @@ public class UpdatedTurret {
         filteredTargetTicks = 0.0;
     }
 
-    public void update (double botErrorDeg, Telemetry t){
+    public void update (double botErrorDeg){
         currentPositionTicks = turret.getCurrentPosition();
         currentPositionDegrees = normalize360(minDegrees + (-currentPositionTicks / ticksPerDegree));
 
@@ -89,18 +89,18 @@ public class UpdatedTurret {
         updateTargetVelocity();
 
 
-        t.addData("bot error deg", botErrorDeg);
-        t.addData("curr ticks", currentPositionTicks);
-        t.addData("curr deg", currentPositionDegrees);
-        t.addLine("---------------");
-        t.addData("target ticks", targetPositionTurretTicks);
-        t.addData("target deg", targetPositionTurretDegrees);
-        t.addData("target vel (ticks/sec)", targetVelTicksPerSec);
-        t.addLine("---------------");
-        t.addData("in deadzone", inDeadZone);
-        t.addData("on target", isOnTarget(5));
-        t.addLine("---------------");
-        t.update();
+//        t.addData("bot error deg", botErrorDeg);
+//        t.addData("curr ticks", currentPositionTicks);
+//        t.addData("curr deg", currentPositionDegrees);
+//        t.addLine("---------------");
+//        t.addData("target ticks", targetPositionTurretTicks);
+//        t.addData("target deg", targetPositionTurretDegrees);
+//        t.addData("target vel (ticks/sec)", targetVelTicksPerSec);
+//        t.addLine("---------------");
+//        t.addData("in deadzone", inDeadZone);
+//        t.addData("on target", isOnTarget(5));
+//        t.addLine("---------------");
+//        t.update();
 
     }
 

@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.hardware.lynx.LynxModule;
-import java.util.List;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
@@ -25,20 +24,29 @@ public class Robot {
     private final Stopper stopper;
 
 
-    public boolean holdShootPressed;
-    public boolean holdShootReleased;
-    public boolean holdShootHeld;
+    public boolean holdPressed;
+    public boolean holdReleased;
+    public boolean holdHeld;
 
-    public boolean normalShootPressed;
-    public boolean normalShootReleased;
-    public boolean normalShootHeld;
+    public boolean shootPressed;
+    public boolean shootReleased;
+    public boolean shootHeld;
 
-    public double intakeShootPower = 0.4; // 0.85 - 0.90 recommended for feeding
-    public double intakeDefaultSpeed = 0.8;
+    public double intakeShootPower = 0.9; // feed power while shooting
+
+    public double stopperDelay = 0.12;
+
+    public double intakeDelayPower = 0.10;
+
+    public double intakeDefaultPower = 0.8;
+
+    // Internal shoot timing state
+    private boolean lastShootHeld = false;
+    private long shootStartNs = 0;
 
 
-    private boolean holdShootActive = false;
-    private boolean normalShootActive = false;
+    // Separate feature states
+    private boolean holdPoseActive = false;
 
     // Timing for pose hold seconds
     private long lastLoopTimeNs = System.nanoTime();
@@ -48,10 +56,13 @@ public class Robot {
     private Gamepad gp1;
     private Gamepad gp2;
 
+    RoadrunnerRobotLocalizer.AllianceColor allianceColor;
+
 
     public Robot(HardwareMap hardwareMap, RoadrunnerRobotLocalizer.AllianceColor allianceColor, Gamepad gp1, Gamepad gp2, Telemetry telemetry){
         drivetrain = new Drivetrain(hardwareMap, PoseStorage.pinpointHeadingOffsetDriverRelative);
         robotLocalizer = new RoadrunnerRobotLocalizer(hardwareMap, PoseStorage.savedPose, allianceColor);
+        this.allianceColor = allianceColor;
         intake = new Intake(hardwareMap);
         poseHoldController = new PoseHoldController();
         turret = new FinalTurret(hardwareMap);
@@ -69,7 +80,7 @@ public class Robot {
         stopper.engageStopper();
         intake.runIntake(0.0);
         outtake.resetController();
-        turret.setMode(FinalTurret.Mode.AUTO);
+        turret.setTurretMode(FinalTurret.Mode.ODOMETRY_AUTO_MODE);
 
     }
 
@@ -94,64 +105,84 @@ public class Robot {
         outtake.runOuttake();
 
         // shooting inputs
-        holdShootPressed  = gp1.triangleWasPressed();
-        holdShootReleased = gp1.triangleWasReleased();
-        holdShootHeld     = gp1.triangle;
+        holdPressed  = gp1.triangleWasPressed();
+        holdReleased = gp1.triangleWasReleased();
+        holdHeld     = gp1.triangle;
 
-        normalShootPressed  = gp1.crossWasPressed();
-        normalShootReleased = gp1.crossWasReleased();
-        normalShootHeld     = gp1.cross;
+        shootPressed  = gp2.crossWasPressed();
+        shootReleased = gp2.crossWasReleased();
+        shootHeld     = gp2.cross;
 
-        // start hold shoot2
-        if (holdShootPressed) {
+        Pose2d currentPose = robotLocalizer.getBotPosition();
 
+
+        if (holdPressed) {
+            // Stop the bot before engaging pose-hold
             drivetrain.setZeroPower();
-            poseHoldController.startHolding(robotLocalizer.getBotPosition());
-            holdShootActive = true;
 
-            normalShootActive = false;
+            poseHoldController.startHolding(currentPose);
+            holdPoseActive = true;
         }
 
-        // Start normal shoot
-        if (!holdShootActive && normalShootPressed) {
-            normalShootActive = true;
-        }
-
-        // stop shooting states on release
-        if (holdShootReleased) {
-            poseHoldController.stopHolding();
-            holdShootActive = false;
-        }
-        if (normalShootReleased) {
-            normalShootActive = false;
-        }
-
-        //drive
-        if (holdShootHeld && holdShootActive && poseHoldController.isHolding()) {
-            // pose hold drives robot-centric commands
-            PoseHoldController.DriveCommand cmd = poseHoldController.update(robotLocalizer.getBotPosition(), dt);
+        if (holdHeld && poseHoldController.isHolding()) {
+            PoseHoldController.DriveCommand cmd = poseHoldController.update(currentPose, dt);
             drivetrain.driveRobotCentric(cmd.forward, cmd.strafe, cmd.turn);
-
         } else {
-            // normal drive
+            // Normal driver control
             drivetrain.handleDrivetrainWithPinpoint(gp1, robotLocalizer.getBotHeadingDegrees0To360());
         }
 
-        // shoot on or no
-        boolean shouldShoot = (holdShootHeld && holdShootActive) || (normalShootHeld && normalShootActive);
+        if (holdReleased) {
+            poseHoldController.stopHolding();
+            holdPoseActive = false;
+        }
+
+
+        boolean shouldShoot = shootHeld;
+
+        // Detect shoot start (rising edge) to start delay timer
+        if (shouldShoot && !lastShootHeld) {
+            shootStartNs = nowNs;
+        }
+        lastShootHeld = shouldShoot;
 
         if (shouldShoot) {
             stopper.disengageStopper();
-            intake.runIntake(intakeShootPower);
+
+            double elapsedSec = (nowNs - shootStartNs) / 1e9;
+            double intakeCmd = (elapsedSec < stopperDelay) ? intakeDelayPower : intakeShootPower;
+
+            intake.runIntake(intakeCmd);
+            telemetry.addData("ShootDelaySec", elapsedSec);
+            telemetry.addData("IntakeCmd", intakeCmd);
+
         } else {
+            // Not shooting: keep stopper engaged and NEVER feed
             stopper.engageStopper();
-            intake.runIntake(intakeDefaultSpeed);
+            intake.runIntake(intakeDefaultPower);
+
+            shootStartNs = 0;
+        }
+
+        if (gp2.dpadLeftWasPressed()){
+            if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.RED){
+                robotLocalizer.adjustRedGoalX(-2);
+            } else if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.BLUE) {
+                robotLocalizer.adjustBlueGoalX(-2);
+            }
+        }
+        if (gp2.dpadRightWasPressed()){
+            if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.RED){
+                robotLocalizer.adjustRedGoalX(2);
+            } else if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.BLUE) {
+                robotLocalizer.adjustBlueGoalX(2);
+            }
         }
 
 
 
         //bot position reset
-        if (gp2.startWasPressed()){
+        if (gp2.shareWasPressed()){
             robotLocalizer.resetBotPoseInCorner();
         }
 
@@ -160,9 +191,8 @@ public class Robot {
         }
 
         // telem
-        telemetry.addData("TurretMode", turret.getMode());
-        telemetry.addData("HoldShootActive", holdShootActive);
-        telemetry.addData("NormalShootActive", normalShootActive);
+        telemetry.addData("TurretMode", turret.getTurretMode());
+        telemetry.addData("HoldPoseActive", holdPoseActive);
         telemetry.addData("ShouldShoot", shouldShoot);
         telemetry.addData("OuttakeTargetVel", outtake.getTargetVelocity());
         telemetry.addData("OuttakeAvgVel", outtake.getAverageVelocity());

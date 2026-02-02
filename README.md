@@ -166,7 +166,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 ### Bug Fixes
 
-* Fix an internal bug where if the RUN_TO_POSITION run mode was specified before a target position, recovery would require a power cycle. A side effect of this fix is that a stack trace identifying the location of the error is always produced in the log. Fixes issue [1345](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1345).
+* Fix an internal bug where if the RUN_TO_POSITION run turretMode was specified before a target position, recovery would require a power cycle. A side effect of this fix is that a stack trace identifying the location of the error is always produced in the log. Fixes issue [1345](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/1345).
 * Throws a helpful exception if region of interest is set to null when building a PredominantColorProcessor. Also sets the default RoI to the full frame. Addresses issue [1076](FIRST-Tech-Challenge/FtcRobotController#1076)
 * Throws a helpful exception if user tries to construct an ImageRegion with malformed boundaries.  Addresses issue [1078](FIRST-Tech-Challenge/FtcRobotController#1078)
 
@@ -359,7 +359,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
     * The ConceptCompassCalibration, SensorMRCompass, and SensorMRIRSeeker samples have been deleted, as they are not useful for modern FTC competitions.
 
 ### Bug Fixes
-* Fixes a bug which prevented PlayStation gamepads from being used in bluetooth mode. Bluetooth is NOT legal for competition but may be useful to allow a DS device to be used while charging, or at an outreach event.
+* Fixes a bug which prevented PlayStation gamepads from being used in bluetooth turretMode. Bluetooth is NOT legal for competition but may be useful to allow a DS device to be used while charging, or at an outreach event.
 * Fixes a bug where a Blocks OpMode's Date Modified value can change to December 31, 1969, if the Control Hub is rebooted while the Blocks OpMode is being edited.
 * Fixes the automatic TeleOp preselection feature (was broken in 8.2)
 * Fixes a bug where passing an integer number such as 123 to the Telemetry.addData block that takes a number shows up as 123.0 in the telemetry.
@@ -370,7 +370,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Fixes OnBotJava tabs failing to close when their file is deleted.
 * Fixes a project view refresh not happening when a file is renamed in OnBotJava.
 * Fixes the "Download" context menu item for external libraries in the OnBotJava interface.
-* Fixes issue where Driver Station telemetry would intermittently freeze when set to Monospace mode.
+* Fixes issue where Driver Station telemetry would intermittently freeze when set to Monospace turretMode.
 * Fixes performance regression for certain REV Hub operations that was introduced in version 8.2.
 * Fixes TagID comparison logic in DriveToTag samples.
 
@@ -567,7 +567,7 @@ This is a bug fix only release to address the following four issues.
 * Increases the height of the 3-dots Landscape menu touch area on the Driver Station, making it much easier to select.
 * Adds `terminateOpModeNow()` method to allow OpModes to cleanly self-exit immediately.
 * Adds `opModeInInit()` method to `LinearOpMode` to facilitate init-loops. Similar to `opModeIsActive()` but for the init phase.
-* Warns user if they have a Logitech F310 gamepad connected that is set to DirectInput mode.
+* Warns user if they have a Logitech F310 gamepad connected that is set to DirectInput turretMode.
 * Allows SPARKmini motor controllers to react more quickly to speed changes.
 * Hides the version number of incorrectly installed sister app (i.e. DS installed on RC device or vice-versa) on inspection screen.
 * Adds support for allowing the user to edit the comment for the runOpMode block.
@@ -619,7 +619,7 @@ This is a bug fix only release to address the following four issues.
 * Added a page to manage the TensorFlow Lite models in /sdcard/FIRST/tflitemodels. To get to the TFLite Models page:
     * You can click on the link at the bottom of the Manage page.
     * You can click on the link at the upper-right the Blocks project page.
-* Fixes logspam when `isBusy()` is called on a motor not in RTP mode.
+* Fixes logspam when `isBusy()` is called on a motor not in RTP turretMode.
 * Hides the "RC Password" item on the inspection screen for phone-based Robot Controllers. (It is only applicable for Control Hubs).
 * Adds channel 165 to Wi-Fi Direct channel selection menu in the settings screen. (165 was previously available through the web UI, but not locally in the app).
 
@@ -700,7 +700,7 @@ This is a bug fix only release to address the following four issues.
 ### Enhancements
 * Attempts to automatically fix the condition where a Control Hub's internal Expansion Hub is not
   working by re-flashing its firmware
-* Makes various improvements to the Wi-Fi Direct pairing screen, especially in landscape mode
+* Makes various improvements to the Wi-Fi Direct pairing screen, especially in landscape turretMode
 * Makes the Robot Controller service no longer be categorically restarted when the main activity is brought to foreground
     * (e.g. the service is no longer restarted simply by viewing the Self Inspect screen and pressing the back button)
     * It is still restarted if the Settings menu or Configure Robot menu is opened
@@ -867,7 +867,7 @@ Version 5.5 requires Android Studio 4.0 or later.
     * Renames "OS version" entry to "Android version"
     * Renames "Wi-Fi Direct Name" to "Wi-Fi Name"
     * Adds Control Hub OS version, when viewing the report of a Control Hub
-    * Hides the airplane mode entry, when viewing the report of a Control Hub
+    * Hides the airplane turretMode entry, when viewing the report of a Control Hub
     * Removes check for ZTE Speed Channel Changer
     * Shows firmware version for **all** Expansion and Control Hubs
 * Reworks network settings portion of Manage page
@@ -880,7 +880,7 @@ Version 5.5 requires Android Studio 4.0 or later.
     * New light and dark themes replace the old themes (chaos, github, chrome,...)
         * the new default theme is `light` and will be used when you first update to this version
     * OnBotJava now has a tabbed editor
-    * Read-only offline mode
+    * Read-only offline turretMode
 * Improves function of "exit" menu item on Robot Controller and Driver Station
     * Now guaranteed to be fully stopped and unloaded from memory
 * Shows a warning message if a LinearOpMode exists prematurely due to failure to monitor for the start condition
@@ -928,7 +928,7 @@ Version 5.5 requires Android Studio 4.0 or later.
 * Fixes issue where device scans would fail while the Robot was restarting
 * Fix RenderScript usage
     * Use androidx.renderscript variant: increased compatibility
-    * Use RenderScript in Java mode, not native: simplifies build
+    * Use RenderScript in Java turretMode, not native: simplifies build
 * Fixes webcam-frame-to-bitmap conversion problem: alpha channel wasn't being initialized, only R, G, & B
 * Fixes possible arithmetic overflow in Deadline
 * Fixes deadlock in Vuforia webcam support which could cause 5-second delays when stopping OpMode
@@ -960,7 +960,7 @@ Version 5.5 requires Android Studio 4.0 or later.
     * Improves logging and reduces log spam during these conditions
 * Syncs the Control Hub time and timezone to a connected web browser programming the robot, if a Driver Station is not available.
 * Adds bulk read functionality for REV Hubs
-  * A bulk caching mode must be set at the Hub level with `LynxModule#setBulkCachingMode()`. This applies to all relevant SDK hardware classes that reference that Hub.
+  * A bulk caching turretMode must be set at the Hub level with `LynxModule#setBulkCachingMode()`. This applies to all relevant SDK hardware classes that reference that Hub.
   * The following following Hub bulk caching modes are available:
     * `BulkCachingMode.OFF` (default): All hardware calls operate as usual. Bulk data can read through `LynxModule#getBulkData()` and processed manually.
     * `BulkCachingMode.AUTO`: Applicable hardware calls are served from a bulk read cache that is cleared/refreshed automatically to ensure identical commands don't hit the same cache. The cache can also be cleared manually with `LynxModule#clearBulkCache()`, although this is not recommended.
@@ -1275,7 +1275,7 @@ The OnBot Java Development Tool provides a Java programming environment that doe
 Changes with version 3.2 include:
  * Enhanced web-based development tools
     - Introduction of OnBot Java Development Tool.
-    - Web-based programming and management features are "always on" (user no longer needs to put Robot Controller into programming mode).
+    - Web-based programming and management features are "always on" (user no longer needs to put Robot Controller into programming turretMode).
     - Web-based management interface (where user can change Robot Controller name and also easily download Robot Controller log file).
     - OnBot Java, Blocks and Management features available from web based interface.
 
@@ -1364,21 +1364,21 @@ Changes include:
   * Changes to enhance Modern Robotics USB protocol robustness.
 
 ## Version 2.61 (released on 16.12.19)
-  * Blocks Programming mode changes:
+  * Blocks Programming turretMode changes:
      - Fix to correct issue when an exception was thrown because an OpticalDistanceSensor object appears twice in the hardware map (the second time as a LightSensor).
 
 ## Version 2.6 (released on 16.12.16)
   * Fixes for Gyro class:
      - Improve (decrease) sensor refresh latency.
      - fix isCalibrating issues.
-  * Blocks Programming mode changes:
+  * Blocks Programming turretMode changes:
      - Blocks now ignores a device in the configuration xml if the name is empty. Other devices work in configuration work fine.
 
 ## Version 2.5 (internal release on released on 16.12.13)
-  * Blocks Programming mode changes:
+  * Blocks Programming turretMode changes:
      - Added blocks support for AdafruitBNO055IMU.
      - Added Download OpMode button to FtcBocks.html.
-     - Added support for copying blocks in one OpMode and pasting them in an other OpMode. The clipboard content is stored on the phone, so the programming mode server must be running.
+     - Added support for copying blocks in one OpMode and pasting them in an other OpMode. The clipboard content is stored on the phone, so the programming turretMode server must be running.
      - Modified Utilities section of the toolbox.
      - In Programming Mode, display information about the active connections.
      - Fixed paste location when workspace has been scrolled.
@@ -1426,7 +1426,7 @@ Changes include:
 
 ## Version 2.4 (released on 16.11.13)
   * Fix to avoid crashing for nonexistent resources.
-  * Blocks Programming mode changes:
+  * Blocks Programming turretMode changes:
      - Added blocks to support OpenGLMatrix, MatrixF, and VectorF.
      - Added blocks to support AngleUnit, AxesOrder, AxesReference, CameraDirection, CameraMonitorFeedback, DistanceUnit, and TempUnit.
      - Added blocks to support Acceleration.
@@ -1458,10 +1458,10 @@ Changes include:
   * Limit unbounded growth of data for telemetry.  If user does not call telemetry.update() for LinearOpMode in a timely manner, data added for telemetry might get lost if size limit is exceeded.
 
 ## Version 2.35 (released on 16.10.06)
-  * Blockly programming mode - Removed unnecesary idle() call from blocks for new project.
+  * Blockly programming turretMode - Removed unnecesary idle() call from blocks for new project.
 
 ## Version 2.30 (released on 16.10.05)
-  * Blockly programming mode:
+  * Blockly programming turretMode:
      - Mechanism added to save Blockly OpModes from Programming Mode Server onto local device
      - To avoid clutter, blocks are displayed in categorized folders
      - Added support for DigitalChannel
@@ -1513,7 +1513,7 @@ Changes include:
     - support for LED.
     - support for color sensor.
     - support for CRServo
-    - prompt user to configure robot before using programming mode.
+    - prompt user to configure robot before using programming turretMode.
  * Provides ability to disable audio cues.
  * various bug fixes and improvements.
 
@@ -1530,7 +1530,7 @@ Changes include:
  * Range.clip() method has been overloaded so it can support this operation for int, short and byte integers.
  * Some changes have been made (new methods added) on how a user can access items from the hardware map.
  * Users can now set the zero power behavior for a DC motor so that the motor will brake or float when power is zero.
- * Prototype Blockly Programming Mode has been added to FTC Robot Controller.  Users can place the Robot Controller into this mode, and then use a device (such as a laptop) that has a Javascript enabled browser to write Blockly-based OpModes directly onto the Robot Controller.
+ * Prototype Blockly Programming Mode has been added to FTC Robot Controller.  Users can place the Robot Controller into this turretMode, and then use a device (such as a laptop) that has a Javascript enabled browser to write Blockly-based OpModes directly onto the Robot Controller.
  * Users can now configure the robot remotely through the FTC Driver Station app.
  * Android Studio project supports Android Studio 2.1.x and compile SDK Version 23 (Marshmallow).
  * Vuforia Computer Vision SDK integrated into FTC SDK.  Users can use sample vision targets to get localization information on a standard FTC field.
@@ -1611,7 +1611,7 @@ Changes include:
 ## Release 16.01.04
 
  * Updated compileSdkVersion for apps
- * Prevent Wi-Fi from entering power saving mode
+ * Prevent Wi-Fi from entering power saving turretMode
  * removed unused import from driver station
  * Corrrected "Dead zone" joystick code.
  * LED.getDeviceName and .getConnectionInfo() return null
@@ -1650,7 +1650,7 @@ Changes include:
  * Improved error messages
   - More descriptive error messages for exceptions in user code.
  * Updated DcMotor API
- * Enable read mode on new address in setI2cAddress
+ * Enable read turretMode on new address in setI2cAddress
  * Fix so that driver station app resets the gamepads when switching OpModes.
  * USB-related code changes to make USB comm more responsive and to display more explicit error messages.
   - Fix so that USB will recover properly if the USB bus returns garbage data.
@@ -1694,7 +1694,7 @@ Changes include:
    - The init() and loop() methods are now required (i.e., need to be overridden in the user's OpMode).
    - The start() and stop() methods are optional.
  * A new LinearOpMode class is introduced.
-   - Teams can use the LinearOpMode mode to create a linear (not event driven) program model.
+   - Teams can use the LinearOpMode turretMode to create a linear (not event driven) program model.
    - Teams can use blocking statements like Thread.sleep() within a linear OpMode.
  * The API for the Legacy Module and Core Device Interface Module have been updated.
    - Support for encoders with the Legacy Module is now working.

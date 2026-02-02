@@ -19,8 +19,8 @@ public class RoadrunnerRobotLocalizer {
     public enum AllianceColor {BLUE, RED}
     AllianceColor allianceColor;
 
-    Pose2d blueSideCornerResetPose = new Pose2d(67,-67, Math.toRadians(180));
-    Pose2d redSideCornerResetPose = new Pose2d(67,67,Math.toRadians(180));
+    Pose2d blueSideCornerResetPose = new Pose2d(62.5,-62.5, Math.toRadians(0));
+    Pose2d redSideCornerResetPose = new Pose2d(62,62.5,Math.toRadians(0));
 
 
     public RoadrunnerRobotLocalizer(HardwareMap hardwareMap, Pose2d startPose, AllianceColor allianceColor){
@@ -88,13 +88,23 @@ public class RoadrunnerRobotLocalizer {
     }
 
     public void resetBotPoseInCorner(){
-        if (this.allianceColor == AllianceColor.BLUE){
+        if (this.allianceColor == AllianceColor.RED){
             drive.localizer.setPose(blueSideCornerResetPose);
             drive.updatePoseEstimate();
-        } else if (this.allianceColor == AllianceColor.RED){
+        } else if (this.allianceColor == AllianceColor.BLUE){
             drive.localizer.setPose(redSideCornerResetPose);
             drive.updatePoseEstimate();
         }
     }
+
+    public void adjustBlueGoalX(int adjustment){
+        blueGoalX += adjustment;
+    }
+
+    public void adjustRedGoalX(int adjustment){
+        redGoalX += adjustment;
+    }
+
+
 
 }
