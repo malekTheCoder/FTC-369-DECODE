@@ -20,7 +20,7 @@ public class TestRRLocalizer extends OpMode {
 
      Drivetrain drive;
 //     Pose2d startPose = new Pose2d(62.5,-62.5, Math.toRadians(180));
-    Pose2d startPose = new Pose2d(3, -30, Math.toRadians(0));
+    Pose2d startPose = new Pose2d(0, 0, Math.toRadians(270));
 //    Pose2d startPose = new Pose2d(-10, 10, Math.toRadians(180));
     double lastHeadingDeg = 0;
     double fullHeading = 0;
@@ -78,18 +78,18 @@ public class TestRRLocalizer extends OpMode {
         }
 
 
-        turret.update(rrLocalizer.getAngleForTurretDegrees(), telemetry);
+//        turret.update(rrLocalizer.getAngleForTurretDegrees(), telemetry);
+//
+//        turret.aimPIDF();
 
-        turret.aimPIDF();
 
 
-
-//        telemetry.addData("X", currentPose.position.x);
-//        telemetry.addData("Y", currentPose.position.y);
-//        telemetry.addData("full heading", fullHeading);
-//        telemetry.addData("inverse heading (degrees)", inverseHeading);
-//        telemetry.addData("yaw scalar", yawScalar);
-//        telemetry.addData("robot angle to goal degrees", rrLocalizer.getRobotAngleToGoalDegrees());
+        telemetry.addData("X", currentPose.position.x);
+        telemetry.addData("Y", currentPose.position.y);
+        telemetry.addData("full heading", fullHeading);
+        telemetry.addData("inverse heading (degrees)", inverseHeading);
+        telemetry.addData("yaw scalar", yawScalar);
+        telemetry.addData("robot angle to goal degrees", rrLocalizer.getRobotAngleToGoalDegrees());
 
         if (hold.getTargetPose() != null) {
             telemetry.addData("hold target x", hold.getTargetPose().position.x);

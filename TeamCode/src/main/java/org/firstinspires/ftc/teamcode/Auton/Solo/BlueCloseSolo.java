@@ -188,6 +188,32 @@ public class BlueCloseSolo extends LinearOpMode {
         }
     }
 
+    public class savePose{
+        private Pose2d endPose;
+
+        private MecanumDrive drivetrain;
+
+        public savePose(MecanumDrive drive){
+            this.drivetrain = drive;
+        }
+
+        public class StorePose implements Action{
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet){
+                if(endPose!=null){
+                    endPose= drivetrain.localizer.getPose();
+                    PoseStorage.savedPose = endPose;
+                }
+                return true;
+            }
+
+        }
+        public Action storePose() {
+            return new StorePose();
+        }
+    }
+
     public class Stopper{
         private Servo stopper;
         private double engagedPosition = 0.6; // fine tune this value
@@ -265,12 +291,13 @@ public class BlueCloseSolo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 //-134,
-        Pose2d initialPose = new Pose2d(-62, -37.5, Math.toRadians(270)); // initial pose from meep meep
+        Pose2d initialPose = new Pose2d(-64, -37, Math.toRadians(270)); // initial pose from meep meep
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         Turret turret = new Turret(hardwareMap);
         Flywheel flywheel = new Flywheel(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
+        savePose storer = new savePose(drive);
 
 
 
@@ -420,7 +447,9 @@ public class BlueCloseSolo extends LinearOpMode {
         // TODO when testing go step by step, comment out all but the ffirst and then incremmentallg uncomment the next line
         // TODO will make testing and troubleshooting easier
         Actions.runBlocking(
-                new SequentialAction(
+            new ParallelAction(
+//                    savePose.storePose(),
+                    new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
                         FirstBatch,
@@ -433,12 +462,12 @@ public class BlueCloseSolo extends LinearOpMode {
                         stopper.engageStopper()
 
                 )
-
+            )
         );
-
-        Pose2d endPose = drive.localizer.getPose();
-        PoseStorage.savedPose = endPose;
-        telemetry.addData("END POSE", endPose);
+//
+        storer.endPose = drive.localizer.getPose();
+        PoseStorage.savedPose = storer.endPose;
+        telemetry.addData("END POSE", storer.endPose);
         telemetry.update();
         sleep(2000);
 
