@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class RoadrunnerRobotLocalizer {
     MecanumDrive drive;
-    private double blueGoalX = -62.5;
-    private double blueGoalY = -62.5;
+    private double blueGoalX = -65;
+    private double blueGoalY = -65;
     private double redGoalX = -67;
     private double redGoalY = 67;
 
