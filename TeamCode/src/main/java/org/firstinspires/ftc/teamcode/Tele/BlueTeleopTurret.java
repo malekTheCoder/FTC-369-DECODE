@@ -213,7 +213,7 @@ public class BlueTeleopTurret extends OpMode {
         outtake.setTargetVelocity(outtake.velocityRegressionModel(distanceToGoal));
         outtake.runOuttake();
 
-        turret.update(angleToGoalRelRobotDeg, telemetry);
+        turret.update(angleToGoalRelRobotDeg);
 
         if(gamepad2.xWasPressed()){
             multiplier=0;

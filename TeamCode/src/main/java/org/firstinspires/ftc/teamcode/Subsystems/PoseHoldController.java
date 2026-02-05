@@ -8,9 +8,9 @@ public class PoseHoldController {
     private boolean holding = false;
 
     // proportional values
-    private PDController xPD = new PDController(0.4, 0.00);
-    private PDController yPD = new PDController(0.4, 0.00);
-    private PDController headingPD = new PDController(5.5,  0.00);
+    private PDController xPD = new PDController(0.3, 0.00);
+    private PDController yPD = new PDController(0.3, 0.00);
+    private PDController headingPD = new PDController(4,  0.00);
 
 
     // not using deadbands for now

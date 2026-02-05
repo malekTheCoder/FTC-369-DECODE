@@ -59,6 +59,10 @@ public class UpdatedTurret {
         turret.setPower(-stickX * 0.3);
     }
 
+    public void setPowerRaw(double p) {
+        turret.setPower(p);
+    }
+
     public void resetPosition(){
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -89,18 +93,6 @@ public class UpdatedTurret {
         updateTargetVelocity();
 
 
-//        t.addData("bot error deg", botErrorDeg);
-//        t.addData("curr ticks", currentPositionTicks);
-//        t.addData("curr deg", currentPositionDegrees);
-//        t.addLine("---------------");
-//        t.addData("target ticks", targetPositionTurretTicks);
-//        t.addData("target deg", targetPositionTurretDegrees);
-//        t.addData("target vel (ticks/sec)", targetVelTicksPerSec);
-//        t.addLine("---------------");
-//        t.addData("in deadzone", inDeadZone);
-//        t.addData("on target", isOnTarget(5));
-//        t.addLine("---------------");
-//        t.update();
 
     }
 
@@ -167,6 +159,15 @@ public class UpdatedTurret {
 
     public double getCurrentTicks() {
         return turret.getCurrentPosition();
+    }
+
+    public void addTelemetry(Telemetry telemetry){
+        telemetry.addData("curr ticks", currentPositionTicks);
+        telemetry.addData("curr deg", currentPositionDegrees);
+        telemetry.addLine("---------------");
+        telemetry.addData("target ticks", targetPositionTurretTicks);
+        telemetry.addData("target deg", targetPositionTurretDegrees);
+        telemetry.addLine("---------------");
     }
 
 

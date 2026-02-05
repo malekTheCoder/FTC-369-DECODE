@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseHoldController;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
+import org.firstinspires.ftc.teamcode.Subsystems.SimpleTurret;
 import org.firstinspires.ftc.teamcode.Subsystems.Stopper;
 
 public class Robot {
@@ -19,7 +21,13 @@ public class Robot {
     private final RoadrunnerRobotLocalizer robotLocalizer;
     private final Intake intake;
     private final PoseHoldController poseHoldController;
+
+
+
     private final FinalTurret turret;
+    //private final SimpleTurret simpleTurret;
+
+
     private final Outtake outtake;
     private final Stopper stopper;
 
@@ -34,9 +42,9 @@ public class Robot {
 
     public double intakeShootPower = 0.9; // feed power while shooting
 
-    public double stopperDelay = 0.12;
+    public double stopperDelay = 0.25;
 
-    public double intakeDelayPower = 0.10;
+    public double intakeDelayPower = 0;
 
     public double intakeDefaultPower = 0.8;
 
@@ -65,7 +73,11 @@ public class Robot {
         this.allianceColor = allianceColor;
         intake = new Intake(hardwareMap);
         poseHoldController = new PoseHoldController();
+
         turret = new FinalTurret(hardwareMap);
+        //simpleTurret = new SimpleTurret(hardwareMap.get(DcMotorEx.class, "turret"));
+
+
         outtake = new Outtake(hardwareMap);
         stopper = new Stopper(hardwareMap);
         this.telemetry = telemetry;
@@ -77,6 +89,7 @@ public class Robot {
 
     public void start() {
         turret.resetPosition();
+        //simpleTurret.resetEncoder();
         stopper.engageStopper();
         intake.runIntake(0.0);
         outtake.resetController();
@@ -96,9 +109,24 @@ public class Robot {
         // localizer update
         robotLocalizer.updateBotPosition();
 
-        // turret
+
+        //turret
         turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
-        turret.update(telemetry);
+        turret.update();
+
+        if (gp2.leftBumperWasPressed()){
+            turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_ASSIST_MODE);
+        }
+
+        if (gp1.rightBumperWasPressed()){
+            turret.setTurretMode(FinalTurret.Mode.ODOMETRY_AUTO_MODE);
+        }
+
+        // simpleTurret.aimWithOdo(robotLocalizer.getAngleForTurretDegrees(), 1);
+
+
+
+
 
         //flywheel
         outtake.setTargetVelocity(outtake.velocityRegressionModel(robotLocalizer.getDistanceToGoal()));
@@ -109,9 +137,9 @@ public class Robot {
         holdReleased = gp1.triangleWasReleased();
         holdHeld     = gp1.triangle;
 
-        shootPressed  = gp2.crossWasPressed();
-        shootReleased = gp2.crossWasReleased();
-        shootHeld     = gp2.cross;
+        shootPressed  = gp1.crossWasPressed();
+        shootReleased = gp1.crossWasReleased();
+        shootHeld     = gp1.cross;
 
         Pose2d currentPose = robotLocalizer.getBotPosition();
 
@@ -190,12 +218,14 @@ public class Robot {
             drivetrain.setPinpointHeadingAdjuster(-robotLocalizer.getBotHeadingDegrees0To360());
         }
 
-        // telem
-        telemetry.addData("TurretMode", turret.getTurretMode());
-        telemetry.addData("HoldPoseActive", holdPoseActive);
-        telemetry.addData("ShouldShoot", shouldShoot);
-        telemetry.addData("OuttakeTargetVel", outtake.getTargetVelocity());
-        telemetry.addData("OuttakeAvgVel", outtake.getAverageVelocity());
+
+
+        telemetry.addData("x", robotLocalizer.getBotPosition().position.x);
+        telemetry.addData("y", robotLocalizer.getBotPosition().position.y);
+        telemetry.addData("heading", Math.toDegrees(robotLocalizer.getBotPosition().heading.toDouble()));
+        turret.addTelemetry(telemetry);
+
+
         telemetry.update();
     }
 

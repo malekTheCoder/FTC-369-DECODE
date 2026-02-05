@@ -180,7 +180,7 @@ public class MakeRegression extends OpMode {
         dashboard.sendTelemetryPacket(packet);
 
 
-        turret.update(angleToGoalRelRobotDeg, telemetry);
+        turret.update(angleToGoalRelRobotDeg);
 
         // turret.aim(1);
 

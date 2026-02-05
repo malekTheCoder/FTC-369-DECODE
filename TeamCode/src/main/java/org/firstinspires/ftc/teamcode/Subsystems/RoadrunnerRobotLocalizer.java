@@ -8,10 +8,10 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class RoadrunnerRobotLocalizer {
     MecanumDrive drive;
-    private double blueGoalX = -67;
-    private double blueGoalY = -67;
-    private double redGoalX = -67;
-    private double redGoalY = 67;
+    private double blueGoalX = -65;
+    private double blueGoalY = -65;
+    private double redGoalX = -62.5;
+    private double redGoalY = 62.5;
 
     public double GOAL_X;
     public double GOAL_Y;
@@ -99,10 +99,12 @@ public class RoadrunnerRobotLocalizer {
 
     public void adjustBlueGoalX(int adjustment){
         blueGoalX += adjustment;
+        GOAL_X = blueGoalX;
     }
 
     public void adjustRedGoalX(int adjustment){
         redGoalX += adjustment;
+        GOAL_X = redGoalX;
     }
 
 

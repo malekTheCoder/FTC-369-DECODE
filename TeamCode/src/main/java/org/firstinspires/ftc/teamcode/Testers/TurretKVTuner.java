@@ -62,7 +62,7 @@ public class TurretKVTuner extends OpMode {
         double botErrorDeg = rr.getAngleForTurretDegrees();
 
         // Update turret target + targetVel inside UpdatedTurret
-        turret.update(botErrorDeg, telemetry);
+        turret.update(botErrorDeg);
 
         // Push tuned gains into the turret PID
         turret.getPid().setCoefficients(KP, KI, KD, KS, KV, MAX_OUTPUT);

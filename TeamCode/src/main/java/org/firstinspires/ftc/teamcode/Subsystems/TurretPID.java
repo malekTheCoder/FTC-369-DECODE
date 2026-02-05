@@ -7,8 +7,14 @@ public class TurretPID {
     public double kI = 0.0; // wont use
     public double kD = 0.0004;
 
-    public double kS = 0.09; // static friction feedforward
-    public double kV = 0.0015; // velocity feedforward - need to tune
+    // public double kS = 0.09; // static friction feedforward
+    public double kS = 0.06; // static friction feedforward
+
+
+
+
+    //    public double kV = 0.0015; // velocity feedforward - need to tune
+    public double kV = 0.0012; // velocity feedforward - need to tune
 
     public double maxOutput = 1.0;
 
@@ -75,16 +81,16 @@ public class TurretPID {
         // Feedforward: kS helps overcome static friction
         double ff = 0.0;
 
-// If target is still changing, use target velocity direction
+       // If target is still changing, use target velocity direction
         if (Math.abs(targetVel) > 1e-6) {
             ff += kS * Math.signum(targetVel);
         }
-// Otherwise, if we are still not at the target, push in error direction
+       // Otherwise, if we are still not at the target, push in error direction
         else if (Math.abs(error) > 1.0) {  // 1 tick deadband
             ff += kS * Math.signum(error);
         }
 
-// Velocity feedforward
+       // Velocity feedforward
         ff += kV * targetVel;
 
         double out = pid + ff;
@@ -109,4 +115,5 @@ public class TurretPID {
     private static double clamp(double x, double lo, double hi) {
         return Math.max(lo, Math.min(hi, x));
     }
+
 }
