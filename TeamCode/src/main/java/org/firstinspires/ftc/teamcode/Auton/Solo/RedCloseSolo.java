@@ -262,7 +262,7 @@ public class RedCloseSolo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-          Pose2d initialPose = new Pose2d(-59,42, Math.toRadians(127)); // initial pose from meep meep
+          Pose2d initialPose = new Pose2d(-61,41, Math.toRadians(90)); // initial pose from meep meep
           MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
           Turret turret = new Turret(hardwareMap);
           Flywheel flywheel = new Flywheel(hardwareMap);
@@ -273,37 +273,40 @@ public class RedCloseSolo extends LinearOpMode {
 
 
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(-15,19), Math.toRadians(90)); // position to shoot zero batch
+                .strafeToLinearHeading(new Vector2d(-10,19), Math.toRadians(90)); // position to shoot zero batch
 
 //        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(-15,32), Math.toRadians(90)); // go to first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15,53), Math.toRadians(90)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(-10,53), Math.toRadians(90)); // drive into first set of artifacts
 
-        TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
+        TrajectoryActionBuilder goEmptyGate = driveIntoFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(0, 58), Math.toRadians(195));
+
+        TrajectoryActionBuilder goToShootFirstSet = goEmptyGate.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(-10,18), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
         TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(9,32), Math.toRadians(90)); // go to second set of artifacts
+                .strafeToLinearHeading(new Vector2d(14,32), Math.toRadians(90)); // go to second set of artifacts
 
         TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(9,53), Math.toRadians(90)); // drive into second set of artifacts
+                .strafeToLinearHeading(new Vector2d(14,53), Math.toRadians(90)); // drive into second set of artifacts
 
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-8,20), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToThirdSet = goToShootSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(34,32), Math.toRadians(90)); // go to third set of artifacts
+                .strafeToLinearHeading(new Vector2d(40,32), Math.toRadians(90)); // go to third set of artifacts
 
         TrajectoryActionBuilder driveIntoThirdSet = goToThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(34,53), Math.toRadians(90)); // drive into third set of artifacts
+                .strafeToLinearHeading(new Vector2d(40,53), Math.toRadians(90)); // drive into third set of artifacts
 
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-15,18), Math.toRadians(90)); // go back after grabbing third set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-8,20), Math.toRadians(90)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-69,35),Math.toRadians(90)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(0,38),Math.toRadians(0)); // go shoot second batch
 
 
 
@@ -323,10 +326,10 @@ public class RedCloseSolo extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1760,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+                flywheel.runFlywheel(1730,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
-                            turret.aimTurret(-792,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                            turret.aimTurret(-775,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                             goToShootPreload.build()
 
                         ),
@@ -341,6 +344,8 @@ public class RedCloseSolo extends LinearOpMode {
                         intake.holdIntakePower(-0.85, 1.7), //TODO fine tune,
                         driveIntoFirstSet.build()
                 ),
+                intake.stopIntake(),
+                goEmptyGate.build(),
                 new ParallelAction(
                         flywheel.runFlywheel(1760,4),
                         new SequentialAction(
