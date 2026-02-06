@@ -10,8 +10,8 @@ public class RoadrunnerRobotLocalizer {
     MecanumDrive drive;
     private double blueGoalX = -65;
     private double blueGoalY = -65;
-    private double redGoalX = -62.5;
-    private double redGoalY = 62.5;
+    private double redGoalX = -65;
+    private double redGoalY = 65;
 
     public double GOAL_X;
     public double GOAL_Y;
@@ -20,7 +20,7 @@ public class RoadrunnerRobotLocalizer {
     AllianceColor allianceColor;
 
     Pose2d blueSideCornerResetPose = new Pose2d(62.5,-62.5, Math.toRadians(0));
-    Pose2d redSideCornerResetPose = new Pose2d(62,62.5,Math.toRadians(0));
+    Pose2d redSideCornerResetPose = new Pose2d(62.5,62.5,Math.toRadians(0));
 
 
     public RoadrunnerRobotLocalizer(HardwareMap hardwareMap, Pose2d startPose, AllianceColor allianceColor){

@@ -5,10 +5,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stopper {
 
-    private final Servo stopperServo;
+    private Servo stopperServo;
 
     public static final double ENGAGED_POSITION = 0.6;
     public static final double DISENGAGED_POSITION = 0.5;
+
 
     public Stopper(HardwareMap hardwareMap) {
         stopperServo = hardwareMap.get(Servo.class, "stopper");

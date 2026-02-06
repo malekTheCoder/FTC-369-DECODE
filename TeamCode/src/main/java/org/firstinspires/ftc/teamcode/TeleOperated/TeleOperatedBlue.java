@@ -14,6 +14,7 @@ public class TeleOperatedBlue extends OpMode {
     @Override
     public void init() {
         robot = new Robot(hardwareMap, RoadrunnerRobotLocalizer.AllianceColor.BLUE, gamepad1, gamepad2, telemetry);
+        robot.runOnInit();
     }
 
     @Override

@@ -40,20 +40,19 @@ public class Robot {
     public boolean shootReleased;
     public boolean shootHeld;
 
-    public double intakeShootPower = 0.95; // feed power while shooting
+    public double intakeShootPower = 1; // feed power while shooting
 
     public double stopperDelay = 0.25;
 
     public double intakeDelayPower = 0;
 
-    public double intakeDefaultPower = 0.8;
+    public double intakeDefaultPower = 0.85;
 
     // Internal shoot timing state
-    private boolean lastShootHeld = false;
     private long shootStartNs = 0;
 
 
-    // Separate feature states
+
     private boolean holdPoseActive = false;
 
     // Timing for pose hold seconds
@@ -74,8 +73,7 @@ public class Robot {
         intake = new Intake(hardwareMap);
         poseHoldController = new PoseHoldController();
 
-        turret = new FinalTurret(hardwareMap);
-        //simpleTurret = new SimpleTurret(hardwareMap.get(DcMotorEx.class, "turret"));
+        turret = new FinalTurret(hardwareMap, allianceColor);
 
 
         outtake = new Outtake(hardwareMap);
@@ -86,10 +84,13 @@ public class Robot {
 
     }
 
+    public void runOnInit(){
+        stopper.engageStopper();
+    }
+
 
     public void start() {
         turret.resetPosition();
-        //simpleTurret.resetEncoder();
         stopper.engageStopper();
         intake.runIntake(0.0);
         outtake.resetController();
@@ -126,9 +127,6 @@ public class Robot {
         turret.update();
 
 
-        // simpleTurret.aimWithOdo(robotLocalizer.getAngleForTurretDegrees(), 1);
-
-
 
 
 
@@ -141,9 +139,9 @@ public class Robot {
         holdReleased = gp1.leftBumperWasReleased();
         holdHeld     = gp1.left_bumper;
 
-        shootPressed  = gp1.crossWasPressed();
-        shootReleased = gp1.crossWasReleased();
-        shootHeld     = gp1.cross;
+        shootPressed  = gp1.xWasPressed();
+        shootReleased = gp1.xWasReleased();
+        shootHeld     = gp1.x;
 
         Pose2d currentPose = robotLocalizer.getBotPosition();
 
@@ -154,6 +152,8 @@ public class Robot {
 
             poseHoldController.startHolding(currentPose);
             holdPoseActive = true;
+
+            turret.setHoldTurretForPoseHold(true);
         }
 
         if (holdHeld && poseHoldController.isHolding()) {
@@ -167,32 +167,34 @@ public class Robot {
         if (holdReleased) {
             poseHoldController.stopHolding();
             holdPoseActive = false;
+
+            turret.setHoldTurretForPoseHold(false);
         }
 
 
-        boolean shouldShoot = shootHeld;
-
-        // Detect shoot start (rising edge) to start delay timer
-        if (shouldShoot && !lastShootHeld) {
-            shootStartNs = nowNs;
+        if (shootPressed) {
+            shootStartNs = nowNs; // start delay timer on rising edge
         }
-        lastShootHeld = shouldShoot;
 
-        if (shouldShoot) {
+        if (shootHeld) {
             stopper.disengageStopper();
 
             double elapsedSec = (nowNs - shootStartNs) / 1e9;
-            double intakeCmd = (elapsedSec < stopperDelay) ? intakeDelayPower : intakeShootPower;
+
+            double intakeCmd;
+            if (elapsedSec < stopperDelay) {
+                intakeCmd = intakeDelayPower;
+            } else {
+                intakeCmd = intakeShootPower;
+            }
 
             intake.runIntake(intakeCmd);
             telemetry.addData("ShootDelaySec", elapsedSec);
             telemetry.addData("IntakeCmd", intakeCmd);
 
         } else {
-            // Not shooting: keep stopper engaged and NEVER feed
             stopper.engageStopper();
             intake.runIntake(intakeDefaultPower);
-
             shootStartNs = 0;
         }
 
@@ -214,11 +216,11 @@ public class Robot {
 
 
         //bot position reset
-        if (gp2.shareWasPressed()){
+        if (gp2.backWasPressed()){
             robotLocalizer.resetBotPoseInCorner();
         }
 
-        if (gp1.squareWasPressed()){
+        if (gp1.startWasPressed()){
             drivetrain.setPinpointHeadingAdjuster(-robotLocalizer.getBotHeadingDegrees0To360());
         }
 
@@ -227,6 +229,8 @@ public class Robot {
         telemetry.addData("x", robotLocalizer.getBotPosition().position.x);
         telemetry.addData("y", robotLocalizer.getBotPosition().position.y);
         telemetry.addData("heading", Math.toDegrees(robotLocalizer.getBotPosition().heading.toDouble()));
+        telemetry.addData("distance to goal", robotLocalizer.getDistanceToGoal());
+
         turret.addTelemetry(telemetry);
 
 
