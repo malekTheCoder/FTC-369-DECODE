@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Final;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,7 +12,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseHoldController;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
-import org.firstinspires.ftc.teamcode.Subsystems.SimpleTurret;
 import org.firstinspires.ftc.teamcode.Subsystems.Stopper;
 
 public class Robot {
@@ -21,13 +19,7 @@ public class Robot {
     private final RoadrunnerRobotLocalizer robotLocalizer;
     private final Intake intake;
     private final PoseHoldController poseHoldController;
-
-
-
     private final FinalTurret turret;
-    //private final SimpleTurret simpleTurret;
-
-
     private final Outtake outtake;
     private final Stopper stopper;
 
@@ -43,12 +35,8 @@ public class Robot {
     public double intakeShootPower = 1; // feed power while shooting
 
     public double stopperDelay = 0.25;
-
     public double intakeDelayPower = 0;
-
     public double intakeDefaultPower = 0.85;
-
-    // Internal shoot timing state
     private long shootStartNs = 0;
 
 
@@ -182,7 +170,8 @@ public class Robot {
             double elapsedSec = (nowNs - shootStartNs) / 1e9;
 
             double intakeCmd;
-            if (elapsedSec < stopperDelay) {
+            if (elapsedSec < stopperDelay)
+            {
                 intakeCmd = intakeDelayPower;
             } else {
                 intakeCmd = intakeShootPower;

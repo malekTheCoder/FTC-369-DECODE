@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Tele;
+package org.firstinspires.ftc.teamcode.OldArchive;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@TeleOp(name = " RED TELEOP FAR")
-public class RedTeleopTurretFar extends OpMode {
+@TeleOp(name = "BLUE TELEOP Far")
+public class BlueTeleopTurretFar extends OpMode {
     private Follower follower;
     public static Pose startingPose;
     private boolean automatedDrive;
@@ -32,8 +32,8 @@ public class RedTeleopTurretFar extends OpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
 
-    private double redGoalXPosition = 130;
-    private double redGoalYPosition = 125;
+    private double blueGoalXPosition = 10;
+    private double blueGoalYPosition = 125;
 
     private double distanceToGoal = 0;
 
@@ -44,8 +44,7 @@ public class RedTeleopTurretFar extends OpMode {
     // Angle the goal is relative to robot forward ( for turret)
     private double angleToGoalRelRobotRad = 0.0;
     private double angleToGoalRelRobotDeg = 0.0;
-
-    private double multiplier = 1;
+    private double multiplier = 1;//TEMP
 
     // forward is 90 degressd for pedro so this is correction
     private static final double PEDRO_FORWARD_OFFSET_RAD = Math.toRadians(0);
@@ -58,6 +57,7 @@ public class RedTeleopTurretFar extends OpMode {
     private Outtake outtake;
 
     private Intake intake;
+
 
 
     @Override
@@ -75,7 +75,7 @@ public class RedTeleopTurretFar extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(startingPose == null ? new Pose(97.5, 0, Math.toRadians(0)) : startingPose); // close initial pose x 97 y 124, far initial pose = 97.5, 0
+        follower.setStartingPose(startingPose == null ? new Pose(30.5, 0, Math.toRadians(-180)) : startingPose); //farblue x 30.5 y 0, closeblue x 37 y 126.5
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -136,20 +136,21 @@ public class RedTeleopTurretFar extends OpMode {
             outtake.verticalTranslationFar -=25;
         }
 
-//        if (gamepad1.x) {
-//            drivetrain.resetIMU();
-//        }
-
-
 
         if (gamepad2.backWasPressed()){
             resetBotPose();
         }
 
+
+
+//        if (gamepad1.x) {
+//            drivetrain.resetIMU();
+//        }
+
         if (gamepad2.leftBumperWasPressed()){
-            redGoalXPosition-=3;
+            blueGoalXPosition-=3;
         } else if (gamepad2.rightBumperWasPressed()) {
-            redGoalXPosition+=3;
+            blueGoalXPosition+=3;
         }
 
 
@@ -166,12 +167,12 @@ public class RedTeleopTurretFar extends OpMode {
         telemetry.addData("Pose X", poseX);
         telemetry.addData("Pose Y", poseY);
         telemetry.addData("Heading (deg)", poseHeadingDeg);
-        telemetry.addData("goal x", redGoalXPosition);
+        telemetry.addData("goal x", blueGoalXPosition);
 
 
 
-        double xDiff = (redGoalXPosition - pose.getX());
-        double yDiff = (redGoalYPosition - pose.getY());
+        double xDiff = (blueGoalXPosition - pose.getX());
+        double yDiff = (blueGoalYPosition - pose.getY());
         double term1 = xDiff * xDiff;
         double term2 = yDiff * yDiff;
         double sum = term1 + term2;
@@ -191,13 +192,14 @@ public class RedTeleopTurretFar extends OpMode {
 
 
 
-
-       // drivetrain.handleDrivetrain(gamepad1);
+        // drivetrain.handleDrivetrain(gamepad1);
 
         if (gamepad1.yWasPressed()) {
             follower.followPath(pathChain.get());
             automatedDrive = true;
         }
+
+
 
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
@@ -211,10 +213,10 @@ public class RedTeleopTurretFar extends OpMode {
         outtake.runOuttake();
 
         turret.update(angleToGoalRelRobotDeg);
+
         if(gamepad2.xWasPressed()){
             multiplier=0;
         }
-
 
         if(multiplier == 0){
             turret.manual(gamepad2.left_stick_x);
@@ -226,18 +228,16 @@ public class RedTeleopTurretFar extends OpMode {
 
         //turret.aim(0.9*multiplier);
 
-
         telemetryM.update();
         telemetry.update();
-
-
-
     }
+
+
     private void resetBotPose(){
         follower = Constants.createFollower(hardwareMap);
 
         // follower.setStartingPose(new Pose(0,0,0));
-        follower.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
+        follower.setStartingPose(new Pose(144, 0, Math.toRadians(-180)));
         follower.update();
     }
 }

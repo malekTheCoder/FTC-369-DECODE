@@ -40,7 +40,6 @@ public class Outtake {
         fly1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         fly2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        // Initialize timing so the first dt isn't huge
         lastLoopTimeNs = System.nanoTime();
     }
 

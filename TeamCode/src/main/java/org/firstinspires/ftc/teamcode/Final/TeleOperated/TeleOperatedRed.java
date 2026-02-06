@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.TeleOperated;
+package org.firstinspires.ftc.teamcode.Final.TeleOperated;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Final.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
 
 @TeleOp(name = "★ TeleOperatedRed")
