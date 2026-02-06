@@ -40,7 +40,7 @@ public class Robot {
     public boolean shootReleased;
     public boolean shootHeld;
 
-    public double intakeShootPower = 0.9; // feed power while shooting
+    public double intakeShootPower = 0.95; // feed power while shooting
 
     public double stopperDelay = 0.25;
 
@@ -93,7 +93,7 @@ public class Robot {
         stopper.engageStopper();
         intake.runIntake(0.0);
         outtake.resetController();
-        turret.setTurretMode(FinalTurret.Mode.ODOMETRY_AUTO_MODE);
+        turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_BASIC_MODE);
 
     }
 
@@ -111,16 +111,20 @@ public class Robot {
 
 
         //turret
-        turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
-        turret.update();
+
 
         if (gp2.leftBumperWasPressed()){
-            turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_ASSIST_MODE);
+            turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_BASIC_MODE);
         }
 
-        if (gp1.rightBumperWasPressed()){
+        if (gp2.rightBumperWasPressed()){
             turret.setTurretMode(FinalTurret.Mode.ODOMETRY_AUTO_MODE);
         }
+
+        turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
+        turret.setManualControl(gp2.right_stick_x);
+        turret.update();
+
 
         // simpleTurret.aimWithOdo(robotLocalizer.getAngleForTurretDegrees(), 1);
 
@@ -133,9 +137,9 @@ public class Robot {
         outtake.runOuttake();
 
         // shooting inputs
-        holdPressed  = gp1.triangleWasPressed();
-        holdReleased = gp1.triangleWasReleased();
-        holdHeld     = gp1.triangle;
+        holdPressed  = gp1.leftBumperWasPressed();
+        holdReleased = gp1.leftBumperWasReleased();
+        holdHeld     = gp1.left_bumper;
 
         shootPressed  = gp1.crossWasPressed();
         shootReleased = gp1.crossWasReleased();

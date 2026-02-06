@@ -12,6 +12,7 @@ public class FinalTurret {
     public enum Mode {
         ODOMETRY_AUTO_MODE,
         LIMELIGHT_ASSIST_MODE,
+        LIMELIGHT_BASIC_MODE,
         MANUAL_RESET_MODE,
         LOCKED_TURRET_MODE
     }
@@ -44,19 +45,23 @@ public class FinalTurret {
     private double manualResetPower = 0.7; // magnitude, sign set by direction
     private int manualResetDirection = -1;
     private boolean wasManualResetHeld = false;
+    private boolean aimBasic = false;
+
+    private double manualControl;
 
 
 
     // limelight pid
 
-    private double ll_kP = 0.01;
-    private double ll_kD = 0.001;
-    private double ll_kS = 0.07;
+    private double ll_kP = 0.035;
+    private double ll_kD = 0.0001;
+    private double ll_kS = 0.00;
 
-    private double ll_maxOutput = 0.5;
-    private double ll_deadbandDeg = 0.1;
+    private double ll_maxOutput = 0.8;
+    private double ll_deadbandDeg = 0;
 
     private double ll_prevErr = 0.0;
+    private long ll_prevTimeNanos = 0;
 
     public FinalTurret(HardwareMap hardwareMap) {
         turret = new UpdatedTurret(hardwareMap.get(DcMotorEx.class, "turret"));
@@ -78,6 +83,20 @@ public class FinalTurret {
         }
         this.turretMode = turretMode;
     }
+
+    public void setAimBasic(boolean aimBasic) {
+        this.aimBasic = aimBasic;
+    }
+
+    public void setManualControl(double manualControl){
+        this.manualControl = manualControl;
+
+        if (Math.abs(manualControl) < 0.05){
+            manualControl = 0;
+        }
+    }
+
+
 
     public Mode getTurretMode() {
         return turretMode;
@@ -270,6 +289,103 @@ public class FinalTurret {
                 break;
             }
 
+            case LIMELIGHT_BASIC_MODE: {
+
+                if (Math.abs(manualControl) > 0) {
+                    aimBasic = false;
+                    turret.manual(manualControl);
+
+                    // reset LL D memory while manually driving
+                    ll_prevErr = 0.0;
+                    ll_prevTimeNanos = 0;
+
+                } else {
+                    aimBasic = true;
+                }
+
+                if (aimBasic) {
+
+                    llResult = limelight.getLatestResult();
+
+                    boolean hasTargetNow = false;
+                    double txNow = 0.0;
+
+                    if ((llResult != null) && (llResult.isValid())) {
+                            hasTargetNow = true;
+                            txNow = llResult.getTx();
+                    }
+
+                    if (hasTargetNow) {
+
+                        double error = -txNow;
+
+                        long now = System.nanoTime();
+                        double derivative = 0.0;
+
+                        if (ll_prevTimeNanos != 0) {
+                            double dt = (now - ll_prevTimeNanos) / 1e9;
+                            if (dt > 1e-6) {
+                                derivative = (error - ll_prevErr) / dt;
+                            }
+                        }
+
+                        ll_prevErr = error;
+                        ll_prevTimeNanos = now;
+
+                        double output = (ll_kP * error) + (ll_kD * derivative);
+
+                        // deadband and ks
+                        if (Math.abs(error) <= ll_deadbandDeg) {
+                            output = 0.0;
+                        } else {
+                            if (error > 0) {
+                                output += Math.abs(ll_kS);
+                            }
+                            if (error < 0) {
+                                output -= Math.abs(ll_kS);
+                            }
+                        }
+
+                        // Clamp output
+                        if (output > ll_maxOutput) {
+                            output = ll_maxOutput;
+                        }
+                        if (output < -ll_maxOutput) {
+                            output = -ll_maxOutput;
+                        }
+
+                        double curTicks = turret.getCurrentTicks();
+
+                        if (curTicks <= minAllowedTicks) {
+                            if (output < 0) {
+                                output = 0.0;
+                            }
+                        }
+
+                        if (curTicks >= maxAllowedTicks) {
+                            if (output > 0) {
+                                output = 0.0;
+                            }
+                        }
+
+                        turret.setPowerRaw(output);
+
+                    } else {
+                        turret.setPowerRaw(0.0);
+                        ll_prevErr = 0.0;
+                        ll_prevTimeNanos = 0;
+                    }
+
+                }
+
+                if (!aimBasic) {
+                    ll_prevErr = 0.0;
+                    ll_prevTimeNanos = 0;
+                }
+
+                break;
+            }
+
             case ODOMETRY_AUTO_MODE: {
                 turret.update(botErrorDeg);
                 turret.aimPIDF();
@@ -329,8 +445,9 @@ public class FinalTurret {
         return Math.max(lo, Math.min(hi, v));
     }
 
-    public void addTelemetry(Telemetry telemetry){
+    public void addTelemetry(Telemetry telemetry) {
         telemetry.addData("MO0DE: ", turretMode.toString());
+        telemetry.addData("TX:", llTxDeg);
         turret.addTelemetry(telemetry);
     }
 }

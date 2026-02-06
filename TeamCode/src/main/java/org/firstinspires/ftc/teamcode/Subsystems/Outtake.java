@@ -25,9 +25,9 @@ public class Outtake {
 
     private long lastLoopTimeNs = 0;
 
-    public double verticalTranslationClose = 1390.04635;
+    public double verticalTranslationClose = 1390.04635 ;
 
-    public double verticalTranslationFar = 1909.47368;
+    public double verticalTranslationFar = 1909.47368 + 10;
 
     public Outtake(HardwareMap hardwareMap){
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");

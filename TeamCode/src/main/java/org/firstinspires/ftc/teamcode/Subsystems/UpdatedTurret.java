@@ -56,7 +56,7 @@ public class UpdatedTurret {
 
     public void manual(double stickX){
         // Still RUN_WITHOUT_ENCODER; direct manual power
-        turret.setPower(-stickX * 0.3);
+        turret.setPower(-stickX * 0.5);
     }
 
     public void setPowerRaw(double p) {

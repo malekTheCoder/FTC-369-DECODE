@@ -18,12 +18,11 @@ public class TurretLimelightTune extends OpMode {
 
     // -------- Dashboard tunables --------
     public static double kP = 0.01;
-    public static double kD = 0.001;
+    public static double kD = 0.0;   // start at 0, then tune
     public static double kS = 0.07;
 
     public static double maxOutput = 0.45;
     public static double deadbandDeg = 0.4;
-    public static double gracePeriodSec = 0.25;
 
     // Turret limits (ticks are negative)
     public static int minAllowedTicks = -833; // MORE negative bound
@@ -34,8 +33,7 @@ public class TurretLimelightTune extends OpMode {
     private Limelight3A limelight;
 
     private double prevErr = 0.0;
-    private double lastTx = 0.0;
-    private long lastSeenNanos = 0;
+    private long prevTimeNanos = 0;
 
     @Override
     public void init() {
@@ -54,118 +52,93 @@ public class TurretLimelightTune extends OpMode {
     @Override
     public void loop() {
 
-        // ----- Read Limelight -----
         LLResult res = limelight.getLatestResult();
 
-        long now = System.nanoTime();
-
-        boolean hasTargetNow = false;
-        double txNow = 0.0;
+        boolean hasTarget = false;
+        double tx = 0.0;
 
         if (res != null) {
             if (res.isValid()) {
-                hasTargetNow = true;
-                txNow = res.getTx();
-
-                // Save last good detection
-                lastTx = txNow;
-                lastSeenNanos = now;
+                hasTarget = true;
+                tx = res.getTx();
             }
         }
 
-        // Decide if we can use last detection (within grace)
-        boolean useLast = false;
-        double ageSec = 999.0;
-
-        if (lastSeenNanos != 0) {
-            ageSec = (now - lastSeenNanos) / 1e9;
-            if (ageSec <= gracePeriodSec) {
-                useLast = true;
-            }
-        }
-
-        // This is the tx we will aim with
-        double txToUse = 0.0;
-        if (useLast) {
-            txToUse = lastTx;
-        }
-
-        // ----- Compute error (aim using last detection if within grace) -----
         double error = 0.0;
-        if (useLast) {
-            error = -txToUse;
-        }
+        double derivative = 0.0;
+        double dt = 0.0;
 
-        // ----- PD terms -----
-        double derivative = error - prevErr;
-        prevErr = error;
+        if (hasTarget) {
+            error = -tx;
 
-        double pTerm = kP * error;
-        double dTerm = kD * derivative;
+            long now = System.nanoTime();
 
-        double out = pTerm + dTerm;
+            if (prevTimeNanos != 0) {
+                dt = (now - prevTimeNanos) / 1e9;
+                if (dt > 1e-6) {
+                    derivative = (error - prevErr) / dt;
+                }
+            }
 
-        // ----- Deadband + kS -----
-        if (Math.abs(error) <= deadbandDeg) {
-            out = 0.0;
+            prevErr = error;
+            prevTimeNanos = now;
+
         } else {
-            if (error > 0) {
-                out += Math.abs(kS);
-            }
-            if (error < 0) {
-                out -= Math.abs(kS);
-            }
-        }
-
-        // ----- Clamp output -----
-        if (out > maxOutput) {
-            out = maxOutput;
-        }
-        if (out < -maxOutput) {
-            out = -maxOutput;
-        }
-
-        // ----- Soft limits (NEGATIVE power drives ticks more negative) -----
-        int curTicks = turret.getCurrentPosition();
-
-        if (curTicks <= minAllowedTicks) {
-            if (out < 0) {
-                out = 0.0;
-            }
-        }
-
-        if (curTicks >= maxAllowedTicks) {
-            if (out > 0) {
-                out = 0.0;
-            }
-        }
-
-        // ----- No recent detection: stop and reset D memory -----
-        if (!useLast) {
-            out = 0.0;
             prevErr = 0.0;
-
-            derivative = 0.0;
-            pTerm = 0.0;
-            dTerm = 0.0;
-            error = 0.0;
+            prevTimeNanos = 0;
         }
 
-        // ----- Apply power -----
+        double out = 0.0;
+
+        if (hasTarget) {
+            out = (kP * error) + (kD * derivative);
+
+            if (Math.abs(error) <= deadbandDeg) {
+                out = 0.0;
+            } else {
+                if (error > 0) {
+                    out += Math.abs(kS);
+                }
+                if (error < 0) {
+                    out -= Math.abs(kS);
+                }
+            }
+
+            if (out > maxOutput) {
+                out = maxOutput;
+            }
+            if (out < -maxOutput) {
+                out = -maxOutput;
+            }
+
+            int curTicks = turret.getCurrentPosition();
+
+            if (curTicks <= minAllowedTicks) {
+                if (out < 0) {
+                    out = 0.0;
+                }
+            }
+
+            if (curTicks >= maxAllowedTicks) {
+                if (out > 0) {
+                    out = 0.0;
+                }
+            }
+
+        } else {
+            out = 0.0;
+        }
+
         turret.setPower(out);
 
-        // ----- Telemetry (graph these in Dashboard) -----
-        telemetry.addData("hasNow", hasTargetNow ? 1 : 0);
-        telemetry.addData("useLast", useLast ? 1 : 0);
-        telemetry.addData("txNow", txNow);
-        telemetry.addData("txLast", lastTx);
-        telemetry.addData("ageSec", ageSec);
+        // Graph these in Dashboard
+        telemetry.addData("has", hasTarget ? 1 : 0);
+        telemetry.addData("tx", tx);
         telemetry.addData("err", error);
+        telemetry.addData("dt", dt);
         telemetry.addData("derr", derivative);
-        telemetry.addData("P", pTerm);
-        telemetry.addData("D", dTerm);
         telemetry.addData("out", out);
-        telemetry.addData("ticks", curTicks);
+        telemetry.addData("ticks", turret.getCurrentPosition());
         telemetry.update();
     }
 }
