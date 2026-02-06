@@ -166,6 +166,7 @@ public class Robot {
         telemetry.addData("ShouldShoot", shouldShoot);
         telemetry.addData("OuttakeTargetVel", outtake.getTargetVelocity());
         telemetry.addData("OuttakeAvgVel", outtake.getAverageVelocity());
+        telemetry.addData("Bot Pose", robotLocalizer.getBotPosition());
         telemetry.update();
     }
 

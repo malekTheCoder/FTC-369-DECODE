@@ -34,7 +34,7 @@ public class TestRRLocalizer extends OpMode {
 
     @Override
     public void init() {
-        rrLocalizer = new RoadrunnerRobotLocalizer(hardwareMap, startPose, RoadrunnerRobotLocalizer.AllianceColor.BLUE);
+        rrLocalizer = new RoadrunnerRobotLocalizer(hardwareMap, PoseStorage.savedPose, RoadrunnerRobotLocalizer.AllianceColor.BLUE);
         drive = new Drivetrain(hardwareMap, 0);
         turret = new UpdatedTurret(hardwareMap.get(DcMotorEx.class, "turret"));
         loopTimer.reset();

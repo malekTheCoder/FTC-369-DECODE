@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -25,7 +27,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Autonomous(name = "BlueCloseSolo")
 public class BlueCloseSolo extends LinearOpMode {
-
+    MecanumDrive drive;
     public class Turret{
         private double turretMinTicks = 0;
         private double turretMaxTicks = 853;
@@ -188,30 +190,15 @@ public class BlueCloseSolo extends LinearOpMode {
         }
     }
 
-    public class savePose{
-        private Pose2d endPose;
-
-        private MecanumDrive drivetrain;
-
-        public savePose(MecanumDrive drive){
-            this.drivetrain = drive;
+    public class Update implements Action{
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            PoseStorage.savedPose = drive.localizer.getPose();
+            return true;
         }
-
-        public class StorePose implements Action{
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet){
-                if(endPose!=null){
-                    endPose= drivetrain.localizer.getPose();
-                    PoseStorage.savedPose = endPose;
-                }
-                return true;
-            }
-
-        }
-        public Action storePose() {
-            return new StorePose();
-        }
+    }
+    public Action updatePose(){
+        return new Update();
     }
 
     public class Stopper{
@@ -292,12 +279,12 @@ public class BlueCloseSolo extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 //-134,
         Pose2d initialPose = new Pose2d(-64, -37, Math.toRadians(270)); // initial pose from meep meep
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        drive = new MecanumDrive(hardwareMap, initialPose);
         Turret turret = new Turret(hardwareMap);
         Flywheel flywheel = new Flywheel(hardwareMap);
         Intake intake = new Intake(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
-        savePose storer = new savePose(drive);
+
 
 
 
@@ -342,6 +329,7 @@ public class BlueCloseSolo extends LinearOpMode {
 
         while (!opModeIsActive()){
             if (isStopRequested()){
+                drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0),0));
                 return;
             }
 
@@ -447,8 +435,8 @@ public class BlueCloseSolo extends LinearOpMode {
         // TODO when testing go step by step, comment out all but the ffirst and then incremmentallg uncomment the next line
         // TODO will make testing and troubleshooting easier
         Actions.runBlocking(
-            new ParallelAction(
-//                    savePose.storePose(),
+            new RaceAction(
+                    updatePose(),
                     new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
@@ -465,11 +453,10 @@ public class BlueCloseSolo extends LinearOpMode {
             )
         );
 //
-        storer.endPose = drive.localizer.getPose();
-        PoseStorage.savedPose = storer.endPose;
-        telemetry.addData("END POSE", storer.endPose);
-        telemetry.update();
-        sleep(2000);
-
+//        storer.endPose = drive.localizer.getPose();
+//        PoseStorage.savedPose = storer.endPose;
+//        telemetry.addData("END POSE", storer.endPose);
+//        telemetry.update();
     }
+
 }

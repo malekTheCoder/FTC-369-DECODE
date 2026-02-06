@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
-@Autonomous(name = "Far Blue Auto")
+@Autonomous(name = "1 Row Blue")
 public class FarBlue1Row extends LinearOpMode {
 
     public class Turret{
@@ -259,7 +259,7 @@ public class FarBlue1Row extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(64, -10, Math.toRadians(270));
+        Pose2d initialPose = new Pose2d(64, -11, Math.toRadians(270));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
