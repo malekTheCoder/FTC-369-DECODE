@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -25,8 +24,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
-@Autonomous(name = "BlueCloseSolo")
-public class BlueCloseSolo extends LinearOpMode {
+@Autonomous(name = "Blue Close 2 row")
+public class BlueClose2Row extends LinearOpMode {
     MecanumDrive drive;
     public class Turret{
         private double turretMinTicks = 0;
@@ -129,7 +128,7 @@ public class BlueCloseSolo extends LinearOpMode {
         }
 
         public Action stopIntake() {
-            return new Intake.StopIntake();
+            return new StopIntake();
         }
     }
 
@@ -332,7 +331,7 @@ public class BlueCloseSolo extends LinearOpMode {
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-2,-15), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
-        TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goGetOffLaunchLine = goToShootSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0,-38),Math.toRadians(0)); // go shoot second batch
 
 
@@ -452,8 +451,8 @@ public class BlueCloseSolo extends LinearOpMode {
                                 stopper.engageStopper(),
                                 SecondBatch,
                                 stopper.engageStopper(),
-                                ThirdBatch,
-                                stopper.engageStopper(),
+//                                ThirdBatch,
+//                                stopper.engageStopper(),
                                 goGetOffLaunchLine.build(),
                                 stopper.engageStopper()
 

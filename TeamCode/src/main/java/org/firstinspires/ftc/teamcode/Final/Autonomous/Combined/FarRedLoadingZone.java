@@ -282,6 +282,9 @@ public class FarRedLoadingZone extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Pose2d initialPose = new Pose2d(64, 6.7, Math.toRadians(90));
+        PoseStorage.pinpointHeadingOffsetDriverRelative = -90;
+
+
 
         drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -376,7 +379,7 @@ public class FarRedLoadingZone extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(2045,3.3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2030,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
@@ -388,7 +391,7 @@ public class FarRedLoadingZone extends LinearOpMode {
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(2040,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2025,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
@@ -419,7 +422,7 @@ public class FarRedLoadingZone extends LinearOpMode {
 //        );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2040,7), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2025,7), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(0.8,2.7),
@@ -438,15 +441,15 @@ public class FarRedLoadingZone extends LinearOpMode {
         );
 
         ParallelAction RandomBatch = new ParallelAction(
-                flywheel.runFlywheel(2060,11), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2045,11), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
-                                intake.holdIntakePower(-0.8,3.5),
+                                intake.holdIntakePower(0.8,3),
                                 goToHumanPlayerZone.build()
                         ),
                         goToShootRandomSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.8,1),
+                        intake.holdIntakePower(0.8,1),
                         stopper.engageStopper(),
                         new ParallelAction(
                                 goGetOffLaunchLine.build(),

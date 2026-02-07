@@ -281,6 +281,8 @@ public class FarBlueLoadingZone extends LinearOpMode {
 
         Pose2d initialPose = new Pose2d(64, -11, Math.toRadians(270));
 
+        PoseStorage.pinpointHeadingOffsetDriverRelative = -270;
+
         drive = new MecanumDrive(hardwareMap, initialPose);
 
         Turret turret = new Turret(hardwareMap);
