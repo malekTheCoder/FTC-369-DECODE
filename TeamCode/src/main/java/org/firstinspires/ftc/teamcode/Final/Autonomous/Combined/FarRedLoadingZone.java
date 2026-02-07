@@ -316,23 +316,23 @@ public class FarRedLoadingZone extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(66,63), Math.toRadians(10)); // drive in
 
         TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
+                .strafeToLinearHeading(new Vector2d(57,10), Math.toRadians(90)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goToHumanPlayerZone = goToShootWallSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(48,60), Math.toRadians(90),
+                .strafeToLinearHeading(new Vector2d(45,58), Math.toRadians(15),
                         // only override velocity constraint
-                        new TranslationalVelConstraint(100.0),
-                        new ProfileAccelConstraint(-100.0, 100.0))
+                        new TranslationalVelConstraint(80.0),
+                        new ProfileAccelConstraint(-80.0, 80.0))
 
-                .strafeToLinearHeading(new Vector2d(60, 53), Math.toRadians(90),
-                        // only override velocity constraint
-                        new TranslationalVelConstraint(100.0),
-                        new ProfileAccelConstraint(-100.0, 100.0))
+//                .strafeToLinearHeading(new Vector2d(60, 53), Math.toRadians(90),
+//                        // only override velocity constraint
+//                        new TranslationalVelConstraint(100.0),
+//                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(60,60), Math.toRadians(90),
+                .strafeToLinearHeading(new Vector2d(62,58), Math.toRadians(15),
                         // only override velocity constraint
-                        new TranslationalVelConstraint(100.0),
-                        new ProfileAccelConstraint(-100.0, 100.0))
+                        new TranslationalVelConstraint(80.0),
+                        new ProfileAccelConstraint(-80.0, 80.0))
 /*
                 .strafeToLinearHeading(new Vector2d(48, -40), Math.toRadians(270),
                         // only override velocity constraint
@@ -345,7 +345,7 @@ public class FarRedLoadingZone extends LinearOpMode {
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
         TrajectoryActionBuilder goToShootRandomSet = goToHumanPlayerZone.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing wall set
+                .strafeToLinearHeading(new Vector2d(55,12), Math.toRadians(90)); // go back after grabbing wall set
 
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootRandomSet.endTrajectory().fresh()
@@ -376,11 +376,11 @@ public class FarRedLoadingZone extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(2060,3.3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2045,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-735 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-730 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(.8, 1.1)
@@ -388,7 +388,7 @@ public class FarRedLoadingZone extends LinearOpMode {
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(2065,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2040,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
@@ -419,7 +419,7 @@ public class FarRedLoadingZone extends LinearOpMode {
 //        );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2065,7), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2040,7), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(0.8,2.7),
@@ -438,7 +438,7 @@ public class FarRedLoadingZone extends LinearOpMode {
         );
 
         ParallelAction RandomBatch = new ParallelAction(
-                flywheel.runFlywheel(2085,11), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2060,11), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(-0.8,3.5),

@@ -318,20 +318,20 @@ public class FarBlueLoadingZone extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goToHumanPlayerZone = goToShootWallSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(45,-61), Math.toRadians(270),
+                .strafeToLinearHeading(new Vector2d(43,-62), Math.toRadians(-15),
                         // only override velocity constraint
-                        new TranslationalVelConstraint(100.0),
-                        new ProfileAccelConstraint(-100.0, 100.0))
+                        new TranslationalVelConstraint(80.0),
+                        new ProfileAccelConstraint(-80.0, 80.0))
+//
+//                .strafeToLinearHeading(new Vector2d(62, -55), Math.toRadians(-15),
+//                        // only override velocity constraint
+//                        new TranslationalVelConstraint(100.0),
+//                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(62, -55), Math.toRadians(270),
+                .strafeToLinearHeading(new Vector2d(62,-62), Math.toRadians(-15),
                         // only override velocity constraint
-                        new TranslationalVelConstraint(100.0),
-                        new ProfileAccelConstraint(-100.0, 100.0))
-
-                .strafeToLinearHeading(new Vector2d(62,-63), Math.toRadians(285),
-                        // only override velocity constraint
-                        new TranslationalVelConstraint(100.0),
-                        new ProfileAccelConstraint(-100.0, 100.0))
+                        new TranslationalVelConstraint(80.0),
+                        new ProfileAccelConstraint(-80.0, 80.0))
 /*
                 .strafeToLinearHeading(new Vector2d(48, -40), Math.toRadians(270),
                         // only override velocity constraint

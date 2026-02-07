@@ -346,7 +346,7 @@ public class RedCloseSolo extends LinearOpMode {
                 flywheel.runFlywheel(1730,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
-                                turret.aimTurret(-775,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-782,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                                 goToShootPreload.build()
 
                         ),
@@ -398,7 +398,7 @@ public class RedCloseSolo extends LinearOpMode {
                 new ParallelAction(
                         intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
                         driveIntoThirdSet.build(),
-                        turret.aimTurret(-782, 0.9)
+                        turret.aimTurret(-789, 0.9)
                 ),
                 new ParallelAction(
                         flywheel.runFlywheel(1790,4.7), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer
