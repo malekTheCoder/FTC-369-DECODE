@@ -408,17 +408,20 @@ public class FarBlue1Row extends LinearOpMode {
 
 
         Actions.runBlocking(
-                new SequentialAction(
-                        shootPreload,
-                        stopper.engageStopper(),
-                        FirstBatch,
-                        stopper.engageStopper(),
-//                        SecondBatch,
-//                        stopper.engageStopper(),
-                        WallBatch,
-                        stopper.engageStopper()
-//                        goGetOffLaunchLine.build(),
-//                        stopper.engageStopper()
+                new ParallelAction(
+                        updatePose(),
+                    new SequentialAction(
+                            shootPreload,
+                            stopper.engageStopper(),
+                            FirstBatch,
+                            stopper.engageStopper(),
+    //                        SecondBatch,
+    //                        stopper.engageStopper(),
+                            WallBatch,
+                            stopper.engageStopper()
+    //                        goGetOffLaunchLine.build(),
+    //                        stopper.engageStopper()
+                    )
                 )
 
 

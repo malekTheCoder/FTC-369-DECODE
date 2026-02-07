@@ -459,18 +459,21 @@ public class FarRedLoadingZone extends LinearOpMode {
 
 
         Actions.runBlocking(
-                new SequentialAction(
-                        shootPreload,
-                        stopper.engageStopper(),
-                        FirstBatch,
-                        stopper.engageStopper(),
-//                        SecondBatch,
-//                        stopper.engageStopper(),
-                        WallBatch,
-                        stopper.engageStopper(),
-                        RandomBatch,
-                        stopper.engageStopper(),
-                        turret.aimTurret(0, .9)
+                new ParallelAction(
+                        updatePose(),
+                    new SequentialAction(
+                            shootPreload,
+                            stopper.engageStopper(),
+                            FirstBatch,
+                            stopper.engageStopper(),
+    //                        SecondBatch,
+    //                        stopper.engageStopper(),
+                            WallBatch,
+                            stopper.engageStopper(),
+                            RandomBatch,
+                            stopper.engageStopper(),
+                            turret.aimTurret(0, .9)
+                )
                 )
 
 

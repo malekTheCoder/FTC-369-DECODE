@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Testers;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
 import org.firstinspires.ftc.teamcode.Subsystems.UpdatedTurret;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-
+@Disabled
 @Config
 @TeleOp(name = "Turret KV Goal Tuner", group = "Tuning")
 public class TurretKVTuner extends OpMode {

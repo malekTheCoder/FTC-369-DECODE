@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Final.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
 
-@TeleOp(name = "★ TeleOperatedRed")
+@TeleOp(name = "★ TeleOperatedRed", group="1Competition Tele")
 
 public class TeleOperatedRed extends OpMode {
     Robot robot;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Testers;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 
+@Disabled
 @TeleOp(name = "Test Distance To Goal", group = "Testers")
 public class TestDistanceToGoal extends OpMode {
 

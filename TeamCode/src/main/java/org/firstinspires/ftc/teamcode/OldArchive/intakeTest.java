@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.OldArchive;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+@Disabled
 @TeleOp(name = "intake test")
 public class intakeTest extends OpMode {
     DcMotor intake;

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Final.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.RoadrunnerRobotLocalizer;
 
 
-@TeleOp(name = "★ TeleOperatedBlue")
+@TeleOp(name = "★ TeleOperatedBlue", group="Competition Tele")
 public class TeleOperatedBlue extends OpMode {
     Robot robot;
 
