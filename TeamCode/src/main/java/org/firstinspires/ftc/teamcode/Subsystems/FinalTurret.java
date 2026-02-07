@@ -43,7 +43,7 @@ public class FinalTurret {
     // Manual reset inputs
     private boolean manualResetHeld = false;
     private double manualResetPower = 0.7; // magnitude, sign set by direction
-    private int manualResetDirection = -1;
+    private int manualResetDirection = 1;
     private boolean wasManualResetHeld = false;
     private boolean aimBasic = false;
 
@@ -106,11 +106,11 @@ public class FinalTurret {
 
 
     public void setManualControl(double manualControl){
-        this.manualControl = manualControl;
-
-        if (Math.abs(manualControl) < 0.05){
-            manualControl = 0;
+        // Apply deadband before storing
+        if (Math.abs(manualControl) < 0.05) {
+            manualControl = 0.0;
         }
+        this.manualControl = manualControl;
     }
 
 
@@ -143,12 +143,12 @@ public class FinalTurret {
                 // turn motor in the direction to go to the start position
                 if (manualResetHeld) {
                     wasManualResetHeld = true;
-                    turret.manual(manualResetPower * manualResetDirection);
+                    turret.setPowerRaw(manualResetPower * manualResetDirection);
 
                 } else {
                     // once released reset the encoder
                     if (wasManualResetHeld) {
-                        turret.manual(0.0);
+                        turret.setPowerRaw(0.0);
                         turret.resetPosition();
 
                         wasManualResetHeld = false;
@@ -156,8 +156,7 @@ public class FinalTurret {
                         // switch to ll
                         setTurretMode(Mode.LIMELIGHT_BASIC_MODE);
                     } else {
-
-                        turret.manual(0.0);
+                        turret.setPowerRaw(0.0);
                     }
                 }
 
@@ -192,6 +191,7 @@ public class FinalTurret {
                         if ((llResult != null) && (llResult.isValid())) {
                             hasTargetNow = true;
                             txNow = llResult.getTx();
+                            llTxDeg = txNow; // store for telemetry
                         }
 
                         if (hasTargetNow) {
@@ -251,6 +251,7 @@ public class FinalTurret {
 
                         } else {
                             turret.setPowerRaw(0.0);
+                            llTxDeg = 0.0; // no target (or keep last if you prefer)
                             ll_prevErr = 0.0;
                             ll_prevTimeNanos = 0;
                         }
@@ -327,7 +328,7 @@ public class FinalTurret {
     }
 
     public void addTelemetry(Telemetry telemetry) {
-        telemetry.addData("MO0DE: ", turretMode.toString());
+        telemetry.addData("MODE: ", turretMode.toString());
         telemetry.addData("TX:", llTxDeg);
         turret.addTelemetry(telemetry);
     }

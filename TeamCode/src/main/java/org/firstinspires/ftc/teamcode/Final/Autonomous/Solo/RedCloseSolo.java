@@ -21,11 +21,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Autonomous(name = "RedCloseSolo")
 public class RedCloseSolo extends LinearOpMode {
-    //TODO: work on pathing first and finalize pathing for this red side, just run the pathing in actions.runblockign and figure that out before adding full auto with actions
 
+    MecanumDrive drive;
 
     public class Turret{
         private double turretMinTicks = 0;
@@ -256,6 +257,25 @@ public class RedCloseSolo extends LinearOpMode {
 
 
 
+
+    }
+
+    public class Update implements Action{
+        // Runs alongside your path to continuously save the latest pose.
+        // Driver Hub telemetry only.
+        private int loops = 0;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            Pose2d pose = drive.localizer.getPose();
+            PoseStorage.savedPose = pose;
+
+            // Keep running until RaceAction ends because the main sequence finished.
+            return true;
+        }
+    }
+    public Action updatePose(){
+        return new Update();
     }
 
 
@@ -263,7 +283,7 @@ public class RedCloseSolo extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         Pose2d initialPose = new Pose2d(-61,41, Math.toRadians(90)); // initial pose from meep meep
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        drive = new MecanumDrive(hardwareMap, initialPose);
         Turret turret = new Turret(hardwareMap);
         Flywheel flywheel = new Flywheel(hardwareMap);
         Intake intake = new Intake(hardwareMap);
@@ -411,6 +431,10 @@ public class RedCloseSolo extends LinearOpMode {
         // TODO when testing go step by step, comment out all but the ffirst and then incremmentallg uncomment the next line
         // TODO will make testing and troubleshooting easier
         Actions.runBlocking(
+                new ParallelAction(
+
+                        updatePose(),
+
                 new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
@@ -434,6 +458,7 @@ public class RedCloseSolo extends LinearOpMode {
 //                        driveIntoThirdSet.build(),
 //                        goToShootThirdSet.build(),
 //                        goGetOffLaunchLine.build()
+                )
                 )
 
         );

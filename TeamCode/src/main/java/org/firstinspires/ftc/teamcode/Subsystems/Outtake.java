@@ -16,7 +16,7 @@ public class Outtake {
     private double fly1Multiplier = 1;
     private double fly2Multiplier = -1;
 
-    private double SWITCH_DISTANCE_VELOCITY_REGRESSION = 110;
+    public double SWITCH_DISTANCE_VELOCITY_REGRESSION = 110;
 
     private double kV = 0.00035; // main feedforward for velocity
     private double kS = 0.044; //feedforward just for static friction
@@ -29,7 +29,7 @@ public class Outtake {
 
     public double verticalTranslationClose = 0 ;
 
-    public double verticalTranslationFar = 30;
+    public double verticalTranslationFar = 0;
 
     public Outtake(HardwareMap hardwareMap){
         fly1 = hardwareMap.get(DcMotorEx.class, "fly1");
@@ -108,7 +108,7 @@ public class Outtake {
     }
 
     public double FarVelocityRegression(double distanceToGoal){
-        return (8.99183 * distanceToGoal) + 791.17166 + verticalTranslationFar;
+        return (8.99183 * distanceToGoal) + 791.17166 + 30 + verticalTranslationFar;
     }
 
     public double CloseVelocityRegression(double distanceToGoal){

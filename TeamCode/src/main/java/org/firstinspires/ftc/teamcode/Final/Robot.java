@@ -37,6 +37,7 @@ public class Robot {
     public double stopperDelay = 0.25;
     public double intakeDelayPower = 0;
     public double intakeDefaultPower = 0.85;
+    private double intakeReversePower = -0.5;
     private long shootStartNs = 0;
 
 
@@ -89,25 +90,38 @@ public class Robot {
 
     public void update() {
 
-        // dt (seconds) for pose-hold controller
+        // TIMER FOR POSE HOLD CONTROLLER
         long nowNs = System.nanoTime();
         double dt = (nowNs - lastLoopTimeNs) / 1e9;
         lastLoopTimeNs = nowNs;
         dt = Math.max(dt, 1e-6);
 
-        // localizer update
+
+
+        // LOCALIZATION
         robotLocalizer.updateBotPosition();
 
 
-        //turret
 
+
+        // TURRET CODE
 
         if (gp2.leftBumperWasPressed()){
             turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_BASIC_MODE);
         }
 
         if (gp2.rightBumperWasPressed()){
-            turret.setTurretMode(FinalTurret.Mode.ODOMETRY_AUTO_MODE);
+            turret.setTurretMode(FinalTurret.Mode.LOCKED_TURRET_MODE);
+        }
+
+        if (gp2.xWasPressed()){
+            turret.setTurretMode(FinalTurret.Mode.MANUAL_RESET_MODE);
+        }
+        if (gp2.x){
+            turret.setManualResetHeld(true);
+        }
+        if (gp2.xWasReleased()){
+            turret.setManualResetHeld(false);
         }
 
         turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
@@ -117,22 +131,26 @@ public class Robot {
 
 
 
-
-        //flywheel
+        //OUTTAKE CODE
         outtake.setTargetVelocity(outtake.velocityRegressionModel(robotLocalizer.getDistanceToGoal()));
         outtake.runOuttake();
 
-        // shooting inputs
+
+
+        // CONTROLLER INPUTS FOR SHOOTING
         holdPressed  = gp1.leftBumperWasPressed();
         holdReleased = gp1.leftBumperWasReleased();
         holdHeld     = gp1.left_bumper;
 
-        shootPressed  = gp1.xWasPressed();
-        shootReleased = gp1.xWasReleased();
-        shootHeld     = gp1.x;
+        shootPressed  = gp1.aWasPressed();
+        shootReleased = gp1.aWasReleased();
+        shootHeld     = gp1.a;
 
+        //pose pull for pose hold controller
         Pose2d currentPose = robotLocalizer.getBotPosition();
 
+
+        //POSE HOLD CODE
 
         if (holdPressed) {
             // Stop the bot before engaging pose-hold
@@ -159,6 +177,7 @@ public class Robot {
             turret.setHoldTurretForPoseHold(false);
         }
 
+        //SHOOTING COMMAND CODE
 
         if (shootPressed) {
             shootStartNs = nowNs; // start delay timer on rising edge
@@ -183,10 +202,18 @@ public class Robot {
 
         } else {
             stopper.engageStopper();
-            intake.runIntake(intakeDefaultPower);
+
+            //default intake speed with reverse option
+            if (gp2.y){
+                intake.runIntake(intakeReversePower);
+            } else {
+                intake.runIntake(intakeDefaultPower);
+            }
+
             shootStartNs = 0;
         }
 
+        // x adjuster - wont need for now
         if (gp2.dpadLeftWasPressed()){
             if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.RED){
                 robotLocalizer.adjustRedGoalX(-2);
@@ -202,6 +229,27 @@ public class Robot {
             }
         }
 
+        double distanceToGoalForReg = robotLocalizer.getDistanceToGoal();
+        // regression adjuster
+        if (gp2.dpadDownWasPressed()){
+            if (distanceToGoalForReg < outtake.SWITCH_DISTANCE_VELOCITY_REGRESSION){
+                outtake.adjustCloseRegression(-15);
+            } else {
+                outtake.adjustFarRegression(-15);
+            }
+
+        }
+        else if (gp2.dpadUpWasPressed()){
+            if (distanceToGoalForReg < outtake.SWITCH_DISTANCE_VELOCITY_REGRESSION){
+                outtake.adjustCloseRegression(15);
+            } else {
+                outtake.adjustFarRegression(15);
+            }
+        }
+
+
+
+
 
 
         //bot position reset
@@ -215,10 +263,13 @@ public class Robot {
 
 
 
+
         telemetry.addData("x", robotLocalizer.getBotPosition().position.x);
         telemetry.addData("y", robotLocalizer.getBotPosition().position.y);
         telemetry.addData("heading", Math.toDegrees(robotLocalizer.getBotPosition().heading.toDouble()));
         telemetry.addData("distance to goal", robotLocalizer.getDistanceToGoal());
+
+
 
         turret.addTelemetry(telemetry);
 

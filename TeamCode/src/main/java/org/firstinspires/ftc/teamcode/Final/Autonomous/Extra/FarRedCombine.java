@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OldArchive;
+package org.firstinspires.ftc.teamcode.Final.Autonomous.Extra;
 
 import androidx.annotation.NonNull;
 
@@ -22,8 +22,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
-@Autonomous(name = "Far Red Combined Norfolk comp ")
-public class FarRedCombineNorfolk extends LinearOpMode {
+@Autonomous(name = "Far Red Auto")
+public class FarRedCombine extends LinearOpMode {
 
     public class Turret{
         private double turretMinTicks = 0;
@@ -65,7 +65,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action aimTurret(double targetPosition, double turretPower){
-            return new AimTurret(targetPosition, turretPower );
+            return new Turret.AimTurret(targetPosition, turretPower );
         }
 
 
@@ -111,7 +111,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action holdIntakePower(double power, double time) {
-            return new HoldIntakePower(power, time);
+            return new Intake.HoldIntakePower(power, time);
         }
 
         // stop the intake
@@ -126,7 +126,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action stopIntake() {
-            return new StopIntake();
+            return new Intake.StopIntake();
         }
     }
 
@@ -170,7 +170,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action runFlywheel(double targetVelocity, double durationSeconds){
-            return new RunFlywheel(targetVelocity, durationSeconds);
+            return new Flywheel.RunFlywheel(targetVelocity, durationSeconds);
         }
 
         public class StopFlywheel implements Action{
@@ -183,7 +183,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action stopFlywheel(){
-            return new StopFlywheel();
+            return new Flywheel.StopFlywheel();
         }
     }
 
@@ -222,7 +222,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action engageStopper(){
-            return new EngageStopper();
+            return new Stopper.EngageStopper();
         }
 
         public class DisengageStopper implements Action{
@@ -250,7 +250,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         }
 
         public Action disengageStopper(){
-            return new DisengageStopper();
+            return new Stopper.DisengageStopper();
         }
 
 
@@ -281,23 +281,20 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
-//        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
-//
-//        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
-//
-//        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
+        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
+
+        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
+
+        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
+                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(46,79), Math.toRadians(10)) // wall set
                 .strafeToLinearHeading(new Vector2d(68.5,79), Math.toRadians(10)); // drive in
 
-        TrajectoryActionBuilder goToWallSet = goToShootPreload.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(54,66), Math.toRadians(90));
-
-        TrajectoryActionBuilder goToShootWallSet = goToWallSet.endTrajectory().endTrajectory().fresh()
+        TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
 
 
@@ -336,7 +333,7 @@ public class FarRedCombineNorfolk extends LinearOpMode {
                                 turret.aimTurret(-735 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(.8, 10.1)
+                        intake.holdIntakePower(.8, 1.1)
                 )
         );
 
@@ -356,36 +353,35 @@ public class FarRedCombineNorfolk extends LinearOpMode {
         );
 
 
-//        ParallelAction SecondBatch = new ParallelAction(
-//                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
-//                new SequentialAction(
-//                        goToSecondSet.build(),
-//                        new ParallelAction(
-//                                intake.holdIntakePower(0.8,1.5),
-//                                driveIntoSecondSet.build()
-//                        ),
-//                        goToShootSecondSet.build(),
-//                        stopper.disengageStopper(),
-//                        intake.holdIntakePower(0.75,2)
-//                )
-//
-//        );
+        ParallelAction SecondBatch = new ParallelAction(
+                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
+                new SequentialAction(
+                        goToSecondSet.build(),
+                        new ParallelAction(
+                                intake.holdIntakePower(0.8,1.5),
+                                driveIntoSecondSet.build()
+                        ),
+                        goToShootSecondSet.build(),
+                        stopper.disengageStopper(),
+                        intake.holdIntakePower(0.75,2)
+                )
 
+        );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2085,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2065,7), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
-                                intake.holdIntakePower(-0.8,3),
-                                goToWallSet.build()
+                                intake.holdIntakePower(0.8,2.7),
+                                goToWallSetAndDriveIn.build()
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.75,1.2),
+                        intake.holdIntakePower(0.75,1.2),
                         stopper.engageStopper(),
                         new ParallelAction(
-                                goGetOffLaunchLine.build(),
-                                turret.aimTurret(0, .9)
+                            goGetOffLaunchLine.build(),
+                            turret.aimTurret(0, .9)
                         )
                 )
 
@@ -401,10 +397,10 @@ public class FarRedCombineNorfolk extends LinearOpMode {
                 new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
-//                        FirstBatch,
-//                        stopper.engageStopper(),
-//                        SecondBatch,
-//                        stopper.engageStopper(),
+                        FirstBatch,
+                        stopper.engageStopper(),
+                        SecondBatch,
+                        stopper.engageStopper(),
                         WallBatch,
 //                        park,
                         stopper.engageStopper()

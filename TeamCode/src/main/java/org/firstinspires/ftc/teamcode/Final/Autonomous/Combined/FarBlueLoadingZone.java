@@ -20,11 +20,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Final.Autonomous.Solo.RedCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
-@Autonomous(name = "1 Row Blue w/ random intake")
+@Autonomous(name = "Far Blue w/ random intake")
 public class FarBlueLoadingZone extends LinearOpMode {
+    MecanumDrive drive;
 
     public class Turret{
         private double turretMinTicks = 0;
@@ -257,13 +260,28 @@ public class FarBlueLoadingZone extends LinearOpMode {
 
     }
 
+    public class Update implements Action{
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            Pose2d pose = drive.localizer.getPose();
+            PoseStorage.savedPose = pose;
+
+            // Keep running until RaceAction ends because the main sequence finished.
+            return true;
+        }
+    }
+    public Action updatePose(){
+        return new Update();
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         Pose2d initialPose = new Pose2d(64, -11, Math.toRadians(270));
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        drive = new MecanumDrive(hardwareMap, initialPose);
 
         Turret turret = new Turret(hardwareMap);
         Intake intake = new Intake(hardwareMap);
@@ -310,7 +328,7 @@ public class FarBlueLoadingZone extends LinearOpMode {
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(62,-61), Math.toRadians(270),
+                .strafeToLinearHeading(new Vector2d(62,-63), Math.toRadians(285),
                         // only override velocity constraint
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))
@@ -328,7 +346,6 @@ public class FarBlueLoadingZone extends LinearOpMode {
         TrajectoryActionBuilder goToShootRandomSet = goToHumanPlayerZone.endTrajectory().endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
-        //TODO: add trajectory to get off the luanch line
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(52, -35), Math.toRadians(270));
 
@@ -360,7 +377,7 @@ public class FarBlueLoadingZone extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-115,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-105,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-.8, 1.1)
@@ -438,6 +455,8 @@ public class FarBlueLoadingZone extends LinearOpMode {
 
 
         Actions.runBlocking(
+                new ParallelAction(
+                        updatePose(),
                 new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
@@ -450,6 +469,7 @@ public class FarBlueLoadingZone extends LinearOpMode {
                         RandomBatch,
                         stopper.engageStopper(),
                         turret.aimTurret(0, .9)
+                )
                 )
 
 

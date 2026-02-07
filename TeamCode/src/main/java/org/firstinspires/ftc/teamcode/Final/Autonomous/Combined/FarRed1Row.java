@@ -19,11 +19,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Final.Autonomous.Solo.RedCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
-@Autonomous(name = "1 Row Red")
+@Autonomous(name = "FAR SIDE RED 1 row")
 public class FarRed1Row extends LinearOpMode {
+    MecanumDrive drive;
 
     public class Turret{
         private double turretMinTicks = 0;
@@ -256,13 +259,29 @@ public class FarRed1Row extends LinearOpMode {
 
 
     }
+    public class Update implements Action{
+
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            Pose2d pose = drive.localizer.getPose();
+            PoseStorage.savedPose = pose;
+
+            // Keep running until RaceAction ends because the main sequence finished.
+            return true;
+        }
+    }
+    public Action updatePose(){
+        return new Update();
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         Pose2d initialPose = new Pose2d(64, 6.7, Math.toRadians(90));
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        drive = new MecanumDrive(hardwareMap, initialPose);
 
         Turret turret = new Turret(hardwareMap);
         Intake intake = new Intake(hardwareMap);
@@ -390,6 +409,8 @@ public class FarRed1Row extends LinearOpMode {
 
 
         Actions.runBlocking(
+                new ParallelAction(
+                        updatePose(),
                 new SequentialAction(
                         shootPreload,
                         stopper.engageStopper(),
@@ -400,6 +421,7 @@ public class FarRed1Row extends LinearOpMode {
                         WallBatch,
                         stopper.engageStopper(),
                         turret.aimTurret(0, .9)
+                )
                 )
 
 

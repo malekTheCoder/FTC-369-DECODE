@@ -190,17 +190,6 @@ public class BlueCloseSolo extends LinearOpMode {
         }
     }
 
-    public class Update implements Action{
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket){
-            PoseStorage.savedPose = drive.localizer.getPose();
-            return true;
-        }
-    }
-    public Action updatePose(){
-        return new Update();
-    }
-
     public class Stopper{
         private Servo stopper;
         private double engagedPosition = 0.6; // fine tune this value
@@ -272,6 +261,25 @@ public class BlueCloseSolo extends LinearOpMode {
     }
 
 
+    public class Update implements Action{
+        // Runs alongside your path to continuously save the latest pose.
+        // Driver Hub telemetry only.
+        private int loops = 0;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket){
+            Pose2d pose = drive.localizer.getPose();
+            PoseStorage.savedPose = pose;
+
+            // Keep running until RaceAction ends because the main sequence finished.
+            return true;
+        }
+    }
+    public Action updatePose(){
+        return new Update();
+    }
+
+
 
 
 
@@ -299,7 +307,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-11,-53), Math.toRadians(270)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goEmptyGate = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-2,-55), Math.toRadians(165)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(-6,-55), Math.toRadians(165)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = goEmptyGate.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-11,-18), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
@@ -353,7 +361,7 @@ public class BlueCloseSolo extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(1785,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
+                flywheel.runFlywheel(1780,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
@@ -367,7 +375,7 @@ public class BlueCloseSolo extends LinearOpMode {
 
         SequentialAction FirstBatch = new SequentialAction(
                 new ParallelAction(
-                        intake.holdIntakePower(-0.9, 1.5), //TODO fine tune,
+                        intake.holdIntakePower(-0.95, 1.5), //TODO fine tune,
                         driveIntoFirstSet.build()
                 ),
                 intake.stopIntake(),
@@ -389,7 +397,7 @@ public class BlueCloseSolo extends LinearOpMode {
         SequentialAction SecondBatch = new SequentialAction(
                 goToSecondSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(-0.85, 1.5), //TODO fine tune,
+                        intake.holdIntakePower(-0.95, 1.5), //TODO fine tune,
                         driveIntoSecondSet.build()
                 ),
                 intake.stopIntake(),
@@ -410,7 +418,7 @@ public class BlueCloseSolo extends LinearOpMode {
         SequentialAction ThirdBatch = new SequentialAction(
                 goToThirdSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(-0.8 , 1.5), //TODO fine tune,
+                        intake.holdIntakePower(-0.95 , 1.5), //TODO fine tune,
                         turret.aimTurret(-73,0.9),
                         driveIntoThirdSet.build()
                 ),
@@ -432,10 +440,8 @@ public class BlueCloseSolo extends LinearOpMode {
 
 
 
-        // TODO when testing go step by step, comment out all but the ffirst and then incremmentallg uncomment the next line
-        // TODO will make testing and troubleshooting easier
         Actions.runBlocking(
-                new RaceAction(
+                new ParallelAction(
                         updatePose(),
                         new SequentialAction(
                                 shootPreload,
@@ -452,11 +458,7 @@ public class BlueCloseSolo extends LinearOpMode {
                         )
                 )
         );
-//
-//        storer.endPose = drive.localizer.getPose();
-//        PoseStorage.savedPose = storer.endPose;
-//        telemetry.addData("END POSE", storer.endPose);
-//        telemetry.update();
+
     }
 
 }
