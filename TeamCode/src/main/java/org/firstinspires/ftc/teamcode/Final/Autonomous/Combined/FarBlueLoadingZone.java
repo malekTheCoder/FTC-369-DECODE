@@ -294,10 +294,10 @@ public class FarBlueLoadingZone extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(53,-12), Math.toRadians(270));
 
         TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(35,-30), Math.toRadians(270)); // go to first set of artifacts
+                .strafeToLinearHeading(new Vector2d(37,-30), Math.toRadians(270)); // go to first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(35,-53), Math.toRadians(270)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(37,-53), Math.toRadians(270)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(58,-15), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
@@ -373,11 +373,11 @@ public class FarBlueLoadingZone extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(2070,3.3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2025,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-115,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-113,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-.8, 1.1)
@@ -385,7 +385,7 @@ public class FarBlueLoadingZone extends LinearOpMode {
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(2075,7), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2030,7), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
@@ -416,13 +416,16 @@ public class FarBlueLoadingZone extends LinearOpMode {
 //        );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2075,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2030,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(-0.8,3),
                                 goToWallSetAndDriveIn.build()
                         ),
-                        goToShootWallSet.build(),
+                        new ParallelAction(
+                                goToShootWallSet.build(),
+                                turret.aimTurret(-110,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                        ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-0.8,1),
                         stopper.engageStopper()//,
@@ -435,13 +438,16 @@ public class FarBlueLoadingZone extends LinearOpMode {
         );
 
         ParallelAction RandomBatch = new ParallelAction(
-                flywheel.runFlywheel(2085,11), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2050,11), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 intake.holdIntakePower(-0.8,3.5),
                                 goToHumanPlayerZone.build()
                         ),
-                        goToShootRandomSet.build(),
+                        new ParallelAction(
+                                goToShootRandomSet.build(),
+                                turret.aimTurret(-113,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                        ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-0.8,1),
                         stopper.engageStopper(),
