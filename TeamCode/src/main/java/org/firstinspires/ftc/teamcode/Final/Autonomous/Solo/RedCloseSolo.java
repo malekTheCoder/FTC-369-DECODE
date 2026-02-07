@@ -191,7 +191,7 @@ public class RedCloseSolo extends LinearOpMode {
 
     public class Stopper{
         private Servo stopper;
-        private double engagedPosition = 0.6; // fine tune this value
+        private double engagedPosition = 0.7; // fine tune this value
         private double disengagedPosition = 0.5; //fine tune this value
         private double servoTime = 0.25; // time it takes servo to move between postions
 
@@ -261,9 +261,6 @@ public class RedCloseSolo extends LinearOpMode {
     }
 
     public class Update implements Action{
-        // Runs alongside your path to continuously save the latest pose.
-        // Driver Hub telemetry only.
-        private int loops = 0;
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket){
@@ -400,7 +397,8 @@ public class RedCloseSolo extends LinearOpMode {
                 goToThirdSet.build(),
                 new ParallelAction(
                         intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
-                        driveIntoThirdSet.build()
+                        driveIntoThirdSet.build(),
+                        turret.aimTurret(-782, 0.9)
                 ),
                 new ParallelAction(
                         flywheel.runFlywheel(1790,4.7), //TODO this flywheel timer wont be the same for all batvhes it will have to get longer since the path to get to the tshooting spot gets longer

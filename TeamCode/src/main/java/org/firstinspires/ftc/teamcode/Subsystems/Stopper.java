@@ -7,7 +7,7 @@ public class Stopper {
 
     private Servo stopperServo;
 
-    public static final double ENGAGED_POSITION = 0.6;
+    public static final double ENGAGED_POSITION = 0.7;
     public static final double DISENGAGED_POSITION = 0.5;
 
 

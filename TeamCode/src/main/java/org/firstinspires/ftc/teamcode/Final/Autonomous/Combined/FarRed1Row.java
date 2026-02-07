@@ -192,7 +192,7 @@ public class FarRed1Row extends LinearOpMode {
 
     public class Stopper{
         private Servo stopper;
-        private double engagedPosition = 0.6; // fine tune this value
+        private double engagedPosition = 0.7; // fine tune this value
         private double disengagedPosition = 0.5; //fine tune this value
         private double servoTime = 0.25; // time it takes servo to move between postions
 
