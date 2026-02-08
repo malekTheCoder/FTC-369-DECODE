@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Final.Autonomous.Combined;
+package org.firstinspires.ftc.teamcode.Final.Autonomous.Extra;
 
 import androidx.annotation.NonNull;
 
@@ -15,18 +15,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Final.Autonomous.Solo.RedCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Disabled
-@Autonomous(name = "FAR SIDE BLUE 1 row")
-public class FarBlue1Row extends LinearOpMode {
+@Autonomous(name = "FAR SIDE RED 1 row")
+public class FarRed1Row extends LinearOpMode {
     MecanumDrive drive;
 
     public class Turret{
@@ -81,6 +81,7 @@ public class FarBlue1Row extends LinearOpMode {
         public Intake (HardwareMap hardwareMap){
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }// constructor
 
         public class HoldIntakePower implements Action {
@@ -259,7 +260,6 @@ public class FarBlue1Row extends LinearOpMode {
 
 
     }
-
     public class Update implements Action{
 
 
@@ -280,7 +280,7 @@ public class FarBlue1Row extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(64, -11, Math.toRadians(270));
+        Pose2d initialPose = new Pose2d(64, 6.7, Math.toRadians(90));
 
         drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -289,38 +289,38 @@ public class FarBlue1Row extends LinearOpMode {
         Flywheel flywheel = new Flywheel(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
 
-
-
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(53,-12), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(53,12), Math.toRadians(90));
 
         TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(35,-30), Math.toRadians(270)); // go to first set of artifacts
+                .strafeToLinearHeading(new Vector2d(32,30), Math.toRadians(90)); // go to first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(35,-53), Math.toRadians(270)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(32,52), Math.toRadians(90)); // drive into first set of artifacts
 
         TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(58,-15), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
-//
+                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
+
 //        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(7,-30), Math.toRadians(270)); // go to second set of artifacts
+//                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
+//
 //        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(7,-53), Math.toRadians(270)); // drive into second set of artifacts
+//                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
 //
 //        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
+//                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(40,-65), Math.toRadians(-10)) // wall set
-                .strafeToLinearHeading(new Vector2d(59,-65), Math.toRadians(-10)); // drive in
+                .strafeToLinearHeading(new Vector2d(46,69), Math.toRadians(10)) // wall set
+                .strafeToLinearHeading(new Vector2d(67.5,69), Math.toRadians(10)); // drive in
 
         TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
+                .strafeToLinearHeading(new Vector2d(48,15), Math.toRadians(90)); // go back after grabbing wall set
 
-        //TODO: add trajectory to get off the luanch line
+
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(52, -35), Math.toRadians(270));
+                .strafeToLinearHeading(new Vector2d(62, 35), Math.toRadians(90));
+        //TODO: add trajectory to get off the luanch line
 
 
         while (!opModeIsActive()){
@@ -350,54 +350,54 @@ public class FarBlue1Row extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-118,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-735 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-.8, 1.1)
+                        intake.holdIntakePower(.8, 1.1)
                 )
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(2085,3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2065,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
-                                intake.holdIntakePower(-0.8,2),
+                                intake.holdIntakePower(0.8,1.5),
                                 driveIntoFirstSet.build()
                         ),
                         goToShootFirstSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.75,1.2)
+                        intake.holdIntakePower(0.75,1.2)
                 )
 
         );
 
-
+//
 //        ParallelAction SecondBatch = new ParallelAction(
 //                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
 //                new SequentialAction(
 //                        goToSecondSet.build(),
 //                        new ParallelAction(
-//                                intake.holdIntakePower(-0.8,2),
+//                                intake.holdIntakePower(0.8,1.5),
 //                                driveIntoSecondSet.build()
 //                        ),
 //                        goToShootSecondSet.build(),
 //                        stopper.disengageStopper(),
-//                        intake.holdIntakePower(-0.75,2)
+//                        intake.holdIntakePower(0.75,2)
 //                )
 //
 //        );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2085,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2065,7), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
-                                intake.holdIntakePower(-0.8,3),
+                                intake.holdIntakePower(0.8,2.7),
                                 goToWallSetAndDriveIn.build()
                         ),
                         goToShootWallSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(-0.75,1.2),
+                        intake.holdIntakePower(0.8,1.2),
                         stopper.engageStopper(),
                         new ParallelAction(
                                 goGetOffLaunchLine.build(),
@@ -412,22 +412,20 @@ public class FarBlue1Row extends LinearOpMode {
         Actions.runBlocking(
                 new ParallelAction(
                         updatePose(),
-                    new SequentialAction(
-                            shootPreload,
-                            stopper.engageStopper(),
-                            FirstBatch,
-                            stopper.engageStopper(),
-    //                        SecondBatch,
-    //                        stopper.engageStopper(),
-                            WallBatch,
-                            stopper.engageStopper()
-    //                        goGetOffLaunchLine.build(),
-    //                        stopper.engageStopper()
-                    )
+                new SequentialAction(
+                        shootPreload,
+                        stopper.engageStopper(),
+                        FirstBatch,
+                        stopper.engageStopper(),
+//                        SecondBatch,
+//                        stopper.engageStopper(),
+                        WallBatch,
+                        stopper.engageStopper(),
+                        turret.aimTurret(0, .9)
+                )
                 )
 
 
         );
-
     }
 }
