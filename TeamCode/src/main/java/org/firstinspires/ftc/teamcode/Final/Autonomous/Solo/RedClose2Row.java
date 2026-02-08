@@ -54,7 +54,7 @@ public class RedClose2Row extends LinearOpMode {
                 turret.setTargetPosition((int)targetPosition);
                 turret.setPower(turretPow);
 
-                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 10){
+                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 3){
                     return false;
                 } else {
                     return true;
@@ -348,7 +348,7 @@ public class RedClose2Row extends LinearOpMode {
                 flywheel.runFlywheel(1730,4), //TODO: find working target velocity and finetune runnign time, this running time should basically be the whole action so make sure its long enough, sytart with a long time and reduce from there
                 new SequentialAction(
                         new ParallelAction(
-                                turret.aimTurret(-782,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-783,0.9), //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                                 goToShootPreload.build()
 
                         ),
@@ -366,7 +366,7 @@ public class RedClose2Row extends LinearOpMode {
                 intake.stopIntake(),
                 goEmptyGate.build(),
                 new ParallelAction(
-                        flywheel.runFlywheel(1760,4),
+                        flywheel.runFlywheel(1740,4),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
                                 stopper.disengageStopper(),
@@ -380,11 +380,11 @@ public class RedClose2Row extends LinearOpMode {
         SequentialAction SecondBatch = new SequentialAction(
                 goToSecondSet.build(),
                 new ParallelAction(
-                        intake.holdIntakePower(-0.8, 1.5), //TODO fine tune,
+                        intake.holdIntakePower(-0.85, 1.5), //TODO fine tune,
                         driveIntoSecondSet.build()
                 ),
                 new ParallelAction(
-                        flywheel.runFlywheel(1770,3.7),
+                        flywheel.runFlywheel(1760,3.7),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
                                 stopper.disengageStopper(),
@@ -444,8 +444,12 @@ public class RedClose2Row extends LinearOpMode {
                         stopper.engageStopper(),
 //                        ThirdBatch,
 //                        stopper.engageStopper(),
-                        goGetOffLaunchLine.build(),
-                        stopper.engageStopper()
+                        new ParallelAction(
+                                goGetOffLaunchLine.build(),
+                                stopper.engageStopper(),
+                                turret.aimTurret(0, .9),
+                                intake.stopIntake()
+                        )
 
 //                        goToShootPreload.build(),
 //                        goToFirstSet.build(),

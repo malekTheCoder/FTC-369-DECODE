@@ -21,13 +21,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Final.Autonomous.Solo.RedCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
-@Autonomous(name = "Far Side Red w/ random intake")
-public class FarRedLoadingZone extends LinearOpMode {
+@Autonomous(name = "Far Side Red w/ random intake to goal")
+public class FarRedTowardGoal extends LinearOpMode {
     MecanumDrive drive;
 
     public class Turret{
@@ -322,7 +321,7 @@ public class FarRedLoadingZone extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(57,10), Math.toRadians(90)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goToHumanPlayerZone = goToShootWallSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(42,58), Math.toRadians(15),
+                .strafeToLinearHeading(new Vector2d(52,58), Math.toRadians(165),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -332,7 +331,7 @@ public class FarRedLoadingZone extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(62,58), Math.toRadians(15),
+                .strafeToLinearHeading(new Vector2d(32,58), Math.toRadians(165),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
