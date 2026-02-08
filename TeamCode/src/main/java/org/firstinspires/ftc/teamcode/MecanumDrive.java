@@ -322,6 +322,13 @@ public final class MecanumDrive {
                 t = Actions.now() - beginTs;
             }
 
+            Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
+            targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
+
+            PoseVelocity2d robotVelRobot = updatePoseEstimate();
+            Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
+
+
 //            if (t >= timeTrajectory.duration) {
 //                leftFront.setPower(0);
 //                leftBack.setPower(0);
@@ -332,7 +339,7 @@ public final class MecanumDrive {
 //            }
 
             if (extraHeadingCorrect){
-                if (t >= timeTrajectory.duration) {
+                if (t >= timeTrajectory.duration && Math.toRadians(error.heading.toDouble()) < 2) {
                     leftFront.setPower(0);
                     leftBack.setPower(0);
                     rightBack.setPower(0);
@@ -353,10 +360,7 @@ public final class MecanumDrive {
 
 
 
-            Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
-            targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
-            PoseVelocity2d robotVelRobot = updatePoseEstimate();
 
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
@@ -387,7 +391,6 @@ public final class MecanumDrive {
             p.put("y", localizer.getPose().position.y);
             p.put("heading (deg)", Math.toDegrees(localizer.getPose().heading.toDouble()));
 
-            Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
