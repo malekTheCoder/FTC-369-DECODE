@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -319,7 +320,7 @@ public class FarBlueTowardGoal extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goToHumanPlayerZone = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
-                .strafeToLinearHeading(new Vector2d(60,-61), Math.toRadians(-15),
+                .strafeToLinearHeading(new Vector2d(60,-63), Math.toRadians(195),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -329,7 +330,7 @@ public class FarBlueTowardGoal extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(25,-61), Math.toRadians(-15),
+                .strafeToLinearHeading(new Vector2d(29,-63), Math.toRadians(195),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -344,7 +345,7 @@ public class FarBlueTowardGoal extends LinearOpMode {
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
-        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(25,-61),Math.toRadians(270)), true)
+        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(29,-63),Math.toRadians(270)), true)
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goGetOffLaunchLine = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
@@ -465,6 +466,7 @@ public class FarBlueTowardGoal extends LinearOpMode {
                 new ParallelAction(
                         updatePose(),
                 new SequentialAction(
+                        new SleepAction(1.5),
                         shootPreload,
                         stopper.engageStopper(),
                         FirstBatch,
