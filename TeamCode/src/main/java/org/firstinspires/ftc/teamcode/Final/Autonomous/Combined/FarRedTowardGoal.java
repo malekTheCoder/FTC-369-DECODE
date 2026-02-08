@@ -332,7 +332,7 @@ public class FarRedTowardGoal extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(32,58), Math.toRadians(165),
+                .strafeToLinearHeading(new Vector2d(25,58), Math.toRadians(165),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
