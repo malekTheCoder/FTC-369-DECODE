@@ -264,11 +264,18 @@ public class FarRedTowardGoal extends LinearOpMode {
 
     public class Update implements Action{
 
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket){
             Pose2d pose = drive.localizer.getPose();
             PoseStorage.savedPose = pose;
+
+            // Telemetry: show current pose (x, y, heading)
+            telemetryPacket.put("pose_x", pose.position.x);
+            telemetryPacket.put("pose_y", pose.position.y);
+            telemetryPacket.put("heading_deg", Math.toDegrees(pose.heading.toDouble()));
+
+            // You could add a flag if needed, for example:
+            // telemetryPacket.put("update_flag", true);
 
             // Keep running until RaceAction ends because the main sequence finished.
             return true;
@@ -293,17 +300,23 @@ public class FarRedTowardGoal extends LinearOpMode {
         Flywheel flywheel = new Flywheel(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
 
-        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(53,12), Math.toRadians(90));
+        // EXTRA correction ON (shoot)
+        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose, true)
+                .strafeToLinearHeading(new Vector2d(53, 12), Math.toRadians(90));
 
-        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36,30), Math.toRadians(90)); // go to first set of artifacts
+        // EXTRA correction OFF (intake travel)
+        Pose2d firstSetStartPose = new Pose2d(53, 12, Math.toRadians(90));
+        TrajectoryActionBuilder goToFirstSet = drive.actionBuilder(firstSetStartPose, false)
+                .strafeToLinearHeading(new Vector2d(36, 30), Math.toRadians(90)); // go to first set of artifacts
 
-        TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(36,52), Math.toRadians(90)); // drive into first set of artifacts
+        Pose2d driveIntoFirstSetStartPose = new Pose2d(36, 30, Math.toRadians(90));
+        TrajectoryActionBuilder driveIntoFirstSet = drive.actionBuilder(driveIntoFirstSetStartPose, false)
+                .strafeToLinearHeading(new Vector2d(36, 52), Math.toRadians(90)); // drive into first set of artifacts
 
-        TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
+        // Start pose is known because driveIntoFirstSet ends at (36, 52, 90deg)
+        Pose2d shootFirstSetStartPose = new Pose2d(36, 52, Math.toRadians(90));
+        TrajectoryActionBuilder goToShootFirstSet = drive.actionBuilder(shootFirstSetStartPose, true)
+                .strafeToLinearHeading(new Vector2d(55, 15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
 
 //        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
@@ -314,14 +327,20 @@ public class FarRedTowardGoal extends LinearOpMode {
 //        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
 
-        TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootFirstSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(46,63), Math.toRadians(10)) // wall set
-                .strafeToLinearHeading(new Vector2d(66,63), Math.toRadians(10)); // drive in
+        // EXTRA correction OFF (intake travel)
+        Pose2d wallSetStartPose = new Pose2d(55, 15, Math.toRadians(90));
+        TrajectoryActionBuilder goToWallSetAndDriveIn = drive.actionBuilder(wallSetStartPose, false)
+                .strafeToLinearHeading(new Vector2d(46, 63), Math.toRadians(10)) // wall set
+                .strafeToLinearHeading(new Vector2d(66, 63), Math.toRadians(10)); // drive in
 
-        TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(57,10), Math.toRadians(90)); // go back after grabbing wall set
+        // Start pose is known because goToWallSetAndDriveIn ends at (66, 63, 10deg)
+        Pose2d shootWallSetStartPose = new Pose2d(66, 63, Math.toRadians(10));
+        TrajectoryActionBuilder goToShootWallSet = drive.actionBuilder(shootWallSetStartPose, true)
+                .strafeToLinearHeading(new Vector2d(57, 10), Math.toRadians(90)); // go back after grabbing wall set
 
-        TrajectoryActionBuilder goToHumanPlayerZone = goToShootWallSet.endTrajectory().fresh()
+        // EXTRA correction OFF (intake travel)
+        Pose2d humanPlayerStartPose = new Pose2d(57, 10, Math.toRadians(90));
+        TrajectoryActionBuilder goToHumanPlayerZone = drive.actionBuilder(humanPlayerStartPose, false)
                 .strafeToLinearHeading(new Vector2d(52,58), Math.toRadians(165),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
@@ -332,7 +351,7 @@ public class FarRedTowardGoal extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(32,58), Math.toRadians(165),
+                .strafeToLinearHeading(new Vector2d(25,58), Math.toRadians(165),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -347,11 +366,15 @@ public class FarRedTowardGoal extends LinearOpMode {
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
-        TrajectoryActionBuilder goToShootRandomSet = goToHumanPlayerZone.endTrajectory().endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(55,12), Math.toRadians(90)); // go back after grabbing wall set
+        // Start pose is known because goToHumanPlayerZone ends at (32, 58, 165deg)
+        Pose2d shootRandomSetStartPose = new Pose2d(25, 58, Math.toRadians(165));
+        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(shootRandomSetStartPose, true)
+                .strafeToLinearHeading(new Vector2d(55, 12), Math.toRadians(90));
 
 
-        TrajectoryActionBuilder goGetOffLaunchLine = goToShootRandomSet.endTrajectory().fresh()
+        // EXTRA correction OFF (post-auto travel)
+        Pose2d offLaunchLineStartPose = new Pose2d(55, 12, Math.toRadians(90));
+        TrajectoryActionBuilder goGetOffLaunchLine = drive.actionBuilder(offLaunchLineStartPose, false)
                 .strafeToLinearHeading(new Vector2d(55, 35), Math.toRadians(90));
         //TODO: add trajectory to get off the luanch line
 
@@ -396,6 +419,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         goToFirstSet.build(),
                         new ParallelAction(
                                 intake.holdIntakePower(0.8,1.5),
+                                turret.aimTurret(-723,0.9),
                                 driveIntoFirstSet.build()
                         ),
                         goToShootFirstSet.build(),
@@ -430,7 +454,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 goToShootWallSet.build(),
-                                turret.aimTurret(-720, .9)
+                                turret.aimTurret(-719, .9)
                                 ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(0.8,1.2),
@@ -452,7 +476,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 goToShootRandomSet.build(),
-                                turret.aimTurret(-720, .9)
+                                turret.aimTurret(-719, .9)
                                 ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(0.8,1),

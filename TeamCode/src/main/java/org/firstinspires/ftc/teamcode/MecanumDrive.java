@@ -277,12 +277,13 @@ public final class MecanumDrive {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
 
-        private boolean extraHeadingCorrect;
+        private final boolean extraHeadingCorrect;
 
         private final double[] xPoints, yPoints;
 
         public FollowTrajectoryAction(TimeTrajectory t, boolean extraHeadingCorrect) {
             timeTrajectory = t;
+            this.extraHeadingCorrect = extraHeadingCorrect;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
                     0, t.path.length(),
@@ -297,19 +298,7 @@ public final class MecanumDrive {
         }
 
         public FollowTrajectoryAction(TimeTrajectory t) {
-
-            timeTrajectory = t;
-
-            List<Double> disps = com.acmerobotics.roadrunner.Math.range(
-                    0, t.path.length(),
-                    Math.max(2, (int) Math.ceil(t.path.length() / 2)));
-            xPoints = new double[disps.size()];
-            yPoints = new double[disps.size()];
-            for (int i = 0; i < disps.size(); i++) {
-                Pose2d p = t.path.get(disps.get(i), 1).value();
-                xPoints[i] = p.position.x;
-                yPoints[i] = p.position.y;
-            }
+            this(t, false);
         }
 
         @Override
@@ -328,23 +317,15 @@ public final class MecanumDrive {
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
             Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
 
+            double headingErrRad = Math.abs(error.heading.toDouble());
 
-//            if (t >= timeTrajectory.duration) {
-//                leftFront.setPower(0);
-//                leftBack.setPower(0);
-//                rightBack.setPower(0);
-//                rightFront.setPower(0);
-//
-//                return false;
-//            }
-
-            if (extraHeadingCorrect){
-                if (t >= timeTrajectory.duration && Math.toRadians(error.heading.toDouble()) < 2) {
+            if (extraHeadingCorrect) {
+                // Finish only after trajectory time is up AND we're within 2 degrees of heading.
+                if (t >= timeTrajectory.duration && headingErrRad < Math.toRadians(1)) {
                     leftFront.setPower(0);
                     leftBack.setPower(0);
                     rightBack.setPower(0);
                     rightFront.setPower(0);
-
                     return false;
                 }
             } else {
@@ -353,7 +334,6 @@ public final class MecanumDrive {
                     leftBack.setPower(0);
                     rightBack.setPower(0);
                     rightFront.setPower(0);
-
                     return false;
                 }
             }
@@ -502,14 +482,14 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
-        
+
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
+
         return vel;
     }
 
@@ -531,9 +511,13 @@ public final class MecanumDrive {
     }
 
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
+        return actionBuilder(beginPose, false);
+    }
+
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose, boolean extraHeadingCorrect) {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
-                FollowTrajectoryAction::new,
+                (TimeTrajectory t) -> new FollowTrajectoryAction(t, extraHeadingCorrect),
                 new TrajectoryBuilderParams(
                         1e-6,
                         new ProfileParams(
