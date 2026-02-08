@@ -351,7 +351,7 @@ public class FarRedTowardGoal extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(25,58), Math.toRadians(165),
+                .strafeToLinearHeading(new Vector2d(19,58), Math.toRadians(165),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -367,7 +367,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
         // Start pose is known because goToHumanPlayerZone ends at (32, 58, 165deg)
-        Pose2d shootRandomSetStartPose = new Pose2d(25, 58, Math.toRadians(165));
+        Pose2d shootRandomSetStartPose = new Pose2d(19, 58, Math.toRadians(165));
         TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(shootRandomSetStartPose, true)
                 .strafeToLinearHeading(new Vector2d(55, 12), Math.toRadians(90));
 
@@ -402,11 +402,11 @@ public class FarRedTowardGoal extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(2000,3.3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2010,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-730,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-732,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(.8, 1.1)
@@ -419,7 +419,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         goToFirstSet.build(),
                         new ParallelAction(
                                 intake.holdIntakePower(0.8,1.5),
-                                turret.aimTurret(-723,0.9),
+                                turret.aimTurret(-728,0.9),
                                 driveIntoFirstSet.build()
                         ),
                         goToShootFirstSet.build(),
@@ -454,7 +454,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 goToShootWallSet.build(),
-                                turret.aimTurret(-719, .9)
+                                turret.aimTurret(-728, .9)
                                 ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(0.8,1.2),
@@ -476,7 +476,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 goToShootRandomSet.build(),
-                                turret.aimTurret(-719, .9)
+                                turret.aimTurret(-724, .9)
                                 ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(0.8,1),

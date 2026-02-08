@@ -321,7 +321,7 @@ public final class MecanumDrive {
 
             if (extraHeadingCorrect) {
                 // Finish only after trajectory time is up AND we're within 2 degrees of heading.
-                if (t >= timeTrajectory.duration && headingErrRad < Math.toRadians(1)) {
+                if (t >= timeTrajectory.duration && headingErrRad < Math.toRadians(1) && error.position.y<1.75){
                     leftFront.setPower(0);
                     leftBack.setPower(0);
                     rightBack.setPower(0);
