@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.sun.tools.javac.jvm.ByteCodes.error;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -275,9 +277,27 @@ public final class MecanumDrive {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
 
+        private boolean extraHeadingCorrect;
+
         private final double[] xPoints, yPoints;
 
+        public FollowTrajectoryAction(TimeTrajectory t, boolean extraHeadingCorrect) {
+            timeTrajectory = t;
+
+            List<Double> disps = com.acmerobotics.roadrunner.Math.range(
+                    0, t.path.length(),
+                    Math.max(2, (int) Math.ceil(t.path.length() / 2)));
+            xPoints = new double[disps.size()];
+            yPoints = new double[disps.size()];
+            for (int i = 0; i < disps.size(); i++) {
+                Pose2d p = t.path.get(disps.get(i), 1).value();
+                xPoints[i] = p.position.x;
+                yPoints[i] = p.position.y;
+            }
+        }
+
         public FollowTrajectoryAction(TimeTrajectory t) {
+
             timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
@@ -302,14 +322,36 @@ public final class MecanumDrive {
                 t = Actions.now() - beginTs;
             }
 
-            if (t >= timeTrajectory.duration) {
-                leftFront.setPower(0);
-                leftBack.setPower(0);
-                rightBack.setPower(0);
-                rightFront.setPower(0);
+//            if (t >= timeTrajectory.duration) {
+//                leftFront.setPower(0);
+//                leftBack.setPower(0);
+//                rightBack.setPower(0);
+//                rightFront.setPower(0);
+//
+//                return false;
+//            }
 
-                return false;
+            if (extraHeadingCorrect){
+                if (t >= timeTrajectory.duration) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+
+                    return false;
+                }
+            } else {
+                if (t >= timeTrajectory.duration) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+
+                    return false;
+                }
             }
+
+
 
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
