@@ -16,18 +16,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Final.Autonomous.Solo.RedCloseSolo;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
-@Autonomous(name = "Far Side Red w/ random intake")
-public class FarRedLoadingZone extends LinearOpMode {
+@Autonomous(name = "Far Blue w/ random intake toward goal")
+public class FarBlueTowardGoal extends LinearOpMode {
     MecanumDrive drive;
 
     public class Turret{
@@ -57,7 +55,7 @@ public class FarRedLoadingZone extends LinearOpMode {
                 turret.setTargetPosition((int)targetPosition);
                 turret.setPower(turretPow);
 
-                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 2){
+                if (Math.abs(turret.getCurrentPosition() - targetPosition) < 10){
                     return false;
                 } else {
                     return true;
@@ -82,7 +80,6 @@ public class FarRedLoadingZone extends LinearOpMode {
         public Intake (HardwareMap hardwareMap){
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }// constructor
 
         public class HoldIntakePower implements Action {
@@ -264,7 +261,6 @@ public class FarRedLoadingZone extends LinearOpMode {
 
     public class Update implements Action{
 
-
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket){
             Pose2d pose = drive.localizer.getPose();
@@ -278,13 +274,13 @@ public class FarRedLoadingZone extends LinearOpMode {
         return new Update();
     }
 
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Pose2d initialPose = new Pose2d(64, 6.7, Math.toRadians(90));
-        PoseStorage.pinpointHeadingOffsetDriverRelative = -90;
+        Pose2d initialPose = new Pose2d(64, -11, Math.toRadians(270));
 
-
+        PoseStorage.pinpointHeadingOffsetDriverRelative = -270;
 
         drive = new MecanumDrive(hardwareMap, initialPose);
 
@@ -293,46 +289,47 @@ public class FarRedLoadingZone extends LinearOpMode {
         Flywheel flywheel = new Flywheel(hardwareMap);
         Stopper stopper = new Stopper(hardwareMap);
 
+
+
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
-                .strafeToLinearHeading(new Vector2d(53,12), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(53,-12), Math.toRadians(270));
 
-        TrajectoryActionBuilder goToFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(53,12),Math.toRadians(90)), false)
-                .strafeToLinearHeading(new Vector2d(36,30), Math.toRadians(90)); // go to first set of artifacts
+        TrajectoryActionBuilder goToFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(53,-12),Math.toRadians(270)), false)
+                .strafeToLinearHeading(new Vector2d(37,-30), Math.toRadians(270)); // go to first set of artifacts
 
-        TrajectoryActionBuilder driveIntoFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(36,30),Math.toRadians(90)), false)
-                .strafeToLinearHeading(new Vector2d(36,52), Math.toRadians(90)); // drive into first set of artifacts
+        TrajectoryActionBuilder driveIntoFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-30),Math.toRadians(270)), false)
+                .strafeToLinearHeading(new Vector2d(37,-53), Math.toRadians(270)); // drive into first set of artifacts
 
-        TrajectoryActionBuilder goToShootFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(36,52),Math.toRadians(90)), true)
-                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
-
-//        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(10,30), Math.toRadians(90)); // go to second set of artifacts
+        TrajectoryActionBuilder goToShootFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-53),Math.toRadians(270)), true)
+                .strafeToLinearHeading(new Vector2d(58,-15), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
 //
+//        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
+//                .strafeToLinearHeading(new Vector2d(7,-30), Math.toRadians(270)); // go to second set of artifacts
 //        TrajectoryActionBuilder driveIntoSecondSet = goToSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(10,52), Math.toRadians(90)); // drive into second set of artifacts
+//                .strafeToLinearHeading(new Vector2d(7,-53), Math.toRadians(270)); // drive into second set of artifacts
 //
 //        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-//                .strafeToLinearHeading(new Vector2d(55,15), Math.toRadians(90)); // go back after grabbing second set of artifacts to shoot
+//                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
-        TrajectoryActionBuilder goToWallSetAndDriveIn = drive.actionBuilder(new Pose2d(new Vector2d(55,15),Math.toRadians(90)), false)
-                .strafeToLinearHeading(new Vector2d(46,63), Math.toRadians(10)) // wall set
-                .strafeToLinearHeading(new Vector2d(66,63), Math.toRadians(10)); // drive in
+        TrajectoryActionBuilder goToWallSetAndDriveIn = drive.actionBuilder(new Pose2d(new Vector2d(58,-15),Math.toRadians(270)), false)
+                .strafeToLinearHeading(new Vector2d(40,-65), Math.toRadians(-10)) // wall set
+                .strafeToLinearHeading(new Vector2d(59,-65), Math.toRadians(-10)); // drive in
 
-        TrajectoryActionBuilder goToShootWallSet = drive.actionBuilder(new Pose2d(new Vector2d(66,63),Math.toRadians(90)), true)
-                .strafeToLinearHeading(new Vector2d(57,10), Math.toRadians(90)); // go back after grabbing wall set
+        TrajectoryActionBuilder goToShootWallSet = drive.actionBuilder(new Pose2d(new Vector2d(59,-66),Math.toRadians(270)), true)
+                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
-        TrajectoryActionBuilder goToHumanPlayerZone = drive.actionBuilder(new Pose2d(new Vector2d(57,10),Math.toRadians(90)), false)
-                .strafeToLinearHeading(new Vector2d(42,58), Math.toRadians(15),
+        TrajectoryActionBuilder goToHumanPlayerZone = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
+                .strafeToLinearHeading(new Vector2d(60,-61), Math.toRadians(-15),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
-
-//                .strafeToLinearHeading(new Vector2d(60, 53), Math.toRadians(90),
+//
+//                .strafeToLinearHeading(new Vector2d(62, -55), Math.toRadians(-15),
 //                        // only override velocity constraint
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(62,58), Math.toRadians(15),
+                .strafeToLinearHeading(new Vector2d(25,-61), Math.toRadians(-15),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -347,13 +344,11 @@ public class FarRedLoadingZone extends LinearOpMode {
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
-        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(62,58),Math.toRadians(90)), true)
-                .strafeToLinearHeading(new Vector2d(55,12), Math.toRadians(90)); // go back after grabbing wall set
+        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(25,-61),Math.toRadians(270)), true)
+                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
-
-        TrajectoryActionBuilder goGetOffLaunchLine = drive.actionBuilder(new Pose2d(new Vector2d(55,12),Math.toRadians(90)), false)
-                .strafeToLinearHeading(new Vector2d(55, 35), Math.toRadians(90));
-        //TODO: add trajectory to get off the luanch line
+        TrajectoryActionBuilder goGetOffLaunchLine = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
+                .strafeToLinearHeading(new Vector2d(52, -35), Math.toRadians(270));
 
 
         while (!opModeIsActive()){
@@ -379,80 +374,83 @@ public class FarRedLoadingZone extends LinearOpMode {
 
         ParallelAction shootPreload = new ParallelAction(
                 // will keep flywheel always running for the action so parall with the sequential
-                flywheel.runFlywheel(2000,3.3), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2025,3.3), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-730 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-113,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(.8, 1.1)
+                        intake.holdIntakePower(-.8, 1.1)
                 )
         );
 
         ParallelAction FirstBatch = new ParallelAction(
-                flywheel.runFlywheel(2025,6), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2030,7), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         goToFirstSet.build(),
                         new ParallelAction(
-                                intake.holdIntakePower(0.8,1.5),
+                                intake.holdIntakePower(-0.8,1.5),
                                 driveIntoFirstSet.build()
                         ),
                         goToShootFirstSet.build(),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.75,1.2)
+                        intake.holdIntakePower(-0.8,1)
                 )
 
         );
 
-//
+
 //        ParallelAction SecondBatch = new ParallelAction(
 //                flywheel.runFlywheel(2080,6), //TODO: find working target velocity and finetune runnign time
 //                new SequentialAction(
 //                        goToSecondSet.build(),
 //                        new ParallelAction(
-//                                intake.holdIntakePower(0.8,1.5),
+//                                intake.holdIntakePower(-0.8,2),
 //                                driveIntoSecondSet.build()
 //                        ),
 //                        goToShootSecondSet.build(),
 //                        stopper.disengageStopper(),
-//                        intake.holdIntakePower(0.75,2)
+//                        intake.holdIntakePower(-0.75,2)
 //                )
 //
 //        );
 
         ParallelAction WallBatch = new ParallelAction(
-                flywheel.runFlywheel(2025,7), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2030,6), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
-                                intake.holdIntakePower(0.8,2.7),
+                                intake.holdIntakePower(-0.8,3),
                                 goToWallSetAndDriveIn.build()
                         ),
-                        goToShootWallSet.build(),
+                        new ParallelAction(
+                                goToShootWallSet.build(),
+                                turret.aimTurret(-110,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                        ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.8,1.2),
+                        intake.holdIntakePower(-0.8,1),
                         stopper.engageStopper()//,
 //                        new ParallelAction(
-//                            goGetOffLaunchLine.build(),
-//                            turret.aimTurret(0, .9)
+//                                goGetOffLaunchLine.build(),
+//                                turret.aimTurret(0, .9)
 //                        )
                 )
 
         );
 
         ParallelAction RandomBatch = new ParallelAction(
-                flywheel.runFlywheel(2045,11), //TODO: find working target velocity and finetune runnign time
+                flywheel.runFlywheel(2050,11), //TODO: find working target velocity and finetune runnign time
                 new SequentialAction(
                         new ParallelAction(
-                                intake.holdIntakePower(0.8,3),
+                                intake.holdIntakePower(-0.8,3.5),
                                 goToHumanPlayerZone.build()
                         ),
                         new ParallelAction(
                                 goToShootRandomSet.build(),
-                                turret.aimTurret(-712, .9)
-                                ),
+                                turret.aimTurret(-113,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                        ),
                         stopper.disengageStopper(),
-                        intake.holdIntakePower(0.8,1),
+                        intake.holdIntakePower(-0.8,1),
                         stopper.engageStopper(),
                         new ParallelAction(
                                 goGetOffLaunchLine.build(),
@@ -463,26 +461,26 @@ public class FarRedLoadingZone extends LinearOpMode {
         );
 
 
-
         Actions.runBlocking(
                 new ParallelAction(
                         updatePose(),
-                    new SequentialAction(
-                            shootPreload,
-                            stopper.engageStopper(),
-                            FirstBatch,
-                            stopper.engageStopper(),
-    //                        SecondBatch,
-    //                        stopper.engageStopper(),
-                            WallBatch,
-                            stopper.engageStopper(),
-                            RandomBatch,
-                            stopper.engageStopper(),
-                            turret.aimTurret(0, .9)
+                new SequentialAction(
+                        shootPreload,
+                        stopper.engageStopper(),
+                        FirstBatch,
+                        stopper.engageStopper(),
+//                        SecondBatch,
+//                        stopper.engageStopper(),
+                        WallBatch,
+                        stopper.engageStopper(),
+                        RandomBatch,
+                        stopper.engageStopper(),
+                        turret.aimTurret(0, .9)
                 )
                 )
 
 
         );
+
     }
 }

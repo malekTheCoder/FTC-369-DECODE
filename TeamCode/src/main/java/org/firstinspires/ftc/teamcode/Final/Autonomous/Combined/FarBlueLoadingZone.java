@@ -295,13 +295,13 @@ public class FarBlueLoadingZone extends LinearOpMode {
         TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
                 .strafeToLinearHeading(new Vector2d(53,-12), Math.toRadians(270));
 
-        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
+        TrajectoryActionBuilder goToFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(53,-12),Math.toRadians(270)), false)
                 .strafeToLinearHeading(new Vector2d(37,-30), Math.toRadians(270)); // go to first set of artifacts
 
-        TrajectoryActionBuilder driveIntoFirstSet = goToFirstSet.endTrajectory().fresh()
+        TrajectoryActionBuilder driveIntoFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-30),Math.toRadians(270)), false)
                 .strafeToLinearHeading(new Vector2d(37,-53), Math.toRadians(270)); // drive into first set of artifacts
 
-        TrajectoryActionBuilder goToShootFirstSet = driveIntoFirstSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goToShootFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-53),Math.toRadians(270)), true)
                 .strafeToLinearHeading(new Vector2d(58,-15), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
 //
 //        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
@@ -312,14 +312,14 @@ public class FarBlueLoadingZone extends LinearOpMode {
 //        TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
-        TrajectoryActionBuilder goToWallSetAndDriveIn = goToShootFirstSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goToWallSetAndDriveIn = drive.actionBuilder(new Pose2d(new Vector2d(58,-15),Math.toRadians(270)), false)
                 .strafeToLinearHeading(new Vector2d(40,-65), Math.toRadians(-10)) // wall set
                 .strafeToLinearHeading(new Vector2d(59,-65), Math.toRadians(-10)); // drive in
 
-        TrajectoryActionBuilder goToShootWallSet = goToWallSetAndDriveIn.endTrajectory().endTrajectory().fresh()
+        TrajectoryActionBuilder goToShootWallSet = drive.actionBuilder(new Pose2d(new Vector2d(59,-66),Math.toRadians(270)), true)
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
-        TrajectoryActionBuilder goToHumanPlayerZone = goToShootWallSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goToHumanPlayerZone = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
                 .strafeToLinearHeading(new Vector2d(43,-62), Math.toRadians(-15),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
@@ -345,10 +345,10 @@ public class FarBlueLoadingZone extends LinearOpMode {
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
-        TrajectoryActionBuilder goToShootRandomSet = goToHumanPlayerZone.endTrajectory().endTrajectory().fresh()
+        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(62,-62),Math.toRadians(270)), true)
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
-        TrajectoryActionBuilder goGetOffLaunchLine = goToShootWallSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goGetOffLaunchLine = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
                 .strafeToLinearHeading(new Vector2d(52, -35), Math.toRadians(270));
 
 
