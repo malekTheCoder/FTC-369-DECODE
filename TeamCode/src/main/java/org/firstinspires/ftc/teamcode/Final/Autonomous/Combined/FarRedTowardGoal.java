@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -382,7 +383,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-730 ,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-730,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(.8, 1.1)
@@ -427,7 +428,10 @@ public class FarRedTowardGoal extends LinearOpMode {
                                 intake.holdIntakePower(0.8,2.7),
                                 goToWallSetAndDriveIn.build()
                         ),
-                        goToShootWallSet.build(),
+                        new ParallelAction(
+                                goToShootWallSet.build(),
+                                turret.aimTurret(-720, .9)
+                                ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(0.8,1.2),
                         stopper.engageStopper()//,
@@ -448,7 +452,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 goToShootRandomSet.build(),
-                                turret.aimTurret(-712, .9)
+                                turret.aimTurret(-720, .9)
                                 ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(0.8,1),
@@ -467,6 +471,7 @@ public class FarRedTowardGoal extends LinearOpMode {
                 new ParallelAction(
                         updatePose(),
                     new SequentialAction(
+                            new SleepAction(2),
                             shootPreload,
                             stopper.engageStopper(),
                             FirstBatch,
