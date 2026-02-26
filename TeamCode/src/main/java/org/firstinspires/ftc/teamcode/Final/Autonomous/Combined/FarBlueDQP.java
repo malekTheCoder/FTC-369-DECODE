@@ -298,9 +298,9 @@ public class FarBlueDQP extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(37,-30), Math.toRadians(270)); // go to first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-30),Math.toRadians(270)), false)
-                .strafeToLinearHeading(new Vector2d(37,-53), Math.toRadians(270)); // drive into first set of artifacts
+                .strafeToLinearHeading(new Vector2d(37,-55), Math.toRadians(270)); // drive into first set of artifacts
 
-        TrajectoryActionBuilder goToShootFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-53),Math.toRadians(270)), true)
+        TrajectoryActionBuilder goToShootFirstSet = drive.actionBuilder(new Pose2d(new Vector2d(37,-55),Math.toRadians(270)), true)
                 .strafeToLinearHeading(new Vector2d(58,-15), Math.toRadians(270)); // go back after grabbing first set of artifacts to shoot
 //
 //        TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
@@ -312,13 +312,13 @@ public class FarBlueDQP extends LinearOpMode {
 //                .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToWallSetAndDriveIn = drive.actionBuilder(new Pose2d(new Vector2d(58,-15),Math.toRadians(270)), false)
-                .strafeToLinearHeading(new Vector2d(60,58), Math.toRadians(280));
+                .strafeToLinearHeading(new Vector2d(62,-64), Math.toRadians(280));
 
-        TrajectoryActionBuilder goToShootWallSet = drive.actionBuilder(new Pose2d(new Vector2d(59,-66),Math.toRadians(280)), true)
+        TrajectoryActionBuilder goToShootWallSet = drive.actionBuilder(new Pose2d(new Vector2d(62,-64),Math.toRadians(280)), true)
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goToHumanPlayerZone = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
-                .strafeToLinearHeading(new Vector2d(60,13), Math.toRadians(280),
+                .strafeToLinearHeading(new Vector2d(62,-18), Math.toRadians(280),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -328,12 +328,12 @@ public class FarBlueDQP extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(60,58), Math.toRadians(280),
+                .strafeToLinearHeading(new Vector2d(62,-58), Math.toRadians(280),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
 
-                .strafeToLinearHeading(new Vector2d(43,-62), Math.toRadians(195),
+                .strafeToLinearHeading(new Vector2d(43,-62), Math.toRadians(-15),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -343,7 +343,7 @@ public class FarBlueDQP extends LinearOpMode {
 //                        new TranslationalVelConstraint(100.0),
 //                        new ProfileAccelConstraint(-100.0, 100.0))
 
-                .strafeToLinearHeading(new Vector2d(62,-62), Math.toRadians(195),
+                .strafeToLinearHeading(new Vector2d(62,-62), Math.toRadians(-15),
                         // only override velocity constraint
                         new TranslationalVelConstraint(80.0),
                         new ProfileAccelConstraint(-80.0, 80.0))
@@ -358,7 +358,7 @@ public class FarBlueDQP extends LinearOpMode {
                         new TranslationalVelConstraint(100.0),
                         new ProfileAccelConstraint(-100.0, 100.0))*/;
 
-        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(62,-62),Math.toRadians(195)), true)
+        TrajectoryActionBuilder goToShootRandomSet = drive.actionBuilder(new Pose2d(new Vector2d(62,-62),Math.toRadians(-15)), true)
                 .strafeToLinearHeading(new Vector2d(55,-15), Math.toRadians(270)); // go back after grabbing wall set
 
         TrajectoryActionBuilder goGetOffLaunchLine = drive.actionBuilder(new Pose2d(new Vector2d(55,-15),Math.toRadians(270)), false)
@@ -392,7 +392,7 @@ public class FarBlueDQP extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 goToShootPreload.build(),
-                                turret.aimTurret(-113,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
+                                turret.aimTurret(-112,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-.8, 1.1)
@@ -407,7 +407,10 @@ public class FarBlueDQP extends LinearOpMode {
                                 intake.holdIntakePower(-0.8,1.5),
                                 driveIntoFirstSet.build()
                         ),
+                        new ParallelAction(
                         goToShootFirstSet.build(),
+                                turret.aimTurret(-110, .9)
+                                ),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-0.8,1)
                 )
@@ -461,6 +464,7 @@ public class FarBlueDQP extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 goToShootRandomSet.build(),
+                                intake.holdIntakePower(-.2, 2),
                                 turret.aimTurret(-113,0.9) //TODO: find target position for turret, it is negative but find what value aims properly, can run the turret encoder test to find it
                         ),
                         stopper.disengageStopper(),
