@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
-@Autonomous(name = "Blue Close 2 row")
-public class BlueClose2Row extends LinearOpMode {
+@Autonomous(name = "Blue Close 3 row")
+public class BlueClose3Row extends LinearOpMode {
     MecanumDrive drive;
     public class Turret{
         private double turretMinTicks = 0;
@@ -429,7 +429,7 @@ public class BlueClose2Row extends LinearOpMode {
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-5,-15), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
-        TrajectoryActionBuilder goGetOffLaunchLine = goToShootSecondSet.endTrajectory().fresh()
+        TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0,-38),Math.toRadians(0)); // go shoot second batch
 
 
@@ -551,8 +551,8 @@ public class BlueClose2Row extends LinearOpMode {
                                 stopper.engageStopper(),
                                 SecondBatch,
                                 stopper.engageStopper(),
-//                                ThirdBatch,
-//                                stopper.engageStopper(),
+                                ThirdBatch,
+                                stopper.engageStopper(),
                                 goGetOffLaunchLine.build(),
                                 turret.aimTurret(0, .9),
                                 stopper.engageStopper()

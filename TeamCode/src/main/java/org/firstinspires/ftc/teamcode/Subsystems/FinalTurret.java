@@ -184,7 +184,6 @@ public class FinalTurret {
                     if (aimBasic) {
 
                         llResult = limelight.getLatestResult();
-
                         boolean hasTargetNow = false;
                         double txNow = 0.0;
 
