@@ -30,8 +30,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 public class BlueClose3Row extends LinearOpMode {
     MecanumDrive drive;
     public class Turret{
-        private double turretMinTicks = 0;
-        private double turretMaxTicks = 853;
+
         private DcMotorEx turret;
         private double ll_kP = 0.01;
         private double ll_kD = 0.000;
