@@ -10,6 +10,8 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -31,6 +33,17 @@ public class RedClose2Row extends LinearOpMode {
         private double turretMinTicks = 0;
         private double turretMaxTicks = 853;
         private DcMotorEx turret;
+        private double ll_kP = 0.01;
+        private double ll_kD = 0.000;
+        private double ll_kS = 0.04;
+
+        private double ll_maxOutput = 0.8;
+        private double ll_deadbandDeg = 0;
+
+        private double ll_prevErr = 0.0;
+        private long ll_prevTimeNanos = 0;
+
+        private Limelight3A limelight;
 
         public Turret(HardwareMap hardwareMap){
             turret = hardwareMap.get(DcMotorEx.class, "turret");
@@ -38,6 +51,88 @@ public class RedClose2Row extends LinearOpMode {
             turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             turret.setTargetPosition(0);
             turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            limelight = hardwareMap.get(Limelight3A.class, "limelight");
+            limelight.start();
+            limelight.pipelineSwitch(1);
+        }
+        public class AutoAim implements Action {
+            //            private double targetPosition;
+            private double output;
+            double txNow = 0.0;
+            boolean hasTargetNow;
+
+            public AutoAim() {
+                turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                LLResult llResult = limelight.getLatestResult();
+
+                if ((llResult != null) && (llResult.isValid())) {
+                    hasTargetNow = true;
+                    txNow = llResult.getTx();
+//                    llTxDeg = txNow; // store for telemetry
+                }
+
+                if(hasTargetNow = true) {
+                    double error = -txNow;
+
+                    long now = System.nanoTime();
+                    double derivative = 0.0;
+
+                    if (ll_prevTimeNanos != 0) {
+                        double dt = (now - ll_prevTimeNanos) / 1e9;
+                        if (dt > 1e-6) {
+                            derivative = (error - ll_prevErr) / dt;
+                        }
+                    }
+
+                    ll_prevErr = error;
+                    ll_prevTimeNanos = now;
+
+                    output = (ll_kP * error) + (ll_kD * derivative);
+
+                    // deadband and ks
+                    if (Math.abs(error) <= ll_deadbandDeg) {
+                        output = 0.0;
+                    } else {
+                        if (error > 0) {
+                            output += Math.abs(ll_kS);
+                        }
+                        if (error < 0) {
+                            output -= Math.abs(ll_kS);
+                        }
+                    }
+
+//                if (turret.getCurrentPosition() <= -833) {
+//                    if (output < 0) {
+//                        output = 0.0;
+//                    }
+//                }
+//                if (turret.getCurrentPosition() >= -20) {
+//                    if (output > 0) {
+//                        output = 0.0;
+//                    }
+//                }
+                }
+                else{
+                    output = 0;
+                }
+
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                turret.setTargetPosition((int)targetPosition);
+                turret.setPower(output);
+
+                if (Math.abs(output) < .1) {
+                    output = 0;
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+        public Action autoAim(){
+            return new RedClose2Row.Turret.AutoAim();
         }
 
         public class AimTurret implements Action {
@@ -47,6 +142,7 @@ public class RedClose2Row extends LinearOpMode {
             public AimTurret(double targetPos, double turretPow){
                 this.targetPosition = targetPos;
                 this.turretPow = turretPow;
+                turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
             @Override
@@ -325,7 +421,7 @@ public class RedClose2Row extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(-8,20), Math.toRadians(90)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(0,38),Math.toRadians(0)); // go shoot second batch
+                .strafeToLinearHeading(new Vector2d(0,38),Math.toRadians(90)); // go shoot second batch
 
 
 
@@ -352,6 +448,7 @@ public class RedClose2Row extends LinearOpMode {
                                 goToShootPreload.build()
 
                         ),
+                        turret.autoAim(),
 
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-0.75,2) //TODO fine tune
@@ -369,6 +466,7 @@ public class RedClose2Row extends LinearOpMode {
                         flywheel.runFlywheel(1740,4),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
+                                turret.autoAim(),
                                 stopper.disengageStopper(),
                                 intake.holdIntakePower(-0.75, 2)
                         )
@@ -387,6 +485,7 @@ public class RedClose2Row extends LinearOpMode {
                         flywheel.runFlywheel(1760,3.7),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
+                                turret.autoAim(),
                                 stopper.disengageStopper(),
                                 intake.holdIntakePower(-0.75, 2)
                         )

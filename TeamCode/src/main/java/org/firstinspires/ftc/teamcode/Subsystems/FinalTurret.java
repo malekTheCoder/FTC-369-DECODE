@@ -184,7 +184,6 @@ public class FinalTurret {
                     if (aimBasic) {
 
                         llResult = limelight.getLatestResult();
-
                         boolean hasTargetNow = false;
                         double txNow = 0.0;
 
@@ -269,9 +268,14 @@ public class FinalTurret {
             }
 
             case ODOMETRY_AUTO_MODE: {
-                turret.update(botErrorDeg);
-                turret.aimPIDF();
-                break;
+                if(llHasTarget) {
+                    turret.update(botErrorDeg);
+                    turret.aimPIDF();
+                    break;
+                }
+                else{
+
+                }
             }
 
             case LOCKED_TURRET_MODE: {

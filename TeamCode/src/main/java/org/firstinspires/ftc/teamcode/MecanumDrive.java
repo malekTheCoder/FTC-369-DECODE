@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.sun.tools.javac.jvm.ByteCodes.error;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -275,10 +277,13 @@ public final class MecanumDrive {
         public final TimeTrajectory timeTrajectory;
         private double beginTs = -1;
 
+        private final boolean extraHeadingCorrect;
+
         private final double[] xPoints, yPoints;
 
-        public FollowTrajectoryAction(TimeTrajectory t) {
+        public FollowTrajectoryAction(TimeTrajectory t, boolean extraHeadingCorrect) {
             timeTrajectory = t;
+            this.extraHeadingCorrect = extraHeadingCorrect;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
                     0, t.path.length(),
@@ -292,6 +297,10 @@ public final class MecanumDrive {
             }
         }
 
+        public FollowTrajectoryAction(TimeTrajectory t) {
+            this(t, false);
+        }
+
         @Override
         public boolean run(@NonNull TelemetryPacket p) {
             double t;
@@ -302,19 +311,36 @@ public final class MecanumDrive {
                 t = Actions.now() - beginTs;
             }
 
-            if (t >= timeTrajectory.duration) {
-                leftFront.setPower(0);
-                leftBack.setPower(0);
-                rightBack.setPower(0);
-                rightFront.setPower(0);
-
-                return false;
-            }
-
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2d robotVelRobot = updatePoseEstimate();
+            Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
+
+            double headingErrRad = Math.abs(error.heading.toDouble());
+
+            if (extraHeadingCorrect) {
+                // Finish only after trajectory time is up AND we're within 2 degrees of heading.
+                if (t >= timeTrajectory.duration && headingErrRad < Math.toRadians(1)) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+                    return false;
+                }
+            } else {
+                if (t >= timeTrajectory.duration) {
+                    leftFront.setPower(0);
+                    leftBack.setPower(0);
+                    rightBack.setPower(0);
+                    rightFront.setPower(0);
+                    return false;
+                }
+            }
+
+
+
+
 
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
@@ -345,7 +371,6 @@ public final class MecanumDrive {
             p.put("y", localizer.getPose().position.y);
             p.put("heading (deg)", Math.toDegrees(localizer.getPose().heading.toDouble()));
 
-            Pose2d error = txWorldTarget.value().minusExp(localizer.getPose());
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
@@ -457,14 +482,14 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
-        
+
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
+
         return vel;
     }
 
@@ -486,9 +511,13 @@ public final class MecanumDrive {
     }
 
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
+        return actionBuilder(beginPose, false);
+    }
+
+    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose, boolean extraHeadingCorrect) {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
-                FollowTrajectoryAction::new,
+                (TimeTrajectory t) -> new FollowTrajectoryAction(t, extraHeadingCorrect),
                 new TrajectoryBuilderParams(
                         1e-6,
                         new ProfileParams(

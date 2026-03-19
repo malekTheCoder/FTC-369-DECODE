@@ -206,10 +206,9 @@ public class Robot {
             //default intake speed with reverse option
             if (gp2.y){
                 intake.runIntake(intakeReversePower);
-            } else if (gp2.a){
+            } else if (gp2.left_bumper){
                 intake.stopIntake();
-            }
-            else {
+            } else {
                 intake.runIntake(intakeDefaultPower);
             }
 
