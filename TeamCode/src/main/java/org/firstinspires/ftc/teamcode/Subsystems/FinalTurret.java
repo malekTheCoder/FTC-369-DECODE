@@ -268,9 +268,14 @@ public class FinalTurret {
             }
 
             case ODOMETRY_AUTO_MODE: {
-                turret.update(botErrorDeg);
-                turret.aimPIDF();
-                break;
+                if(llHasTarget) {
+                    turret.update(botErrorDeg);
+                    turret.aimPIDF();
+                    break;
+                }
+                else{
+
+                }
             }
 
             case LOCKED_TURRET_MODE: {
