@@ -448,8 +448,7 @@ public class RedClose2Row extends LinearOpMode {
                                 goToShootPreload.build()
 
                         ),
-                        turret.autoAim(),
-
+//                        turret.autoAim(),
                         stopper.disengageStopper(),
                         intake.holdIntakePower(-0.75,2) //TODO fine tune
                 )
@@ -466,7 +465,7 @@ public class RedClose2Row extends LinearOpMode {
                         flywheel.runFlywheel(1740,4),
                         new SequentialAction(
                                 goToShootFirstSet.build(),
-                                turret.autoAim(),
+//                                turret.autoAim(),
                                 stopper.disengageStopper(),
                                 intake.holdIntakePower(-0.75, 2)
                         )
@@ -485,7 +484,7 @@ public class RedClose2Row extends LinearOpMode {
                         flywheel.runFlywheel(1760,3.7),
                         new SequentialAction(
                                 goToShootSecondSet.build(),
-                                turret.autoAim(),
+//                                turret.autoAim(),
                                 stopper.disengageStopper(),
                                 intake.holdIntakePower(-0.75, 2)
                         )

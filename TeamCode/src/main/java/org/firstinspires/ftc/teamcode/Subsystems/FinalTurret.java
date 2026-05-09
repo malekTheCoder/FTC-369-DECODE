@@ -176,10 +176,12 @@ public class FinalTurret {
                         // reset LL D memory while manually driving
                         ll_prevErr = 0.0;
                         ll_prevTimeNanos = 0;
+
                     } else if(!llHasTarget){ //ODOM HERE
                         turret.update(botErrorDeg);
                         turret.aimPIDF();
-                    } else {
+
+                    } else { // Limelight aiming
                         aimBasic = true;
                     }
 
