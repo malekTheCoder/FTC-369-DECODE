@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.LinkedList;
 
 public class FinalTurret {
 
@@ -70,6 +73,7 @@ public class FinalTurret {
 
     private double ll_prevErr = 0.0;
     private long ll_prevTimeNanos = 0;
+    private double moveDisplacement = .5;
 
     public FinalTurret(HardwareMap hardwareMap, RoadrunnerRobotLocalizer.AllianceColor allianceColor) {
         turret = new UpdatedTurret(hardwareMap.get(DcMotorEx.class, "turret"));
@@ -135,7 +139,22 @@ public class FinalTurret {
     }
 
 
-    public void update() {
+    public void update(LinkedList<Pose2d> poseHistory) {
+        boolean isMoving = false;
+
+        double x1 = poseHistory.get(poseHistory.size()-1).position.x;
+        double y1 = poseHistory.get(poseHistory.size()-1).position.y;
+        double heading1 = poseHistory.get(poseHistory.size()-1).heading.toDouble();
+        double x2 = poseHistory.get(poseHistory.size()-2).position.x;
+        double y2 = poseHistory.get(poseHistory.size()-2).position.y;
+        double heading2 = poseHistory.get(poseHistory.size()-2).heading.toDouble();
+
+        //TODO fine tune the values
+        if(Math.abs(Math.abs(x1)-Math.abs(x2))> moveDisplacement || Math.abs(Math.abs(y1)-Math.abs(y2)) > moveDisplacement ||
+                Math.abs(Math.abs(heading1)- Math.abs(heading2)) > moveDisplacement){
+            isMoving = true;
+        }
+
         switch (turretMode) {
 
             case MANUAL_RESET_MODE: {
@@ -176,7 +195,7 @@ public class FinalTurret {
                         // reset LL D memory while manually driving
                         ll_prevErr = 0.0;
                         ll_prevTimeNanos = 0;
-                    } else if(!llHasTarget){ //ODOM HERE
+                    } else if(!llHasTarget || isMoving){ //ODOM HERE, FIND ROBOT VELOCITY
                         turret.update(botErrorDeg);
                         turret.aimPIDF();
                     } else {

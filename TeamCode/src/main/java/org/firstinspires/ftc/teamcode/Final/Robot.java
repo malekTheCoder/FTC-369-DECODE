@@ -126,7 +126,7 @@ public class Robot {
 
         turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
         turret.setManualControl(gp2.right_stick_x);
-        turret.update();
+        turret.update(robotLocalizer.getPoseHistory());
 
 
 
@@ -262,9 +262,6 @@ public class Robot {
         if (gp1.startWasPressed()){
             drivetrain.setPinpointHeadingAdjuster(-robotLocalizer.getBotHeadingDegrees0To360());
         }
-
-
-
 
         telemetry.addData("x", robotLocalizer.getBotPosition().position.x);
         telemetry.addData("y", robotLocalizer.getBotPosition().position.y);

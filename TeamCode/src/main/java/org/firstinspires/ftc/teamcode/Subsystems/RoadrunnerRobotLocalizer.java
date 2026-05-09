@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
+import java.util.LinkedList;
+
 public class RoadrunnerRobotLocalizer {
     MecanumDrive drive;
     private double blueGoalX = -65;
@@ -81,6 +83,10 @@ public class RoadrunnerRobotLocalizer {
 
     public double getAngleForTurretDegrees(){
         return Math.toDegrees(getRobotAngleToGoalRadians());
+    }
+
+    public LinkedList<Pose2d> getPoseHistory(){
+        return drive.getPoseHistory();
     }
 
     public double getYawScalar(){

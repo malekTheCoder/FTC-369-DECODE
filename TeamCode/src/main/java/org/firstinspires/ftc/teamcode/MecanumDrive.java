@@ -493,6 +493,10 @@ public final class MecanumDrive {
         return vel;
     }
 
+    public LinkedList<Pose2d> getPoseHistory(){
+        return getPoseHistory();
+    }
+
     private void drawPoseHistory(Canvas c) {
         double[] xPoints = new double[poseHistory.size()];
         double[] yPoints = new double[poseHistory.size()];
