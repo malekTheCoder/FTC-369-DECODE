@@ -126,7 +126,7 @@ public class Robot {
 
         turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
         turret.setManualControl(gp2.right_stick_x);
-        turret.update(robotLocalizer.getPoseHistory());
+        turret.update(robotLocalizer.getPoseHistory(), robotLocalizer.getBotPosition(), robotLocalizer.getGoalPos());
 
 
 

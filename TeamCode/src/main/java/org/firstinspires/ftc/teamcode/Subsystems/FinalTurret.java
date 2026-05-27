@@ -54,6 +54,8 @@ public class FinalTurret {
 
     private double manualControl;
 
+    private boolean isMoving = false;
+
 
 
     // limelight pid
@@ -139,8 +141,7 @@ public class FinalTurret {
     }
 
 
-    public void update(LinkedList<Pose2d> poseHistory) {
-        boolean isMoving = false;
+    public void update(LinkedList<Pose2d> poseHistory, Pose2d botPosition, double[] goalPos) {
 
         double x1 = poseHistory.get(poseHistory.size()-1).position.x;
         double y1 = poseHistory.get(poseHistory.size()-1).position.y;
@@ -149,8 +150,20 @@ public class FinalTurret {
         double y2 = poseHistory.get(poseHistory.size()-2).position.y;
         double heading2 = poseHistory.get(poseHistory.size()-2).heading.toDouble();
 
+        double x = Math.abs(Math.abs(x1)-Math.abs(x2));
+        double y = Math.abs(Math.abs(y1)-Math.abs(y2));
+        double[] robotVelocity = {x, y};
+
+        double goalVectorX = Math.abs(goalPos[0]-botPosition.position.x);
+        double goalVectorY = Math.abs(goalPos[1]-botPosition.position.y);
+        double[] vectorToGoal = {goalVectorX, goalVectorY};
+
+        double[] shootingVector = {Math.abs(vectorToGoal[0]-robotVelocity[0]), Math.abs(vectorToGoal[1]-robotVelocity[1])};
+        double shootingDistance = Math.hypot(shootingVector[0],shootingVector[1]);
+        double shootingAngle = Math.toDegrees(Math.acos((Math.pow(shootingVector[0],2) + Math.pow(shootingVector[1],2) - Math.pow(shootingDistance,2))/(2*shootingVector[0]*shootingVector[1])));
+
         //TODO fine tune the values
-        if(Math.abs(Math.abs(x1)-Math.abs(x2))> moveDisplacement || Math.abs(Math.abs(y1)-Math.abs(y2)) > moveDisplacement ||
+        if(x > moveDisplacement || y > moveDisplacement ||
                 Math.abs(Math.abs(heading1)- Math.abs(heading2)) > moveDisplacement){
             isMoving = true;
         }
@@ -196,7 +209,7 @@ public class FinalTurret {
                         ll_prevErr = 0.0;
                         ll_prevTimeNanos = 0;
                     } else if(!llHasTarget || isMoving){ //ODOM HERE, FIND ROBOT VELOCITY
-                        turret.update(botErrorDeg);
+                        turret.update(shootingAngle);
                         turret.aimPIDF();
                     } else {
                         aimBasic = true;
@@ -460,6 +473,7 @@ public class FinalTurret {
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addData("MODE: ", turretMode.toString());
         telemetry.addData("TX:", llTxDeg);
+        telemetry.addData("Is moving? ", isMoving);
         turret.addTelemetry(telemetry);
     }
 }

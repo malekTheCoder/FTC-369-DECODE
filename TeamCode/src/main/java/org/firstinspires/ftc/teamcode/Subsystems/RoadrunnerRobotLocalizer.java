@@ -65,6 +65,11 @@ public class RoadrunnerRobotLocalizer {
         return Math.hypot((GOAL_X - currentPose.position.x), (GOAL_Y - currentPose.position.y));
     }
 
+    public double[] getGoalPos(){
+        double[] goalPos = {GOAL_X, GOAL_Y};
+        return goalPos;
+    }
+
     public double getAngleToGoalRadians(){
         Pose2d currentPose = getBotPosition();
         return Math.atan2((GOAL_Y - currentPose.position.y), (GOAL_X - currentPose.position.x));
