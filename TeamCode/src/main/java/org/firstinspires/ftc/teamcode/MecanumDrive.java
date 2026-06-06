@@ -494,7 +494,7 @@ public final class MecanumDrive {
     }
 
     public LinkedList<Pose2d> getPoseHistory(){
-        return getPoseHistory();
+        return poseHistory;
     }
 
     private void drawPoseHistory(Canvas c) {

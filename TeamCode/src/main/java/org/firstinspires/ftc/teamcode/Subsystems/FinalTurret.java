@@ -160,7 +160,7 @@ public class FinalTurret {
 
         double[] shootingVector = {Math.abs(vectorToGoal[0]-robotVelocity[0]), Math.abs(vectorToGoal[1]-robotVelocity[1])};
         double shootingDistance = Math.hypot(shootingVector[0],shootingVector[1]);
-        double shootingAngle = Math.toDegrees(Math.acos((Math.pow(shootingVector[0],2) + Math.pow(shootingVector[1],2) - Math.pow(shootingDistance,2))/(2*shootingVector[0]*shootingVector[1])));
+        double shootingAngle = Math.toDegrees(Math.acos(Math.toRadians((Math.pow(shootingVector[0],2) + Math.pow(shootingVector[1],2) - Math.pow(shootingDistance,2))/(2*shootingVector[0]*shootingVector[1]))));
 
         //TODO fine tune the values
         if(x > moveDisplacement || y > moveDisplacement ||
@@ -209,7 +209,7 @@ public class FinalTurret {
                         ll_prevErr = 0.0;
                         ll_prevTimeNanos = 0;
                     } else if(!llHasTarget || isMoving){ //ODOM HERE, FIND ROBOT VELOCITY
-                        turret.update(shootingAngle);
+                        turret.update(shootingAngle-botErrorDeg);
                         turret.aimPIDF();
                     } else {
                         aimBasic = true;
