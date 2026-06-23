@@ -83,7 +83,7 @@ public class Robot {
         stopper.engageStopper();
         intake.runIntake(0.0);
         outtake.resetController();
-        turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_BASIC_MODE);
+        turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_ASSIST_MODE);
 
     }
 

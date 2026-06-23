@@ -3,15 +3,22 @@ package org.firstinspires.ftc.teamcode.Final.Autonomous.Solo;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -28,6 +35,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PoseStorage;
 
 @Autonomous(name = "Blue Close 2 row")
 public class BlueClose2Row extends LinearOpMode {
+
     MecanumDrive drive;
     public class Turret{
         private double turretMinTicks = 0;
@@ -379,14 +387,19 @@ public class BlueClose2Row extends LinearOpMode {
 
 
 
+    public boolean isRedAlliance(){
+        return false;
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
-//-134,
+        boolean isRedAlliance = true;
         Pose2d initialPose = new Pose2d(-64, -37, Math.toRadians(270)); // initial pose from meep meep
+        drive = new MecanumDrive(hardwareMap, initialPose);
+
         PoseStorage.pinpointHeadingOffsetDriverRelative = -270;
 
-        drive = new MecanumDrive(hardwareMap, initialPose);
+
         Turret turret = new Turret(hardwareMap);
         Flywheel flywheel = new Flywheel(hardwareMap);
         Intake intake = new Intake(hardwareMap);
@@ -396,7 +409,7 @@ public class BlueClose2Row extends LinearOpMode {
 
 
 
-        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder goToShootPreload = drive.mirroredActionBuilder(initialPose, isRedAlliance)
                 .strafeToLinearHeading(new Vector2d(-11,-18), Math.toRadians(270)); // position to shoot zero batch
 
 //        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()

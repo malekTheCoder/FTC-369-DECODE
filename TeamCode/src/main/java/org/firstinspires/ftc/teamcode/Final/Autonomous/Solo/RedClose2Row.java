@@ -371,9 +371,10 @@ public class RedClose2Row extends LinearOpMode {
     }
 
 
+
     @Override
     public void runOpMode() throws InterruptedException {
-
+        boolean isRedAlliance = true;
         Pose2d initialPose = new Pose2d(-61,41, Math.toRadians(90)); // initial pose from meep meep
 
         PoseStorage.pinpointHeadingOffsetDriverRelative = -90;
@@ -387,11 +388,13 @@ public class RedClose2Row extends LinearOpMode {
 
 
 
-        TrajectoryActionBuilder goToShootPreload = drive.actionBuilder(initialPose)
+        TrajectoryActionBuilder goToShootPreload = drive.mirroredActionBuilder(initialPose, isRedAlliance)
                 .strafeToLinearHeading(new Vector2d(-10,19), Math.toRadians(90)); // position to shoot zero batch
 
 //        TrajectoryActionBuilder goToFirstSet = goToShootPreload.endTrajectory().fresh()
 //                .strafeToLinearHeading(new Vector2d(-15,32), Math.toRadians(90)); // go to first set of artifacts
+
+        // drive into first set of artifacts
 
         TrajectoryActionBuilder driveIntoFirstSet = goToShootPreload.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(-10,53), Math.toRadians(90)); // drive into first set of artifacts
@@ -400,7 +403,7 @@ public class RedClose2Row extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(0, 58), Math.toRadians(195));
 
         TrajectoryActionBuilder goToShootFirstSet = goEmptyGate.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-10,18), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-10,18), Math.toRadians(90)); // go back after grabbing first set of artifacts to shoot // go to second set of artifacts
 
         TrajectoryActionBuilder goToSecondSet = goToShootFirstSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(14,32), Math.toRadians(90)); // go to second set of artifacts
@@ -422,7 +425,6 @@ public class RedClose2Row extends LinearOpMode {
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0,38),Math.toRadians(90)); // go shoot second batch
-
 
 
 //        SequentialAction pathingTest = new SequentialAction(
