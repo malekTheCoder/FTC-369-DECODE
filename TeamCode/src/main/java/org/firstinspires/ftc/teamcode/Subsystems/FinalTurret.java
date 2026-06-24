@@ -163,6 +163,113 @@ public class FinalTurret {
                 break;
             }
 
+            case LIMELIGHT_ASSIST_MODE: {
+
+                if (holdTurretForPoseHold){
+                    turret.setPowerRaw(0);
+                } else {
+
+                    if (Math.abs(manualControl) > 0) {
+                        aimBasic = false;
+                        turret.manual(manualControl);
+
+                        // reset LL D memory while manually driving
+                        ll_prevErr = 0.0;
+                        ll_prevTimeNanos = 0;
+                    } else if(!llHasTarget){ //ODOM HERE
+                        turret.update(botErrorDeg);
+                        turret.aimPIDF();
+                    } else {
+                        aimBasic = true;
+                    }
+
+
+                    if (aimBasic) {
+
+                        llResult = limelight.getLatestResult();
+                        boolean hasTargetNow = false;
+                        double txNow = 0.0;
+
+                        if ((llResult != null) && (llResult.isValid())) {
+                            hasTargetNow = true;
+                            txNow = llResult.getTx();
+                            llTxDeg = txNow; // store for telemetry
+                        }
+
+                        if (hasTargetNow) {
+
+                            double error = -txNow;
+
+                            long now = System.nanoTime();
+                            double derivative = 0.0;
+
+                            if (ll_prevTimeNanos != 0) {
+                                double dt = (now - ll_prevTimeNanos) / 1e9;
+                                if (dt > 1e-6) {
+                                    derivative = (error - ll_prevErr) / dt;
+                                }
+                            }
+
+                            ll_prevErr = error;
+                            ll_prevTimeNanos = now;
+
+                            double output = (ll_kP * error) + (ll_kD * derivative);
+
+                            // deadband and ks
+                            if (Math.abs(error) <= ll_deadbandDeg) {
+                                output = 0.0;
+                            } else {
+                                if (error > 0) {
+                                    output += Math.abs(ll_kS);
+                                }
+                                if (error < 0) {
+                                    output -= Math.abs(ll_kS);
+                                }
+                            }
+
+                            // Clamp output
+                            if (output > ll_maxOutput) {
+                                output = ll_maxOutput;
+                            }
+                            if (output < -ll_maxOutput) {
+                                output = -ll_maxOutput;
+                            }
+
+                            double curTicks = turret.getCurrentTicks();
+
+                            if (curTicks <= minAllowedTicks) {
+                                if (output < 0) {
+                                    output = 0.0;
+                                }
+                            }
+
+                            if (curTicks >= maxAllowedTicks) {
+                                if (output > 0) {
+                                    output = 0.0;
+                                }
+                            }
+
+                            turret.setPowerRaw(output);
+
+                        } else {
+                            turret.setPowerRaw(0.0);
+                            llTxDeg = 0.0; // no target (or keep last if you prefer)
+                            ll_prevErr = 0.0;
+                            ll_prevTimeNanos = 0;
+                        }
+
+                    }
+
+                    if (!aimBasic) {
+                        ll_prevErr = 0.0;
+                        ll_prevTimeNanos = 0;
+                    }
+                }
+
+
+                break;
+            }
+
             case LIMELIGHT_BASIC_MODE: {
 
                 if (holdTurretForPoseHold){
