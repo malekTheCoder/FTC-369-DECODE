@@ -321,7 +321,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(13,-53), Math.toRadians(270)); // drive into second set of artifacts
 
         TrajectoryActionBuilder goToShootSecondSet = driveIntoSecondSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-2,-15), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-2,-10), Math.toRadians(270)); // go back after grabbing second set of artifacts to shoot
 
         TrajectoryActionBuilder goToThirdSet = goToShootSecondSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(38,-28), Math.toRadians(270)); // go to third set of artifacts
@@ -330,7 +330,7 @@ public class BlueCloseSolo extends LinearOpMode {
                 .strafeToLinearHeading(new Vector2d(38,-56), Math.toRadians(270)); // drive into third set of artifacts
 
         TrajectoryActionBuilder goToShootThirdSet = driveIntoThirdSet.endTrajectory().fresh()
-                .strafeToLinearHeading(new Vector2d(-2,-15), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
+                .strafeToLinearHeading(new Vector2d(-2,-10), Math.toRadians(270)); // go back after grabbing third set of artifacts to shoot
 
         TrajectoryActionBuilder goGetOffLaunchLine = goToShootThirdSet.endTrajectory().fresh()
                 .strafeToLinearHeading(new Vector2d(0,-38),Math.toRadians(0)); // go shoot second batch

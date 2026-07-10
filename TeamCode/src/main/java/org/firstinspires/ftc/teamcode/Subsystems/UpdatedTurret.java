@@ -75,11 +75,16 @@ public class UpdatedTurret {
     }
 
     public void update (double botErrorDeg){
+        double error = botErrorDeg-currentPositionDegrees;
+        if(error < 20){
+            error = 0;
+        }
+
         currentPositionTicks = turret.getCurrentPosition();
         currentPositionDegrees = normalize360(minDegrees + (-currentPositionTicks / ticksPerDegree));
 
         // targetPositionTurretDegrees = normalize360(360 - botErrorDeg);
-        targetPositionTurretDegrees = clamp(normalize360(360 - botErrorDeg), safeMinDegrees, safeMaxDegrees);
+        targetPositionTurretDegrees = clamp(normalize360(360 - (botErrorDeg)), safeMinDegrees, safeMaxDegrees);
         targetPositionTurretTicks = -(targetPositionTurretDegrees - minDegrees) * ticksPerDegree;
 
         // Low-pass filter the target ticks so tiny botErrorDeg noise doesn't cause jitter
