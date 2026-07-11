@@ -83,7 +83,7 @@ public class Robot {
         stopper.engageStopper();
         intake.runIntake(0.0);
         outtake.resetController();
-        turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_BASIC_MODE);
+        turret.setTurretMode(FinalTurret.Mode.LIMELIGHT_ASSIST_MODE);
 
     }
 
@@ -124,9 +124,9 @@ public class Robot {
             turret.setManualResetHeld(false);
         }
 
-        turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
+//        turret.setBotErrorDeg(robotLocalizer.getAngleForTurretDegrees());
         turret.setManualControl(gp2.right_stick_x);
-        turret.update(robotLocalizer.getPoseHistory(), robotLocalizer.getBotPosition(), robotLocalizer.getGoalPos());
+        turret.update(robotLocalizer.getPoseHistory(), robotLocalizer.getBotPosition(), robotLocalizer.getGoalPos(), robotLocalizer.getAngleForTurretDegrees());
 
 
 

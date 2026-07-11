@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -81,13 +82,12 @@ public class FinalTurret {
 
     private double ll_prevErr = 0.0;
     private long ll_prevTimeNanos = 0;
-    private double moveDisplacement = .5;
+    private double moveDisplacement = 5;
 
     public FinalTurret(HardwareMap hardwareMap, RoadrunnerRobotLocalizer.AllianceColor allianceColor) {
         turret = new UpdatedTurret(hardwareMap.get(DcMotorEx.class, "turret"));
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
-
         if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.BLUE){
             limelight.pipelineSwitch(0);
         } else if (allianceColor == RoadrunnerRobotLocalizer.AllianceColor.RED) {
@@ -152,6 +152,7 @@ public class FinalTurret {
         this.mobileShootEnabled = enabled;
     }
 
+<<<<<<< HEAD
     public void setMovingSpeedThresholdInPerSec(double threshold){
         this.movingSpeedThresholdInPerSec = threshold;
     }
@@ -182,13 +183,20 @@ public class FinalTurret {
     }
 
     /*public void update(LinkedList<Pose2d> poseHistory, Pose2d botPosition, double[] goalPos) {
+=======
+    public void update(LinkedList<Pose2d> poseHistory, Pose2d botPosition, double[] goalPos, double angleForTurretDegrees) {
+>>>>>>> 550798e9d686cfd8d1097b11b2fe20684859ca76
 
         double x1 = poseHistory.get(poseHistory.size()-1).position.x;
         double y1 = poseHistory.get(poseHistory.size()-1).position.y;
         double heading1 = poseHistory.get(poseHistory.size()-1).heading.toDouble();
-        double x2 = poseHistory.get(poseHistory.size()-2).position.x;
-        double y2 = poseHistory.get(poseHistory.size()-2).position.y;
-        double heading2 = poseHistory.get(poseHistory.size()-2).heading.toDouble();
+
+        if(poseHistory.size()<2) {
+            poseHistory.add(new Pose2d(new Vector2d(0, 0),Math.toRadians(0)));
+        }
+        double x2 = poseHistory.get(poseHistory.size() - 2).position.x;
+        double y2 = poseHistory.get(poseHistory.size() - 2).position.y;
+        double heading2 = poseHistory.get(poseHistory.size() - 2).heading.toDouble();
 
         double x = Math.abs(Math.abs(x1)-Math.abs(x2));
         double y = Math.abs(Math.abs(y1)-Math.abs(y2));
@@ -200,7 +208,8 @@ public class FinalTurret {
 
         double[] shootingVector = {Math.abs(vectorToGoal[0]-robotVelocity[0]), Math.abs(vectorToGoal[1]-robotVelocity[1])};
         double shootingDistance = Math.hypot(shootingVector[0],shootingVector[1]);
-        double shootingAngle = Math.toDegrees(Math.acos(Math.toRadians((Math.pow(shootingVector[0],2) + Math.pow(shootingVector[1],2) - Math.pow(shootingDistance,2))/(2*shootingVector[0]*shootingVector[1]))));
+        botErrorDeg = (Math.toDegrees(Math.acos(Math.toRadians((Math.pow(shootingVector[0],2) +
+                Math.pow(shootingVector[1],2) - Math.pow(shootingDistance,2))/(2*shootingVector[0]*shootingVector[1])))));
 
         //TODO fine tune the values
         if(x > moveDisplacement || y > moveDisplacement ||
@@ -248,8 +257,8 @@ public class FinalTurret {
                         // reset LL D memory while manually driving
                         ll_prevErr = 0.0;
                         ll_prevTimeNanos = 0;
-                    } else if(!llHasTarget || isMoving){ //ODOM HERE, FIND ROBOT VELOCITY
-                        turret.update(shootingAngle-botErrorDeg);
+                    } else if(!llHasTarget /*|| isMoving*/){ //ODOM HERE, FIND ROBOT VELOCITY
+                        turret.update(botErrorDeg);
                         turret.aimPIDF();
                     } else {
                         aimBasic = true;
@@ -447,7 +456,7 @@ public class FinalTurret {
             }
 
             case ODOMETRY_AUTO_MODE: {
-                if(llHasTarget) {
+                if(llHasTarget || isMoving) {
                     turret.update(botErrorDeg);
                     turret.aimPIDF();
                     break;
@@ -773,6 +782,7 @@ public class FinalTurret {
         telemetry.addData("MODE: ", turretMode.toString());
         telemetry.addData("TX:", llTxDeg);
         telemetry.addData("Is moving? ", isMoving);
+        telemetry.addData("boterrordeg", botErrorDeg);
         turret.addTelemetry(telemetry);
     }
 }
