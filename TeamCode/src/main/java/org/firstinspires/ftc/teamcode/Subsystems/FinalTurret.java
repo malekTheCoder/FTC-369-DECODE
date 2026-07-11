@@ -55,7 +55,13 @@ public class FinalTurret {
     private double manualControl;
 
     private boolean isMoving = false;
+    private double lastPoseTimeSec = -1.0;
+    private double movingSpeedThresholdInPerSec = 3.0;
+    private double flywheelShotSpeedInPerSec = 200.0;
 
+    private double mobileShootErrorDeg = 0.0;
+
+    private boolean mobileShootEnabled = true;
 
 
     // limelight pid
@@ -106,6 +112,7 @@ public class FinalTurret {
         this.turretMode = turretMode;
     }
 
+
     public void setHoldTurretForPoseHold(boolean holdTurretForPoseHold){
         this.holdTurretForPoseHold = holdTurretForPoseHold;
     }
@@ -140,8 +147,41 @@ public class FinalTurret {
         turret.resetPosition();
     }
 
+    //Mobile shooting tuning setters
+    public void setMobileShootEnabled(boolean enabled){
+        this.mobileShootEnabled = enabled;
+    }
 
-    public void update(LinkedList<Pose2d> poseHistory, Pose2d botPosition, double[] goalPos) {
+    public void setMovingSpeedThresholdInPerSec(double threshold){
+        this.movingSpeedThresholdInPerSec = threshold;
+    }
+
+    public void setFlywheelShotSpeedInPerSec(double speed){
+        this.flywheelShotSpeedInPerSec = speed;
+    }
+
+    public double getMobileShootErrorDeg(){
+        return mobileShootErrorDeg;
+    }
+
+    public double getTimeOfFlight(double distanceIn){
+        if(flywheelShotSpeedInPerSec<=0){
+            return 0.0;
+        }
+        return distanceIn/flywheelShotSpeedInPerSec;
+    }
+
+    private double normalizeDeg(double deg){
+        while(deg>100){
+            deg-=360;
+        }
+        while(deg<-180){
+            deg+=360;
+        }
+        return deg;
+    }
+
+    /*public void update(LinkedList<Pose2d> poseHistory, Pose2d botPosition, double[] goalPos) {
 
         double x1 = poseHistory.get(poseHistory.size()-1).position.x;
         double y1 = poseHistory.get(poseHistory.size()-1).position.y;
@@ -423,7 +463,266 @@ public class FinalTurret {
             }
         }
     }
+*/
 
+    public void update(LinkedList<Pose2d> poseHistory, Pose2d botPosition, double[] goalPos, double nowSec){
+        Pose2d p1 = poseHistory.get(poseHistory.size()-1);
+        Pose2d p2 = poseHistory.get(poseHistory.size()-2);
+
+        //dt between samples, from real elapsed time rather than the assumed loop length
+        double dt = (lastPoseTimeSec<0)?0.02 : (nowSec-lastPoseTimeSec);
+        lastPoseTimeSec = nowSec;
+
+        if(dt<=1e-4){
+            dt = 0.02; //guarding against duplicate timestamps
+        }
+
+        double vx = (p1.position.x-p2.position.x)/dt;
+        double vy = (p1.position.y-p2.position.y)/dt;
+        double speed = Math.hypot(vx,vy);
+
+        double dx = goalPos[0] - botPosition.position.x;
+        double dy = goalPos[1] - botPosition.position.y;
+        double distanceToGoal = Math.hypot(dx, dy);
+
+        double timeOfFlight = getTimeOfFlight(distanceToGoal);
+
+        double virtualGoalX = goalPos[0] - vx * timeOfFlight;
+        double virtualGoalY = goalPos[1] - vy * timeOfFlight;
+
+        double vdx = virtualGoalX - botPosition.position.x;
+        double vdy = virtualGoalY - botPosition.position.y;
+
+        double fieldAngleToGoalDeg = Math.toDegrees(Math.atan2(vdy, vdx));
+        double robotHeadingDeg = Math.toDegrees(botPosition.heading.toDouble());
+
+        mobileShootErrorDeg = normalizeDeg(fieldAngleToGoalDeg - robotHeadingDeg);
+
+        isMoving = speed>movingSpeedThresholdInPerSec;
+
+        double odomAimErrorDeg = mobileShootEnabled ? mobileShootErrorDeg : botErrorDeg;
+
+        switch(turretMode){
+            case MANUAL_RESET_MODE:{
+                if(manualResetHeld){
+                    wasManualResetHeld = true;
+                    turret.setPowerRaw(manualControl * manualResetDirection);
+                }
+
+                else{
+                    if(wasManualResetHeld){
+                        turret.setPowerRaw(0.0);
+                        turret.resetPosition();
+
+                        wasManualResetHeld = false;
+
+                        setTurretMode(Mode.LIMELIGHT_BASIC_MODE);
+                    }
+
+                    else{
+                        turret.setPowerRaw(0.0);
+                    }
+                }
+                break;
+            }
+
+            case LIMELIGHT_ASSIST_MODE:{
+                if(holdTurretForPoseHold){
+                    turret.setPowerRaw(0);
+                }
+                else {
+                    if (Math.abs(manualControl) > 0) {
+                        aimBasic = false;
+                        turret.manual(manualControl);
+
+                        ll_prevErr = 0.0;
+                        ll_prevTimeNanos = 0;
+                    } else if (!llHasTarget || isMoving) {
+                        turret.update(odomAimErrorDeg);
+                        turret.aimPIDF();
+                    } else {
+                        aimBasic = true;
+                    }
+
+                    if (aimBasic) {
+                        llResult = limelight.getLatestResult();
+                        boolean hasTargetNow = false;
+                        double txNow = 0.0;
+
+                        if (llResult != null && (llResult.isValid())) {
+                            hasTargetNow = true;
+                            txNow = llResult.getTx();
+                            llTxDeg = txNow;
+                        }
+                        if (hasTargetNow) {
+                            double error = -txNow;
+
+                            long now = System.nanoTime();
+                            double derivative = 0.0;
+
+                            if (ll_prevTimeNanos != 0) {
+                                double dtLL = (now - ll_prevTimeNanos) / 1e9;
+                                if (dtLL > 1e-6) {
+                                    derivative = (error - ll_prevErr) / dtLL;
+                                }
+                            }
+
+                            ll_prevErr = error;
+                            ll_prevTimeNanos = now;
+
+                            double output = (ll_kP * error) + (ll_kD * derivative);
+
+                            if (Math.abs(error) <= ll_deadbandDeg) {
+                                output = 0.0;
+                            } else {
+                                if (error > 0) {
+                                    output += Math.abs(ll_kS);
+                                }
+                                if (error < 0) {
+                                    output -= Math.abs(ll_kS);
+                                }
+                            }
+
+                            if (output > ll_maxOutput) {
+                                output = ll_maxOutput;
+                            }
+                            if (output < -ll_maxOutput) {
+                                output = -ll_maxOutput;
+                            }
+
+                            double curTicks = turret.getCurrentTicks();
+                            if (curTicks <= minAllowedTicks) {
+                                if (output < 0) {
+                                    output = 0.0;
+                                }
+                            }
+                            if (curTicks > maxAllowedTicks) {
+                                if (output > 0) {
+                                    output = 0.0;
+                                }
+                                turret.setPowerRaw(output);
+                            } else {
+                                turret.setPowerRaw(0.0);
+                                llTxDeg = 0.0;
+                                ll_prevErr = 0.0;
+                                ll_prevTimeNanos = 0;
+                            }
+                        }
+
+                        if (!aimBasic) {
+                            ll_prevErr = 0.0;
+                            ll_prevTimeNanos = 0;
+                        }
+                    }
+                }
+                break;
+            }
+            case LIMELIGHT_BASIC_MODE:{
+                if(holdTurretForPoseHold){
+                    turret.setPowerRaw(0);
+                }
+                else{
+                    if(Math.abs(manualControl)>0){
+                        aimBasic = false;
+                        turret.manual(manualControl);
+
+                        ll_prevErr = 0.0;
+                        ll_prevTimeNanos = 0;
+                    }
+
+                    else{
+                        aimBasic = true;
+                    }
+
+                    if(aimBasic){
+                        llResult = limelight.getLatestResult();
+                        boolean hasTargetNow = false;
+                        double txNow = 0.0;
+                        if(llResult!=null && llResult.isValid()){
+                            hasTargetNow = true;
+                            txNow = llResult.getTx();
+                            llTxDeg = txNow;
+                        }
+                        if(hasTargetNow){
+                            double error = -txNow;
+                            long now = System.nanoTime();
+                            double derivative = 0.0;
+
+                            if(ll_prevTimeNanos != 0){
+                                double dtLL = (now-ll_prevTimeNanos)/1e9;
+                                if(dtLL>1e-6){
+                                    derivative = (error-ll_prevErr)/dtLL;
+                                }
+                            }
+
+                            ll_prevErr = error;
+                            ll_prevTimeNanos = now;
+
+                            double output = (ll_kP*error)+(ll_kD*derivative);
+
+                            if(Math.abs(error) <= ll_deadbandDeg){
+                                output = 0.0;
+                            }
+                            else{
+                                if(error>0){
+                                    output+=Math.abs(ll_kS);
+                                }
+                                if(error<0){
+                                    output-=Math.abs(ll_kS);
+                                }
+                            }
+
+                            if(output>ll_maxOutput){
+                                output = ll_maxOutput;
+                            }
+                            if(output<-ll_maxOutput){
+                                output = -ll_maxOutput;
+                            }
+
+                            double curTicks = turret.getCurrentTicks();
+
+                            if(curTicks<=minAllowedTicks){
+                                if(output<0){
+                                    output = 0.0;
+                                }
+                            }
+                            if(curTicks>=maxAllowedTicks){
+                                if(output>0){
+                                    output = 0.0;
+                                }
+                            }
+
+                            turret.setPowerRaw(output);
+                        }
+                        else{
+                            turret.setPowerRaw(0.0);
+                            llTxDeg = 0.0;
+                            ll_prevErr = 0.0;
+                            ll_prevTimeNanos = 0;
+                        }
+                    }
+                    if(!aimBasic){
+                        ll_prevErr = 0.0;
+                        ll_prevTimeNanos = 0;
+                    }
+                }
+                break;
+            }
+            case ODOMETRY_AUTO_MODE:{
+                if(llHasTarget){
+                    turret.update(odomAimErrorDeg);
+                    turret.aimPIDF();
+                    break;
+                }
+
+            }
+            case LOCKED_TURRET_MODE:{
+                turret.setPowerRaw(0.0);
+                break;
+            }
+
+        }
+    }
 
     public boolean isOnTargetDeg(double degTolerance) {
         return turret.isOnTarget(degTolerance);
