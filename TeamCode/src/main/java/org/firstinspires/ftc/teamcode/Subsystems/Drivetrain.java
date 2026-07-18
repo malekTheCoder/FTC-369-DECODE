@@ -96,10 +96,10 @@ public class Drivetrain {
         double s = r * Math.cos(rotatedTheta);
 
         // Mecanum kinematics
-        double frontLeftPower = f + s + rotate;
-        double backLeftPower = f - s + rotate;
-        double frontRightPower = f - s - rotate;
-        double backRightPower = f + s - rotate;
+        double frontLeftPower = (f + s + rotate) / 2.5;
+        double backLeftPower = (f - s + rotate) / 2.5;
+        double frontRightPower = (f - s - rotate) / 2.5;
+        double backRightPower = (f + s - rotate) / 2.5;
 
         // Normalize so no value exceeds 1.0
         double max = Math.max(1.0, Math.max(Math.abs(frontLeftPower),
