@@ -78,7 +78,7 @@ public class Drivetrain {
         if (Math.abs(rightStickX) < 0.05) rightStickX = 0;
         double x = gp1.left_stick_x;
         double y = -gp1.left_stick_y;
-        double rx = (gp1.right_trigger - gp1.left_trigger + (rightStickX * slowRotationScale));
+        double rx = (gp1.right_trigger - gp1.left_trigger + rightStickX);
 
         driveWithPinpointHelper(y, x, rx, heading);
     }
