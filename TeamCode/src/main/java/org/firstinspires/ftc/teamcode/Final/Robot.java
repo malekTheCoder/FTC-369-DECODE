@@ -208,8 +208,11 @@ public class Robot {
                 intake.runIntake(intakeReversePower);
             } else if (gp2.left_bumper){
                 intake.stopIntake();
-            } else {
+            } else if (gp2.right_trigger >0){
                 intake.runIntake(intakeDefaultPower);
+            }
+            else{
+                intake.stopIntake();
             }
 
             shootStartNs = 0;
